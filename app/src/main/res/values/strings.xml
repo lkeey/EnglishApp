@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">EnglishApp</string>
+
+    <string name="btnLoggingString">Go To Account</string>
+    <string name="btnBeginString">Begin Learning</string>
+    <string name="btnCheckString">Pass the exam</string>
+
+</resources>
