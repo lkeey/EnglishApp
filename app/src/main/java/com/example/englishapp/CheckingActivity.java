@@ -23,12 +23,15 @@ import java.util.Random;
 public class CheckingActivity extends AppCompatActivity {
         // 28 урок - анимация
     Dialog dialog;
+    Dialog dialogEnd;
 
     final int COUNTER_WORDS = 2;
 
+    public boolean statusCounter = true;
     public int numCounter = 0;
     public int numPassed = 0;
     public int counterTrueAnswer = 0;
+    public int[] usedNum = new int[COUNTER_WORDS];
     public Button[] btnArray = {};
     public TextView[] tvArray = {};
 
@@ -127,9 +130,15 @@ public class CheckingActivity extends AppCompatActivity {
             }
         });
 
+//      settings usedNum
+        for(int num: usedNum) {
+            num = COUNTER_WORDS + 1;
+        }
+
 //          setting the string that will need to be found
         numCounter = random.nextInt(2);
         searchWord.setText(array.ruWords[numCounter]);
+        usedNum[0] = numCounter;
 
         for(int i = 0; i < COUNTER_WORDS; i++) {
             btnArray[i].setText(array.enWords[i]);
@@ -160,21 +169,117 @@ public class CheckingActivity extends AppCompatActivity {
 
                         numPassed++;
 
-                        Toast.makeText(CheckingActivity.this, String.valueOf(counterTrueAnswer), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CheckingActivity.this, "counterTrueAnswer " + String.valueOf(counterTrueAnswer), Toast.LENGTH_SHORT).show();
 
                         for(int j = 0; j < numPassed; j++) {
                             tvArray[j].setBackgroundResource(R.drawable.style_points_done);
                         }
 
-                        for(int j = 0; j < COUNTER_WORDS; j++){
-                            btnArray[j].setEnabled(true);
-                        }
-
                         if(numPassed == COUNTER_WORDS) {
 //                            exiting the game
+                            Toast.makeText(CheckingActivity.this, "Game End", Toast.LENGTH_SHORT).show();
+
+//                            SUCCESS or FAIL
+                            if(counterTrueAnswer / numPassed * 100 > 75) {
+                                statusCounter = true;
+                            } else {
+                                statusCounter = false;
+                            }
+
+                            dialogEnd = new Dialog(CheckingActivity.this);
+//        Hide title
+                            dialogEnd.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        choose layout
+                            if(statusCounter) {
+                                dialogEnd.setContentView(R.layout.dialog_end_success);
+                            } else {
+                                dialogEnd.setContentView(R.layout.dialog_end_fail);
+                            }
+//        blur background
+                            dialogEnd.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        not allow close by mobile button
+                            dialogEnd.setCancelable(false);
+//      show layout
+                            dialogEnd.show();
+
+                            Button btnCloseEnd = dialogEnd.findViewById(R.id.btnCloseEnd);
+                            btnCloseEnd.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+//                                    Increase experience
+
+                                    dialogEnd.dismiss();
+                                }
+                            });
+
+                            Button btnContinueEnd = dialogEnd.findViewById(R.id.btnContinueEnd);
+                            btnContinueEnd.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    if(statusCounter) {
+//                                        New level
+                                        Intent intent = new Intent(CheckingActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+
+                                    } else {
+//                                        Lets go again
+
+                                        numCounter = 0;
+                                        numPassed = 0;
+                                        counterTrueAnswer = 0;
+                                        usedNum = new int[COUNTER_WORDS];
+
+                                        for(int num: usedNum) {
+                                            num = COUNTER_WORDS + 1;
+                                        }
+
+                                        numCounter = random.nextInt(2);
+                                        searchWord.setText(array.ruWords[numCounter]);
+                                        usedNum[0] = numCounter;
+
+                                        for(TextView point: tvArray) {
+                                            point.setBackgroundResource(R.drawable.style_status_progress);
+                                        }
+
+                                    }
+                                    dialogEnd.dismiss();
+                                }
+                            });
+
+
                         } else {
                             numCounter = random.nextInt(2);
+
+                            while (true) {
+                                statusCounter = true;
+
+//                                Toast.makeText(CheckingActivity.this, "NEW " + String.valueOf(numCounter), Toast.LENGTH_SHORT).show();
+                                numCounter = random.nextInt(2);
+
+                                for(int j = 0; j < COUNTER_WORDS - 1; j++){
+//                                   if num has already used
+//                                    Toast.makeText(CheckingActivity.this, "UsedNum " + String.valueOf(usedNum[j]), Toast.LENGTH_SHORT).show();
+                                    if(numCounter == usedNum[j]){
+//                                        Toast.makeText(CheckingActivity.this, String.valueOf(numCounter) + " NO " + String.valueOf(usedNum[j]), Toast.LENGTH_SHORT).show();
+                                        statusCounter = false;
+                                        break;
+                                    }
+                                }
+
+                                if(statusCounter){
+//                                    add to used num
+                                    usedNum[numPassed] = numCounter;
+                                    break;
+                                }
+                            }
+
                             searchWord.setText(array.ruWords[numCounter]);
+
+                            for(int j = 0; j < COUNTER_WORDS; j++){
+                                btnArray[j].setEnabled(true);
+                            }
+
                         }
                     }
                     return true;
