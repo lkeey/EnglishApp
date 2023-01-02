@@ -48,6 +48,22 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(MainActivity.this, LoggingActivity.class);
                     startActivity(intent);
                     finish();
+
+                    ArrayActivity ac = new ArrayActivity(
+                            new String[]{"awd"}, new String[]{"AWd"}
+                    );
+
+//                    Toast.makeText(MainActivity.this, "Good3", Toast.LENGTH_SHORT).show();
+//
+//                    ac.createWallPaper();
+//
+
+                    int reqCode = 1;
+                    Intent intentNew = new Intent(getApplicationContext(), MainActivity.class);
+                    ac.showNotification(getApplicationContext(), "Title", "Message", intentNew, reqCode);
+
+                    Toast.makeText(MainActivity.this, "Good4", Toast.LENGTH_SHORT).show();
+
                 } catch ( Exception e) {
 
                 }

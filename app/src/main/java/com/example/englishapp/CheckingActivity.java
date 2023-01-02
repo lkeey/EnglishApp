@@ -169,7 +169,7 @@ public class CheckingActivity extends AppCompatActivity {
 
                         numPassed++;
 
-                        Toast.makeText(CheckingActivity.this, "counterTrueAnswer " + String.valueOf(counterTrueAnswer), Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(CheckingActivity.this, "counterTrueAnswer " + String.valueOf(counterTrueAnswer), Toast.LENGTH_SHORT).show();
 
                         for(int j = 0; j < numPassed; j++) {
                             tvArray[j].setBackgroundResource(R.drawable.style_points_done);
@@ -177,13 +177,19 @@ public class CheckingActivity extends AppCompatActivity {
 
                         if(numPassed == COUNTER_WORDS) {
 //                            exiting the game
-                            Toast.makeText(CheckingActivity.this, "Game End", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(CheckingActivity.this, "Game End", Toast.LENGTH_SHORT).show();
 
+                            if(counterTrueAnswer < 0) {
+                                counterTrueAnswer = 0;
+                            }
 //                            SUCCESS or FAIL
                             if(counterTrueAnswer / numPassed * 100 > 75) {
                                 statusCounter = true;
+                                Toast.makeText(CheckingActivity.this, "Well done!!", Toast.LENGTH_LONG).show();
                             } else {
                                 statusCounter = false;
+                                Toast.makeText(CheckingActivity.this, "Oh, it should have been better to learn...", Toast.LENGTH_LONG).show();
+
                             }
 
                             dialogEnd = new Dialog(CheckingActivity.this);
@@ -200,6 +206,10 @@ public class CheckingActivity extends AppCompatActivity {
 //        not allow close by mobile button
                             dialogEnd.setCancelable(false);
 //      show layout
+
+                            TextView tv = dialogEnd.findViewById(R.id.description);
+                            tv.setText("Your result is " + String.valueOf(counterTrueAnswer) + "/" + String.valueOf(COUNTER_WORDS));
+
                             dialogEnd.show();
 
                             Button btnCloseEnd = dialogEnd.findViewById(R.id.btnCloseEnd);
@@ -207,6 +217,10 @@ public class CheckingActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(View view) {
 //                                    Increase experience
+
+                                    Intent intent = new Intent(CheckingActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
 
                                     dialogEnd.dismiss();
                                 }
@@ -240,6 +254,10 @@ public class CheckingActivity extends AppCompatActivity {
 
                                         for(TextView point: tvArray) {
                                             point.setBackgroundResource(R.drawable.style_status_progress);
+                                        }
+
+                                        for(int j = 0; j < COUNTER_WORDS; j++){
+                                            btnArray[j].setEnabled(true);
                                         }
 
                                     }
