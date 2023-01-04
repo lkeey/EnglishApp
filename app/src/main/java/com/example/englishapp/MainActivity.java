@@ -14,6 +14,7 @@ import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -42,7 +43,48 @@ public class MainActivity extends AppCompatActivity {
     public NotificationManagerCompat notificationManagerCompat;
     public Notification notification;
 
-    @SuppressLint("WrongThread")
+    public Bitmap drawTextToBitmap(Context mContext,  int resourceId,  String mText) {
+        try {
+            Resources resources = mContext.getResources();
+            float scale = resources.getDisplayMetrics().density;
+            Bitmap bitmap = BitmapFactory.decodeResource(resources, resourceId);
+            android.graphics.Bitmap.Config bitmapConfig =   bitmap.getConfig();
+
+            // set default bitmap config if none
+            if(bitmapConfig == null) {
+                bitmapConfig = android.graphics.Bitmap.Config.ARGB_8888;
+            }
+
+            // resource bitmaps are imutable,
+            // so we need to convert it to mutable one
+            bitmap = bitmap.copy(bitmapConfig, true);
+
+            Canvas canvas = new Canvas(bitmap);
+            // new antialised Paint
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            // text color - #3D3D3D
+            paint.setColor(Color.rgb(110,110, 110));
+            // text size in pixels
+            paint.setTextSize((int) (12 * scale));
+            // text shadow
+            paint.setShadowLayer(1f, 0f, 1f, Color.DKGRAY);
+
+            // draw text to the Canvas center
+            Rect bounds = new Rect();
+            paint.getTextBounds(mText, 0, mText.length(), bounds);
+            int x = (bitmap.getWidth() - bounds.width())/6;
+            int y = (bitmap.getHeight() + bounds.height())/5;
+
+            canvas.drawText(mText, x * scale, y * scale, paint);
+            canvas.drawText(mText, x * scale, (y+bounds.height()) * scale, paint);
+
+            return bitmap;
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,7 +124,9 @@ public class MainActivity extends AppCompatActivity {
 
         Bitmap bitmapAlpha1 = Bitmap.createBitmap(colors, 300, 300, Bitmap.Config.ARGB_8888);
         Bitmap bitmapAlpha2 = BitmapFactory.decodeResource(getResources(), R.drawable.main_img_user);
-//
+
+        Bitmap bmpNEW = drawTextToBitmap(this, R.drawable.main_img_user,"Hello Android\nHello Java");
+
 //        String gText = "HI";
 //
 //        Canvas canvas = new Canvas(bitmapAlpha2); //Создаем Canvas на его основе
@@ -112,12 +156,11 @@ public class MainActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 
-
         Toast.makeText(this, "Good", Toast.LENGTH_SHORT).show();
 
         try {
 
-            WallpaperManager.getInstance(this).setBitmap(bitmapAlpha2);
+            WallpaperManager.getInstance(this).setBitmap(bmpNEW);
         } catch (IOException e) {
             e.printStackTrace();
         }
