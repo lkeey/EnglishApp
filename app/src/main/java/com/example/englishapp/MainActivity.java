@@ -165,14 +165,13 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
         // go to account
         Button btnStart = findViewById(R.id.btnLogging);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    Intent intent = new Intent(MainActivity.this, LoggingActivity.class);
+                    Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                     startActivity(intent);
                     finish();
                 } catch (Exception e) {
