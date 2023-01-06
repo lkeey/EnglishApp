@@ -50,11 +50,19 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"/>
 
+            <ImageView
+                android:id="@+id/imageEye"
+                android:layout_width="30dp"
+                android:layout_height="32dp"
+                android:layout_marginRight="6dp"
+                android:layout_below="@id/loginPassword"/>
+
             <EditText
                 android:id="@+id/userPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="6dp"
+                android:layout_marginStart="36dp"
                 android:textSize="16sp"
                 android:layout_below="@+id/loginPassword"
                 android:hint="Enter password"
