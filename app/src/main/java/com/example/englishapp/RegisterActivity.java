@@ -1,12 +1,16 @@
 package com.example.englishapp;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
@@ -28,6 +32,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private RadioGroup radioGroupGender;
     private RadioButton radioBtnGender;
+    private DatePickerDialog picker;
     private static final String TAG = "RegisterActivity";
 
     private void registerUser(String textName, String textEmail, String textDOB, String textGender, String textMobile, String textPassword){
@@ -125,69 +131,95 @@ public class RegisterActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
 
+
+
+        //Setting up DatePicker on EditText
+
+        userDOB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar calendar = Calendar.getInstance();
+                int day = calendar.get(Calendar.DAY_OF_MONTH);
+                int month = calendar.get(Calendar.MONTH);
+                int year = calendar.get(Calendar.YEAR);
+
+                //DatePicker dialog
+                picker = new DatePickerDialog(RegisterActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                        userDOB.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                    }
+                }, year, month, day);
+                picker.show();
+            }
+        });
+
         Button btnRegister = findViewById(R.id.btnRegister);
-        btnRegister.setOnClickListener(view -> {
-            int selectedGenderId = radioGroupGender.getCheckedRadioButtonId();
-            radioBtnGender = findViewById(selectedGenderId);
+        btnRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int selectedGenderId = radioGroupGender.getCheckedRadioButtonId();
+                radioBtnGender = RegisterActivity.this.findViewById(selectedGenderId);
 
-            String textName = userName.getText().toString();
-            String textEmail = userEmail.getText().toString();
-            String textDOB = userDOB.getText().toString();
-            String textMobile = userMobile.getText().toString();
-            String textPassword = userPassword.getText().toString();
-            String textConfirmedPassword = userConfirmedPassword.getText().toString();
-            String textGender;
+                String textName = userName.getText().toString();
+                String textEmail = userEmail.getText().toString();
+                String textDOB = userDOB.getText().toString();
+                String textMobile = userMobile.getText().toString();
+                String textPassword = userPassword.getText().toString();
+                String textConfirmedPassword = userConfirmedPassword.getText().toString();
+                String textGender;
 
-            //validate mobile phone
-            String mobileRegex = "[6-9][0-9]{9}";
-            Matcher mobileMatcher;
-            Pattern mobilePattern = Pattern.compile(mobileRegex);
-            mobileMatcher = mobilePattern.matcher(textMobile);
+                //validate mobile phone
+                String mobileRegex = "[6-9][0-9]{9}";
+                Matcher mobileMatcher;
+                Pattern mobilePattern = Pattern.compile(mobileRegex);
+                mobileMatcher = mobilePattern.matcher(textMobile);
 
-            if(TextUtils.isEmpty(textName)){
-                Toast.makeText(RegisterActivity.this, "Please enter your name", Toast.LENGTH_SHORT).show();
-                userName.setError("Name is required");
-                userName.requestFocus();
-            } else if(TextUtils.isEmpty(textEmail)){
-                Toast.makeText(RegisterActivity.this, "Please enter your email", Toast.LENGTH_SHORT).show();
-                userEmail.setError("Email is required");
-                userEmail.requestFocus();
-            } else if(!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()){
-                Toast.makeText(RegisterActivity.this, "Please re-enter your email", Toast.LENGTH_SHORT).show();
-                userEmail.setError("Valid email is required");
-                userEmail.requestFocus();
-            } else if(TextUtils.isEmpty(textDOB)){
-                Toast.makeText(RegisterActivity.this, "Please enter your date of birth", Toast.LENGTH_SHORT).show();
-                userDOB.setError("Date of birth is required");
-                userDOB.requestFocus();
-            } else if(radioGroupGender.getCheckedRadioButtonId() == -1) {
-                Toast.makeText(RegisterActivity.this, "Please select your gender", Toast.LENGTH_SHORT).show();
-                radioBtnGender.setError("Gender is required");
-                radioBtnGender.requestFocus();
-            } else if(TextUtils.isEmpty(textMobile)){
-                Toast.makeText(RegisterActivity.this, "Please enter your phone number", Toast.LENGTH_SHORT).show();
-                userMobile.setError("Phone number is required");
-                userMobile.requestFocus();
-            } else if(!mobileMatcher.find()){
-                Toast.makeText(RegisterActivity.this, "Please re-enter your phone number", Toast.LENGTH_SHORT).show();
-                userMobile.setError("Phone number is not valid");
-                userMobile.requestFocus();
-            } else if(TextUtils.isEmpty(textPassword)) {
-                Toast.makeText(RegisterActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
-                userPassword.setError("Password is required");
-                userPassword.requestFocus();
-            } else if(textPassword.length() < 6) {
-                Toast.makeText(RegisterActivity.this, "Password too weak", Toast.LENGTH_SHORT).show();
-                userPassword.setError("Password must be at least 6 digits");
-                userPassword.requestFocus();
-            } else if(!textPassword.equals(textConfirmedPassword)) {
-                Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
-                userConfirmedPassword.setError("Enter same password");
-                userConfirmedPassword.requestFocus();
-            } else {
-                textGender = radioBtnGender.getText().toString();
-                progressBar.setVisibility(View.VISIBLE);
-                registerUser(textName, textEmail, textDOB, textGender, textMobile, textPassword);
+                if (TextUtils.isEmpty(textName)) {
+                    Toast.makeText(RegisterActivity.this, "Please enter your name", Toast.LENGTH_SHORT).show();
+                    userName.setError("Name is required");
+                    userName.requestFocus();
+                } else if (TextUtils.isEmpty(textEmail)) {
+                    Toast.makeText(RegisterActivity.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+                    userEmail.setError("Email is required");
+                    userEmail.requestFocus();
+                } else if (!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()) {
+                    Toast.makeText(RegisterActivity.this, "Please re-enter your email", Toast.LENGTH_SHORT).show();
+                    userEmail.setError("Valid email is required");
+                    userEmail.requestFocus();
+                } else if (TextUtils.isEmpty(textDOB)) {
+                    Toast.makeText(RegisterActivity.this, "Please select your date of birth", Toast.LENGTH_SHORT).show();
+                    userDOB.setError("Date of birth is required");
+                    userDOB.requestFocus();
+                } else if (radioGroupGender.getCheckedRadioButtonId() == -1) {
+                    Toast.makeText(RegisterActivity.this, "Please select your gender", Toast.LENGTH_SHORT).show();
+                    radioBtnGender.setError("Gender is required");
+                    radioBtnGender.requestFocus();
+                } else if (TextUtils.isEmpty(textMobile)) {
+                    Toast.makeText(RegisterActivity.this, "Please enter your phone number", Toast.LENGTH_SHORT).show();
+                    userMobile.setError("Phone number is required");
+                    userMobile.requestFocus();
+                } else if (!mobileMatcher.find()) {
+                    Toast.makeText(RegisterActivity.this, "Please re-enter your phone number", Toast.LENGTH_SHORT).show();
+                    userMobile.setError("Phone number is not valid");
+                    userMobile.requestFocus();
+                } else if (TextUtils.isEmpty(textPassword)) {
+                    Toast.makeText(RegisterActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
+                    userPassword.setError("Password is required");
+                    userPassword.requestFocus();
+                } else if (textPassword.length() < 6) {
+                    Toast.makeText(RegisterActivity.this, "Password too weak", Toast.LENGTH_SHORT).show();
+                    userPassword.setError("Password must be at least 6 digits");
+                    userPassword.requestFocus();
+                } else if (!textPassword.equals(textConfirmedPassword)) {
+                    Toast.makeText(RegisterActivity.this, "Password does not match", Toast.LENGTH_SHORT).show();
+                    userConfirmedPassword.setError("Enter same password");
+                    userConfirmedPassword.requestFocus();
+                } else {
+                    textGender = radioBtnGender.getText().toString();
+                    progressBar.setVisibility(View.VISIBLE);
+                    RegisterActivity.this.registerUser(textName, textEmail, textDOB, textGender, textMobile, textPassword);
+                }
             }
         });
     }

@@ -79,8 +79,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/registerDOB"
-            android:hint="Write your date of birth"
+            android:hint="Select your date of birth"
             android:inputType="date"
+            android:focusable="false"
             android:padding="6dp"
             android:textSize="16sp"
             android:background="@drawable/style_border"/>
