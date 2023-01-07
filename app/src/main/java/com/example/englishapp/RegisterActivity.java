@@ -55,8 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
                     FirebaseUser firebaseUser = auth.getCurrentUser();
 
                     //Update display name of user
-//                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(textName).build();
-//                    firebaseUser.updateProfile(profileChangeRequest);
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(textName).build();
+                    firebaseUser.updateProfile(profileChangeRequest);
 
                     //Enter the data to FireBase
                     ReadWriteUserDetails writeUserDetails = new ReadWriteUserDetails(
@@ -79,8 +79,8 @@ public class RegisterActivity extends AppCompatActivity {
 
                                 Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                RegisterActivity.this.startActivity(intent);
-                                RegisterActivity.this.finish();
+                                startActivity(intent);
+                                finish();
                             } else {
                                 Toast.makeText(RegisterActivity.this, "User registered failed! Please try again", Toast.LENGTH_SHORT).show();
                             }

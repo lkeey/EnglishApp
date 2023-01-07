@@ -48,7 +48,7 @@ public class LoggingActivity extends AppCompatActivity {
                         Toast.makeText(LoggingActivity.this, "You are logged in", Toast.LENGTH_SHORT).show();
 
                         //Open Profile
-                        Intent intent = new Intent(LoggingActivity.this, MainActivity.class);
+                        Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
@@ -81,7 +81,7 @@ public class LoggingActivity extends AppCompatActivity {
     private void showAlertDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(LoggingActivity.this);
         builder.setTitle("Email is not verified");
-        builder.setMessage("Please verify your email now. You can not login without email verification");
+        builder.setMessage("Please verify your email now. You can not login without email verification next time");
 
         //Open Email app
         builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
@@ -169,7 +169,7 @@ public class LoggingActivity extends AppCompatActivity {
             Toast.makeText(LoggingActivity.this, "You are already logged in", Toast.LENGTH_SHORT).show();
 
             // go to profile
-            Intent intent = new Intent(LoggingActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
             startActivity(intent);
             finish();
         } else {
