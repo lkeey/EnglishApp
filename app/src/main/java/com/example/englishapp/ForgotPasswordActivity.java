@@ -3,6 +3,7 @@ package com.example.englishapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,12 +17,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class ForgotPasswordActivity extends AppCompatActivity {
     private Button btnResetPassword;
     private EditText userEmail;
     private ProgressBar progressBar;
     private FirebaseAuth authProfile;
+    private static final String TAG = "ForgotPasswordActivity";
 
 
     private void resetPassword(String textEmail) {
@@ -38,7 +41,14 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
-                    Toast.makeText(ForgotPasswordActivity.this, "Something went wrong! Check your email", Toast.LENGTH_SHORT).show();
+                    try {
+                        throw task.getException();
+                    } catch (FirebaseAuthInvalidUserException e) {
+                        userEmail.setError("User does not exist");
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                        Toast.makeText(ForgotPasswordActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 progressBar.setVisibility(View.GONE);
             }

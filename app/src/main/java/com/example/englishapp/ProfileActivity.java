@@ -29,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 public class ProfileActivity extends AppCompatActivity {
     private TextView userGreeting, userName, userEmail, userDOB, userGender, userMobile;
     private ProgressBar progressBar;
+    private ImageView imageView;
     private String textName, textEmail, textDOB, textGender, textMobile;
     private ImageView userImage;
     private FirebaseAuth authProfile;
@@ -111,6 +112,18 @@ public class ProfileActivity extends AppCompatActivity {
         userMobile = findViewById(R.id.userMobile);
 
         progressBar = findViewById(R.id.progressBar);
+
+        //Change Profile Picture
+        imageView = findViewById(R.id.userImage);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, UploadProfilePictureActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         authProfile = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = authProfile.getCurrentUser();

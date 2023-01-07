@@ -175,16 +175,16 @@ public class LoggingActivity extends AppCompatActivity {
         //If user is already logged in
         super.onStart();
 
-//        if(authProfile.getCurrentUser() != null) {
-//            Toast.makeText(LoggingActivity.this, "You are already logged in", Toast.LENGTH_SHORT).show();
-//
-//            // go to profile
-//            Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
-//            startActivity(intent);
-//            finish();
-//        } else {
-//            Toast.makeText(LoggingActivity.this, "You are not already logged in", Toast.LENGTH_SHORT).show();
-//        }
+        if(authProfile.getCurrentUser() != null) {
+            Toast.makeText(LoggingActivity.this, "You are already logged in", Toast.LENGTH_SHORT).show();
+
+            // go to profile
+            Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            Toast.makeText(LoggingActivity.this, "You are not already logged in", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
