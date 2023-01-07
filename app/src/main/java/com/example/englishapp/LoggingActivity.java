@@ -113,6 +113,16 @@ public class LoggingActivity extends AppCompatActivity {
 
         authProfile = FirebaseAuth.getInstance();
 
+        //Reset Password
+        Button btnForgotPassword = findViewById(R.id.btnForgotPassword);
+        btnForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoggingActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
         //Show or Hide using Eye
         ImageView imageEye = findViewById(R.id.imageEye);
         userPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
@@ -165,16 +175,16 @@ public class LoggingActivity extends AppCompatActivity {
         //If user is already logged in
         super.onStart();
 
-        if(authProfile.getCurrentUser() != null) {
-            Toast.makeText(LoggingActivity.this, "You are already logged in", Toast.LENGTH_SHORT).show();
-
-            // go to profile
-            Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            Toast.makeText(LoggingActivity.this, "You are not already logged in", Toast.LENGTH_SHORT).show();
-        }
+//        if(authProfile.getCurrentUser() != null) {
+//            Toast.makeText(LoggingActivity.this, "You are already logged in", Toast.LENGTH_SHORT).show();
+//
+//            // go to profile
+//            Intent intent = new Intent(LoggingActivity.this, ProfileActivity.class);
+//            startActivity(intent);
+//            finish();
+//        } else {
+//            Toast.makeText(LoggingActivity.this, "You are not already logged in", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     @Override
