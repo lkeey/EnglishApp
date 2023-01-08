@@ -55,6 +55,7 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         if (uriImage != null) {
             //Save image
             StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "." + getFileExtension(uriImage));
+            //Toast.makeText(UploadProfilePictureActivity.this, fileReference.toString(), Toast.LENGTH_SHORT).show();
 
             //Upload image to Storage
             fileReference.putFile(uriImage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -160,14 +161,14 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
             startActivity(getIntent());
             finish();
             overridePendingTransition(0, 0);
-//        } else if (id == R.id.menuUpdateProfile) {
-//            Intent intent = new Intent(ProfileActivity.this, UpdateProfile.class);
-//            startActivity(intent);
-//            finish();
-//        } else if (id == R.id.menuUpdateEmail) {
-//            Intent intent = new Intent(ProfileActivity.this, UpdateEmail.class);
-//            startActivity(intent);
-//            finish();
+        } else if (id == R.id.menuUpdateProfile) {
+            Intent intent = new Intent(UploadProfilePictureActivity.this, UpdateProfileActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.menuUpdateEmail) {
+            Intent intent = new Intent(UploadProfilePictureActivity.this, UpdateEmailActivity.class);
+            startActivity(intent);
+            finish();
 //        } else if (id == R.id.menuSettings) {
 //            Intent intent = new Intent(ProfileActivity.this, ActivitySettings.class);
 //            startActivity(intent);

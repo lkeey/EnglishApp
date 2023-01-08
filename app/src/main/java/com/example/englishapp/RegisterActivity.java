@@ -131,10 +131,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         progressBar = findViewById(R.id.progressBar);
 
-
-
         //Setting up DatePicker on EditText
-
         userDOB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

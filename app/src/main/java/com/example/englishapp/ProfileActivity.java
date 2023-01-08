@@ -4,6 +4,7 @@ import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 public class ProfileActivity extends AppCompatActivity {
     private TextView userGreeting, userName, userEmail, userDOB, userGender, userMobile;
@@ -56,6 +58,13 @@ public class ProfileActivity extends AppCompatActivity {
                     userDOB.setText(textDOB);
                     userGender.setText(textGender);
                     userMobile.setText(textMobile);
+
+                    //Set up profile picture
+                    Uri uri = firebaseUser.getPhotoUrl();
+
+                    Picasso.get().load(uri).into(imageView);
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
                 }
                 progressBar.setVisibility(View.GONE);
             }
@@ -72,6 +81,9 @@ public class ProfileActivity extends AppCompatActivity {
     private void checkEmailVerification(FirebaseUser firebaseUser) {
         if(!firebaseUser.isEmailVerified()){
             showAlertDialog();
+            Toast.makeText(this, "email verification - false", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "email verification - true", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -155,14 +167,14 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(getIntent());
             finish();
             overridePendingTransition(0, 0);
-//        } else if (id == R.id.menuUpdateProfile) {
-//            Intent intent = new Intent(ProfileActivity.this, UpdateProfile.class);
-//            startActivity(intent);
-//            finish();
-//        } else if (id == R.id.menuUpdateEmail) {
-//            Intent intent = new Intent(ProfileActivity.this, UpdateEmail.class);
-//            startActivity(intent);
-//            finish();
+        } else if (id == R.id.menuUpdateProfile) {
+            Intent intent = new Intent(ProfileActivity.this, UpdateProfileActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.menuUpdateEmail) {
+            Intent intent = new Intent(ProfileActivity.this, UpdateEmailActivity.class);
+            startActivity(intent);
+            finish();
 //        } else if (id == R.id.menuSettings) {
 //            Intent intent = new Intent(ProfileActivity.this, ActivitySettings.class);
 //            startActivity(intent);
