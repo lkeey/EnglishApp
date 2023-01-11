@@ -173,10 +173,10 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
 //            Intent intent = new Intent(ProfileActivity.this, ActivitySettings.class);
 //            startActivity(intent);
 //            finish();
-//        } else if (id == R.id.menuChangePassword) {
-//            Intent intent = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
-//            startActivity(intent);
-//            finish();
+        } else if (id == R.id.menuChangePassword) {
+            Intent intent = new Intent(UploadProfilePictureActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+            finish();
 //        } else if (id == R.id.menuDeleteAccount) {
 //            Intent intent = new Intent(ProfileActivity.this, DeleteProfileActivity.class);
 //            startActivity(intent);
