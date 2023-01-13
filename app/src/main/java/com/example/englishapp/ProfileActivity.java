@@ -183,10 +183,10 @@ public class ProfileActivity extends AppCompatActivity {
             Intent intent = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
             startActivity(intent);
             finish();
-//        } else if (id == R.id.menuDeleteAccount) {
-//            Intent intent = new Intent(ProfileActivity.this, DeleteProfileActivity.class);
-//            startActivity(intent);
-//            finish();
+        } else if (id == R.id.menuDeleteAccount) {
+            Intent intent = new Intent(ProfileActivity.this, DeleteProfileActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.menuLogOut) {
             authProfile.signOut();
             Toast.makeText(ProfileActivity.this, "Logged out", Toast.LENGTH_SHORT).show();

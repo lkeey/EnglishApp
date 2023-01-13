@@ -258,14 +258,14 @@ public class UpdateProfileActivity extends AppCompatActivity {
 //            Intent intent = new Intent(ProfileActivity.this, ActivitySettings.class);
 //            startActivity(intent);
 //            finish();
-//        } else if (id == R.id.menuChangePassword) {
-//            Intent intent = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
-//            startActivity(intent);
-//            finish();
-//        } else if (id == R.id.menuDeleteAccount) {
-//            Intent intent = new Intent(ProfileActivity.this, DeleteProfileActivity.class);
-//            startActivity(intent);
-//            finish();
+        } else if (id == R.id.menuChangePassword) {
+            Intent intent = new Intent(UpdateProfileActivity.this, ChangePasswordActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.menuDeleteAccount) {
+            Intent intent = new Intent(UpdateProfileActivity.this, DeleteProfileActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.menuLogOut) {
             authProfile.signOut();
             Toast.makeText(UpdateProfileActivity.this, "Logged out", Toast.LENGTH_SHORT).show();
