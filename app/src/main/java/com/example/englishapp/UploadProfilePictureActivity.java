@@ -54,7 +54,7 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
     private void uploadPicture() {
         if (uriImage != null) {
             //Save image
-            StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "." + getFileExtension(uriImage));
+            StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "/ProfilePictures." + getFileExtension(uriImage));
             //Toast.makeText(UploadProfilePictureActivity.this, fileReference.toString(), Toast.LENGTH_SHORT).show();
 
             //Upload image to Storage
@@ -121,7 +121,7 @@ public class UploadProfilePictureActivity extends AppCompatActivity {
         authProfile = FirebaseAuth.getInstance();
         firebaseUser = authProfile.getCurrentUser();
 
-        storageReference = FirebaseStorage.getInstance().getReference("Display Pictures");
+        storageReference = FirebaseStorage.getInstance().getReference("DisplayPictures");
         Uri uri = firebaseUser.getPhotoUrl();
 
         //Set User's current DP in ImageView

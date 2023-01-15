@@ -44,22 +44,24 @@ public class DeleteProfileActivity extends AppCompatActivity {
     private String userPwd;
     private Button btnAuthenticate, btnDeleteAccount;
 
-    private void deleteUserData() {
+    private void deleteUserData(FirebaseUser firebaseUser) {
         //Delete Picture
-        FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
-        StorageReference storageReference = firebaseStorage.getReferenceFromUrl(firebaseUser.getPhotoUrl().toString());
-        storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                Log.d(TAG,  "picture was successfully deleted");
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,  "picture wasn't deleted");
-                Toast.makeText(DeleteProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        if(firebaseUser.getPhotoUrl() != null) {
+            FirebaseStorage firebaseStorage = FirebaseStorage.getInstance();
+            StorageReference storageReference = firebaseStorage.getReferenceFromUrl(firebaseUser.getPhotoUrl().toString());
+            storageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    Log.d(TAG,  "picture was successfully deleted");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG,  "picture wasn't deleted");
+                    Toast.makeText(DeleteProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         //Delete Data from realtime database
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Registered Users");
@@ -67,6 +69,9 @@ public class DeleteProfileActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void unused) {
                 Log.d(TAG,  "data from realtime database was successfully deleted");
+
+                //Finally delete the user
+                deleteUser();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -77,13 +82,11 @@ public class DeleteProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void deleteUser(FirebaseUser firebaseUser) {
+    private void deleteUser() {
         firebaseUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    deleteUserData();
-
                     authProfile.signOut();
                     Toast.makeText(DeleteProfileActivity.this, "User has been deleted", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(DeleteProfileActivity.this, ProfileActivity.class);
@@ -111,7 +114,7 @@ public class DeleteProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 progressBar.setVisibility(View.VISIBLE);
-                deleteUser(firebaseUser);
+                deleteUserData(firebaseUser);
             }
         });
 
