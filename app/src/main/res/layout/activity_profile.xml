@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -17,12 +18,17 @@
             android:layout_height="250dp"
             android:background="#5CC09F">
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/userImage"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
+                android:adjustViewBounds="true"
                 android:layout_centerInParent="true"
-                android:background="@drawable/main_img_user"/>
+                android:src="@drawable/ic_user"
+                app:riv_corner_radius_top_left="10dp"
+                app:riv_corner_radius_top_right="10dp"
+                app:riv_corner_radius_bottom_left="10dp"
+                app:riv_corner_radius_bottom_right="10dp"/>
 
             <TextView
                 android:id="@+id/textGreeting"
@@ -31,8 +37,8 @@
                 android:layout_below="@+id/userImage"
                 android:hint="Loading..."
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+                android:layout_marginTop="5dp"
                 android:textColor="@color/white"/>
         </RelativeLayout>
 

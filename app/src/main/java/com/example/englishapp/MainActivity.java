@@ -2,15 +2,9 @@ package com.example.englishapp;
 
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
-import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
@@ -21,19 +15,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import java.io.IOException;
-import java.security.acl.NotOwnerException;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +36,32 @@ public class MainActivity extends AppCompatActivity {
     public NotificationManager notificationManager;
     public NotificationManagerCompat notificationManagerCompat;
     public Notification notification;
+
+//    private void searchImages(String query) {
+//        HashMap<String, String> params = new HashMap<>();
+//        wallpaper = new Wallpaper(MainActivity.this);
+//        if (query != null) {
+//            params.put("method", "flickr.photos.search");
+//            params.put("text", query);
+//        } else {
+//            params.put("method", "flickr.interestingness.getList");
+//        }
+//
+//        wallpaper.fetch(params, null, new Flickr.FlickrModelResponseHandler() {
+//            @Override
+//            public void onSuccess(ArrayList<HashMap<String, String>> responseArray) {
+////                adapter.setArray(responseArray);
+//                Toast.makeText(MainActivity.this, "KAIF", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(String error) {
+////                adapter.setArray(new ArrayList<HashMap<String, String>>());
+//                Toast.makeText(MainActivity.this, "BAD", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        });
+//    }
 
     public Bitmap drawTextToBitmap(Context mContext,  int resourceId,  String mText) {
         try {
@@ -159,11 +179,33 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, "Good", Toast.LENGTH_SHORT).show();
 
         try {
-
             WallpaperManager.getInstance(this).setBitmap(bmpNEW);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //   BEGIN IMAGE SEARCH
+
+        Wallpaper wallpaper = new Wallpaper();
+        Bitmap bitmapWallpaper;
+
+        try {
+
+            bitmapWallpaper = wallpaper.execute("volcano").get();
+            Toast.makeText(this, "WALL" + bitmapWallpaper.toString(), Toast.LENGTH_SHORT).show();
+            WallpaperManager.getInstance(this).setBitmap(bitmapWallpaper);
+
+        } catch (ExecutionException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (InterruptedException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Toast.makeText(this, "OKEY", Toast.LENGTH_SHORT).show();
+
+        // END GOOGLE IMAGE SEARCH
 
         // go to account
         Button btnStart = findViewById(R.id.btnLogging);
