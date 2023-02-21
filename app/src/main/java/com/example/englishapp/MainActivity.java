@@ -27,7 +27,6 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -186,24 +185,10 @@ public class MainActivity extends AppCompatActivity {
 
         //   BEGIN IMAGE SEARCH
 
-        Wallpaper wallpaper = new Wallpaper();
-        Bitmap bitmapWallpaper;
+        Intent intent = new Intent(this, WallpaperService.class);
+        startService(intent);
 
-        try {
-
-            bitmapWallpaper = wallpaper.execute("volcano").get();
-            Toast.makeText(this, "WALL" + bitmapWallpaper.toString(), Toast.LENGTH_SHORT).show();
-            WallpaperManager.getInstance(this).setBitmap(bitmapWallpaper);
-
-        } catch (ExecutionException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (InterruptedException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Toast.makeText(this, "OKEY", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "OKEY - BEGIN", Toast.LENGTH_SHORT).show();
 
         // END GOOGLE IMAGE SEARCH
 
@@ -271,6 +256,13 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Intent intent = new Intent(this, WallpaperService.class);
+        stopService(intent);
     }
 
     @Override
