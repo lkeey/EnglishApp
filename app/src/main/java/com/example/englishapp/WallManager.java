@@ -17,13 +17,12 @@ public class WallManager extends AsyncTask<String, Void, Bitmap> {
 
     private static final String TAG = "WallManager";
 
-    @Override
     protected Bitmap doInBackground(String... strings) {
         Bitmap bitmap;
         try {
 //            URL url = new URL(strings[0]);
 
-        //
+            //
             String key="AIzaSyDdBPCVzYyCmtFtZSSihqOSUsPZglM5x3E";
 
             URL url = new URL(
@@ -31,6 +30,7 @@ public class WallManager extends AsyncTask<String, Void, Bitmap> {
                             key+"&cx=42a504d9a5afa4755&q="+
                             strings[0]+"&alt=json"+"&searchType=image"
             );
+
             Log.i(TAG, "URL1 - " + url);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -38,17 +38,18 @@ public class WallManager extends AsyncTask<String, Void, Bitmap> {
             Log.i(TAG, "CONNECTION - " + conn.toString());
 
             conn.setRequestMethod("GET");
-
             conn.setRequestProperty("Accept", "application/json");
-
-            Log.i(TAG, "URL-3 -- " + conn.getInputStream());
+            Log.i(TAG, "URL-31 -- " + conn.getInputStream());
 
 
             BufferedReader br = new BufferedReader(new InputStreamReader(
                     (conn.getInputStream())));
+
             Log.i(TAG, "BR - " + br);
 
             String output;
+
+
             while ((output = br.readLine()) != null) {
 
                 if(output.contains("\"link\": \"")){
@@ -84,3 +85,4 @@ public class WallManager extends AsyncTask<String, Void, Bitmap> {
     }
 
 }
+
