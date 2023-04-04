@@ -187,6 +187,7 @@
             android:name=".WallpaperService"
             android:enabled="true"
             android:exported="true" />
+
     </application>
 
 </manifest>

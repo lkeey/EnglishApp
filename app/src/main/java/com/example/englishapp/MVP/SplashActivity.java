@@ -7,7 +7,6 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.englishapp.MainActivity;
 import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -29,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Access a Cloud Firestore instance from your Activity
-        DataBase.firestore = FirebaseFirestore.getInstance();
+        DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
 
         new Thread(() -> {
             try {
@@ -43,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
 
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
 
                 startActivity(intent);
                 SplashActivity.this.finish();
