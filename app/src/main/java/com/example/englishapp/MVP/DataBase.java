@@ -1,6 +1,7 @@
 package com.example.englishapp.MVP;
 
 import android.util.ArrayMap;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -17,10 +18,7 @@ import java.util.Map;
 public class DataBase {
 
     private static final String TAG = "FirestoreDB";
-
     public static FirebaseFirestore DATA_FIRESTORE;
-    public static FirebaseFirestore FIRESTORE;
-
     public static final String USER_COLLECTION = "USERS";
     public static final String TOTAL_OF_USERS = "TOTAL_USERS";
 
@@ -31,24 +29,34 @@ public class DataBase {
         userData.put("TOTAL_SCORE", 0);
         userData.put("BOOKMARKS", 0);
 
-        DocumentReference userDoc = FIRESTORE.collection(USER_COLLECTION).document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        WriteBatch batch = FIRESTORE.batch();
+        DocumentReference userDoc = DATA_FIRESTORE
+                .collection(USER_COLLECTION)
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
 
         batch.set(userDoc, userData);
 
-        DocumentReference docReference = FIRESTORE.collection(USER_COLLECTION).document(TOTAL_OF_USERS);
+        DocumentReference docReference = DATA_FIRESTORE
+                .collection(USER_COLLECTION)
+                .document(TOTAL_OF_USERS);
+
         batch.update(docReference, "COUNT", FieldValue.increment(1));
 
         batch.commit()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
+                        Log.i(TAG, "User Created");
+
                         listener.OnSuccess();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Log.i(TAG, "Fail To Create User " + e.getMessage());
+
                         listener.OnFailure();
                     }
                 });

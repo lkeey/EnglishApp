@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -71,8 +72,14 @@ public class LoginActivity extends AppCompatActivity {
         // TODO if forgot
         forgotPassword = findViewById(R.id.labelForgot);
 
-        // TODO configure toolbar
         toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        getSupportActionBar().setTitle("Login");
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -143,6 +150,17 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    private void init() {
+
     }
 
     private void googleSignIn() {
@@ -191,7 +209,6 @@ public class LoginActivity extends AppCompatActivity {
                                 DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), new CompleteListener() {
                                     @Override
                                     public void OnSuccess() {
-
                                         DataBase.loadData(new CompleteListener() {
                                             @Override
                                             public void OnSuccess() {
@@ -261,47 +278,55 @@ public class LoginActivity extends AppCompatActivity {
     private void login() {
         progressBar.show();
 
-//        Toast.makeText(this, userEmail.getText().toString().trim(), Toast.LENGTH_SHORT).show();
-//        Toast.makeText(this, userPassword.getText().toString().trim(), Toast.LENGTH_SHORT).show();
-
         mAuth.signInWithEmailAndPassword(userEmail.getText().toString().trim(), userPassword.getText().toString().trim())
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if (task.isSuccessful()) {
+                        // Sign in success, update UI with the signed-in user's information
 
-                            Toast.makeText(LoginActivity.this, "Authentication was successfully",
-                                    Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Authentication was successfully",
+                                Toast.LENGTH_SHORT).show();
 
-                            DataBase.loadData(new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    progressBar.dismiss();
+                        DataBase.loadData(new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                progressBar.dismiss();
 
-                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                    startActivity(intent);
-                                    LoginActivity.this.finish();
-                                }
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                LoginActivity.this.finish();
+                            }
 
-                                @Override
-                                public void OnFailure() {
-                                    Toast.makeText(LoginActivity.this, "Something went wrong",
-                                            Toast.LENGTH_SHORT).show();
+                            @Override
+                            public void OnFailure() {
+                                Toast.makeText(LoginActivity.this, "Something went wrong",
+                                        Toast.LENGTH_SHORT).show();
 
-                                    progressBar.dismiss();
-                                }
-                            });
+                                progressBar.dismiss();
+                            }
+                        });
 
-                        } else {
-                            // If sign in fails, display a message to the user.
+                    } else {
+                        // If sign in fails, display a message to the user.
 
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(),
-                                    Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(),
+                                Toast.LENGTH_SHORT).show();
 
-                            progressBar.dismiss();
-                        }
+                        progressBar.dismiss();
                     }
-                });
+                }
+            });
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if (item.getItemId() == android.R.id.home) {
+            LoginActivity.this.finish();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
