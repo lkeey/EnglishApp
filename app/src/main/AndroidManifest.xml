@@ -119,7 +119,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".ForgotPasswordActivity"
+            android:name=".MVP.ForgotPasswordActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
