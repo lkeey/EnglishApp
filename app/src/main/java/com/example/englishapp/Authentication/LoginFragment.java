@@ -78,7 +78,11 @@ public class LoginFragment extends Fragment {
 
         signGoogle.setOnClickListener(v -> googleSignIn());
 
-        forgotPassword.setOnClickListener(v -> ((MainAuthenticationActivity) getActivity()).setFragment(new LoginFragment()));
+        forgotPassword.setOnClickListener(v -> {
+            ((MainAuthenticationActivity) getActivity()).setFragment(new ForgotPasswordFragment());
+            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameForgot);
+
+        });
 
         // for google authentication
         oneTapClient = Identity.getSignInClient(getActivity());

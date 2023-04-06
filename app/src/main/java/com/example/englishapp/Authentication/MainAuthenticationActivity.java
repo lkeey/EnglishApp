@@ -9,12 +9,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.englishapp.R;
 
 public class MainAuthenticationActivity extends AppCompatActivity {
 
+    private static final String TAG = "Activity Authentication";
     private Toolbar toolbar;
     private static FrameLayout mainFrame;
 
@@ -37,21 +37,27 @@ public class MainAuthenticationActivity extends AppCompatActivity {
     }
 
     public void setFragment(Fragment fragment) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(mainFrame.getId(), fragment);
-        transaction.commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(mainFrame.getId(), fragment)
+                .addToBackStack(String.valueOf(fragment.getId()))
+                .commit();
     }
 
     public void setTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
 
-
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
-            Toast.makeText(this, "CLICKED", Toast.LENGTH_SHORT).show();
-            getFragmentManager().popBackStack();
+
+            if (getFragmentManager().getBackStackEntryCount() > 1){
+                Toast.makeText(this, "CLICKED-1", Toast.LENGTH_SHORT).show();
+                getFragmentManager().popBackStackImmediate();
+            } else {
+                Toast.makeText(this, "CLICKED-2", Toast.LENGTH_SHORT).show();
+                super.onBackPressed();
+            }
         }
 
         return super.onOptionsItemSelected(item);

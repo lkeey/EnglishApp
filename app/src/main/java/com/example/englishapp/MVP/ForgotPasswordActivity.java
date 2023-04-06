@@ -84,23 +84,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText("Sending email");
 
-        btnResetPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String textEmail = userEmail.getText().toString();
+        btnResetPassword.setOnClickListener(view -> {
+            String textEmail = userEmail.getText().toString();
 
-                if(TextUtils.isEmpty(textEmail)) {
-                    Toast.makeText(ForgotPasswordActivity.this, "Please enter your registered email", Toast.LENGTH_SHORT).show();
-                    userEmail.setError("Email is required");
-                    userEmail.requestFocus();
-                } else if(!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()){
-                    Toast.makeText(ForgotPasswordActivity.this, "Please enter valid email", Toast.LENGTH_SHORT).show();
-                    userEmail.setError("Valid email is required");
-                    userEmail.requestFocus();
-                } else {
-                    progressBar.show();
-                    resetPassword(textEmail);
-                }
+            if(TextUtils.isEmpty(textEmail)) {
+                Toast.makeText(ForgotPasswordActivity.this, "Please enter your registered email", Toast.LENGTH_SHORT).show();
+                userEmail.setError("Email is required");
+                userEmail.requestFocus();
+            } else if(!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()){
+                Toast.makeText(ForgotPasswordActivity.this, "Please enter valid email", Toast.LENGTH_SHORT).show();
+                userEmail.setError("Valid email is required");
+                userEmail.requestFocus();
+            } else {
+                progressBar.show();
+                resetPassword(textEmail);
             }
         });
 
@@ -113,7 +110,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
             }
         });
 
-        //TODO listener
         lblSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
