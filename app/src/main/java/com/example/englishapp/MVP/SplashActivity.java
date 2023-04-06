@@ -7,6 +7,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.englishapp.Authentication.MainAuthenticationActivity;
 import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,11 +43,17 @@ public class SplashActivity extends AppCompatActivity {
 
                 Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
 
-                Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
+                Intent intent = new Intent(SplashActivity.this, MainAuthenticationActivity.class);
 
                 startActivity(intent);
                 SplashActivity.this.finish();
 
+            } else {
+
+                Intent intent = new Intent(SplashActivity.this, MainAuthenticationActivity.class);
+
+                startActivity(intent);
+                SplashActivity.this.finish();
             }
 
         }).start();

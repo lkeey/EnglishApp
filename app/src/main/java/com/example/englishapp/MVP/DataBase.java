@@ -22,12 +22,18 @@ public class DataBase {
     public static final String USER_COLLECTION = "USERS";
     public static final String TOTAL_OF_USERS = "TOTAL_USERS";
 
-    public static void createUserData(String email, String name, CompleteListener listener) {
+    public static void createUserData(String email, String name, String DOB, String gender, String mobile, CompleteListener listener) {
         Map<String, Object> userData = new ArrayMap<>();
         userData.put("EMAIL_ID", email);
         userData.put("NAME", name);
+        userData.put("MOBILE", mobile);
+        userData.put("GENDER", gender);
+        userData.put("DOB", DOB);
+
         userData.put("TOTAL_SCORE", 0);
         userData.put("BOOKMARKS", 0);
+
+        // TODO добавить надпись о политике конфиденциалоьности
 
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(USER_COLLECTION)

@@ -9,7 +9,7 @@
     </item>
 
     <item
-        android:bottom="600dp"
+        android:bottom="650dp"
         android:left="-100dp"
         android:right="-100dp"
         android:top="-100dp">

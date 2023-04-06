@@ -4,5 +4,7 @@
     <string name="btnLoggingString">Go To Account</string>
     <string name="btnBeginString">Begin Learning</string>
     <string name="btnCheckString">Pass the exam</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

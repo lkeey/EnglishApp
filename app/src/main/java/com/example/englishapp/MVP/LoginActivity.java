@@ -69,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
         signUp = findViewById(R.id.labelAccount);
         signGoogle = findViewById(R.id.signGoogle);
 
-        // TODO if forgot
         forgotPassword = findViewById(R.id.labelForgot);
 
         toolbar = findViewById(R.id.toolbar);
@@ -126,11 +125,37 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == RESULT_OK) {
+
+                    try {
+
+                        SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
+                        String idToken = credential.getGoogleIdToken();
+
+                        if (idToken != null) {
+                            String email = credential.getId();
+                            Log.i(TAG, "EMAIL - " + email);
+
+                            firebaseAuthWithGoogle(idToken);
+                        }
+
+                    } catch (ApiException e) {
+                        Toast.makeText(LoginActivity.this, "API: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(LoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-//                startActivity(intent);
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -207,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), new CompleteListener() {
+                                DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(), new CompleteListener() {
                                     @Override
                                     public void OnSuccess() {
                                         DataBase.loadData(new CompleteListener() {
@@ -297,6 +322,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
                                 LoginActivity.this.finish();
+
                             }
 
                             @Override
