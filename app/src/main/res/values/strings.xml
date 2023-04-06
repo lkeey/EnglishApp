@@ -32,5 +32,6 @@
     <string name="failExist">User does not exist</string>
 
     <string name="successSentEmail">Email was sent. Check your inbox</string>
+    <string name="politicsRules">By clicking the register button, you agree to the processing of personal data</string>
 
 </resources>

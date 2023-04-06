@@ -132,7 +132,7 @@
                 android:layout_height="25dp"
                 android:layout_below="@+id/dividerDOB"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/ic_gender"/>
+                android:background="@drawable/ic_check"/>
 
             <TextView
                 android:id="@+id/userGender"
@@ -159,7 +159,7 @@
                 android:layout_height="25dp"
                 android:layout_below="@+id/dividerGender"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/ic_phone"/>
+                android:background="@drawable/ic_check"/>
 
             <TextView
                 android:id="@+id/userMobile"

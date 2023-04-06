@@ -57,6 +57,8 @@ public class LoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
+        ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameLogin);
+
         setListeners();
 
         return view;
@@ -67,7 +69,6 @@ public class LoginFragment extends Fragment {
 
         signUp.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new SignUpFragment());
-            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameSignUp);
         });
 
         btnLogin.setOnClickListener(v -> {
@@ -80,7 +81,6 @@ public class LoginFragment extends Fragment {
 
         forgotPassword.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new ForgotPasswordFragment());
-            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameForgot);
 
         });
 

@@ -1,9 +1,9 @@
 package com.example.englishapp.Authentication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -51,11 +51,12 @@ public class MainAuthenticationActivity extends AppCompatActivity {
 
         if (item.getItemId() == android.R.id.home) {
 
-            if (getFragmentManager().getBackStackEntryCount() > 1){
-                Toast.makeText(this, "CLICKED-1", Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Stack of Fragments - " + getFragmentManager().getBackStackEntryCount());
+
+            if (getFragmentManager().getBackStackEntryCount() > 2){
                 getFragmentManager().popBackStackImmediate();
+
             } else {
-                Toast.makeText(this, "CLICKED-2", Toast.LENGTH_SHORT).show();
                 super.onBackPressed();
             }
         }

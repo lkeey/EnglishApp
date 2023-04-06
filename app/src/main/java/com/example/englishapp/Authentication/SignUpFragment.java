@@ -55,6 +55,8 @@ public class SignUpFragment extends Fragment {
 
         init(view);
 
+        ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameSignUp);
+
         setListeners(view);
 
         return view;
@@ -64,7 +66,6 @@ public class SignUpFragment extends Fragment {
     private void setListeners(View view) {
         lblLogin.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new LoginFragment());
-            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameLogin);
         });
 
         btnSignUp.setOnClickListener(v -> {
@@ -153,8 +154,7 @@ public class SignUpFragment extends Fragment {
                 }
             });
     }
-
-
+    
     private boolean checkData(View view) {
         boolean status = false;
 

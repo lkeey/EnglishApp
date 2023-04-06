@@ -40,6 +40,8 @@ public class ForgotPasswordFragment extends Fragment {
 
         init(view);
 
+        ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameForgot);
+
         setListeners();
 
         return view;
@@ -65,12 +67,10 @@ public class ForgotPasswordFragment extends Fragment {
 
         lblLogin.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new LoginFragment());
-            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameLogin);
         });
 
         lblSignUp.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new SignUpFragment());
-            ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameSignUp);
         });
     }
 
