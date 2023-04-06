@@ -3,6 +3,7 @@ package com.example.englishapp.Authentication;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,14 +27,13 @@ public class MainAuthenticationActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Login");
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mainFrame = findViewById(R.id.mainFrame);
 
+        setTitle(R.string.nameLogin);
         setFragment(new LoginFragment());
-
     }
 
     public void setFragment(Fragment fragment) {
@@ -42,10 +42,16 @@ public class MainAuthenticationActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    public void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         if (item.getItemId() == android.R.id.home) {
-            MainAuthenticationActivity.this.finish();
+            Toast.makeText(this, "CLICKED", Toast.LENGTH_SHORT).show();
+            getFragmentManager().popBackStack();
         }
 
         return super.onOptionsItemSelected(item);

@@ -4,6 +4,28 @@
     <string name="btnLoggingString">Go To Account</string>
     <string name="btnBeginString">Begin Learning</string>
     <string name="btnCheckString">Pass the exam</string>
+
+    <string name="nameLogin">Login</string>
+    <string name="nameSignUp">Sign Up</string>
+
+    <string name="errorName">Please enter your name</string>
+    <string name="errorEmail">Please enter your email</string>
+    <string name="errorDOB">Please select your date of birth</string>
+    <string name="errorGender">Please select your gender</string>
+    <string name="errorMobile">Please enter your phone number</string>
+    <string name="errorPassword">Please enter your password</string>
+    <string name="errorConfirmedPassword">Password does not match</string>
+
+    <string name="requiredName">Name is required</string>
+    <string name="requiredEmail">Email is required</string>
+    <string name="requiredDOB">Date of birth is required</string>
+    <string name="requiredGender">Gender is required</string>
+    <string name="requiredMobile">Phone number is required</string>
+    <string name="requiredPassword">Password is required</string>
+    <string name="requiredConfirmedPassword">Enter same password</string>
+
+    <string name="progressBarLogging">Logging...</string>
+    <string name="progressBarCreating">Creating...</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
