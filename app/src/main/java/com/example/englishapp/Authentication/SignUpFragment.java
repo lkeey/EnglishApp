@@ -73,16 +73,24 @@ public class SignUpFragment extends Fragment {
 
                 Log.i(TAG, "Data Checked");
 
-                progressBar.show();
+                PhoneVerificationFragment fragment = new PhoneVerificationFragment();
+                Bundle bundle = new Bundle();
+                // put data into fragment
+                bundle.putString("phone", userMobile.getText().toString());
+                fragment.setArguments(bundle);
 
-                signUpUser(
-                        userEmail.getText().toString(),
-                        userPassword.getText().toString(),
-                        userName.getText().toString(),
-                        userDOB.getText().toString(),
-                        radioBtnGender.getText().toString(),
-                        userMobile.getText().toString()
-                );
+                ((MainAuthenticationActivity) getActivity()).setFragment(fragment);
+
+//                progressBar.show();
+//
+//                signUpUser(
+//                        userEmail.getText().toString(),
+//                        userPassword.getText().toString(),
+//                        userName.getText().toString(),
+//                        userDOB.getText().toString(),
+//                        radioBtnGender.getText().toString(),
+//                        userMobile.getText().toString()
+//                );
             } else {
                 Log.i(TAG, "Incorrect data");
 

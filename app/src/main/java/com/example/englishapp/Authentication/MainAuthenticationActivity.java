@@ -59,6 +59,7 @@ public class MainAuthenticationActivity extends AppCompatActivity {
             } else {
                 super.onBackPressed();
             }
+
         }
 
         return super.onOptionsItemSelected(item);

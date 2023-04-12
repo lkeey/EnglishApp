@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
@@ -43,6 +45,9 @@ public class ForgotPasswordFragment extends Fragment {
         ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameForgot);
 
         setListeners();
+
+        new CustomBottomSheetDialog().show(getChildFragmentManager(), "MyFragment");
+
 
         return view;
     }
@@ -83,7 +88,7 @@ public class ForgotPasswordFragment extends Fragment {
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
-        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarSending);
@@ -92,8 +97,14 @@ public class ForgotPasswordFragment extends Fragment {
 
     private void resetPassword(String textEmail) {
         authProfile = FirebaseAuth.getInstance();
+
+
+
         authProfile.sendPasswordResetEmail(textEmail).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
+
+                Log.i(TAG, "Email was sent to - " + textEmail);
+
                 Toast.makeText(getActivity(), R.string.successSentEmail, Toast.LENGTH_SHORT).show();
 
             } else {
@@ -110,4 +121,13 @@ public class ForgotPasswordFragment extends Fragment {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            Toast.makeText(getActivity(), "I am HERE!", Toast.LENGTH_SHORT).show();
+            getChildFragmentManager().popBackStackImmediate();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 }
