@@ -73,13 +73,13 @@ public class SignUpFragment extends Fragment {
 
                 Log.i(TAG, "Data Checked");
 
-                PhoneVerificationFragment fragment = new PhoneVerificationFragment();
-                Bundle bundle = new Bundle();
-                // put data into fragment
-                bundle.putString("phone", userMobile.getText().toString());
-                fragment.setArguments(bundle);
-
-                ((MainAuthenticationActivity) getActivity()).setFragment(fragment);
+//                PhoneVerificationFragment fragment = new PhoneVerificationFragment();
+//                Bundle bundle = new Bundle();
+//                // put data into fragment
+//                bundle.putString("phone", userMobile.getText().toString());
+//                fragment.setArguments(bundle);
+//
+//                ((MainAuthenticationActivity) getActivity()).setFragment(fragment);
 
 //                progressBar.show();
 //

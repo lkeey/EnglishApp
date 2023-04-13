@@ -1,5 +1,6 @@
 package com.example.englishapp.Authentication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -31,6 +32,9 @@ public class MainAuthenticationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mainFrame = findViewById(R.id.mainFrame);
+
+        Intent intent = new Intent(MainAuthenticationActivity.this, OTPVerification.class);
+        startActivity(intent);
 
         setTitle(R.string.nameLogin);
         setFragment(new LoginFragment());

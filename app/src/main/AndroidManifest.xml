@@ -18,6 +18,9 @@
         android:theme="@style/Theme.EnglishApp"
         tools:targetApi="31">
         <activity
+            android:name=".Authentication.OTPVerification"
+            android:exported="false" />
+        <activity
             android:name=".Authentication.MainAuthenticationActivity"
             android:exported="false" />
         <activity
