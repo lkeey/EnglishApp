@@ -18,8 +18,10 @@
         android:theme="@style/Theme.EnglishApp"
         tools:targetApi="31">
         <activity
-            android:name=".Authentication.OTPVerification"
-            android:exported="false" />
+            android:name=".MVP.FeedActivity"
+            android:exported="false"
+            android:label="@string/title_activity_feed"
+            android:theme="@style/Theme.EnglishApp.NoActionBar" />
         <activity
             android:name=".Authentication.MainAuthenticationActivity"
             android:exported="false" />

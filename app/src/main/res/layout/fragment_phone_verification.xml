@@ -5,9 +5,82 @@
     android:layout_height="match_parent"
     tools:context=".Authentication.PhoneVerificationFragment">
 
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Loading" />
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/userPhone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:drawableStart="@drawable/ic_account"
+            android:drawableTint="@color/design_default_color_primary"
+            android:drawablePadding="16dp"
+            android:textColor="@color/design_default_color_primary"
+            android:hint="Write Phone (+79999999999)"
+            android:ems="10"
+            android:inputType="phone|number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <Button
+            android:id="@+id/btnSendCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:text="Send Code"
+            android:textColor="@color/white"
+            android:elevation="18sp"
+            android:translationZ="3dp"
+            android:background="@drawable/round_corner_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userPhone"/>
+
+        <EditText
+            android:id="@+id/userCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:drawableStart="@drawable/ic_phone"
+            android:drawableTint="@color/design_default_color_primary"
+            android:drawablePadding="16dp"
+            android:textColor="@color/design_default_color_primary"
+            android:hint="Write Code"
+            android:ems="10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnSendCode"/>
+
+        <Button
+            android:id="@+id/btnVerifyCode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:text="Verify Phone Number"
+            android:textColor="@color/white"
+            android:elevation="18sp"
+            android:translationZ="3dp"
+            android:background="@drawable/round_corner_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userCode"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

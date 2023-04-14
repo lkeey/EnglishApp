@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
+import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
@@ -42,7 +43,7 @@ public class LoginFragment extends Fragment {
     private TextView forgotPassword, signUp, dialogText;
     private FirebaseAuth mAuth;
     private Dialog progressBar;
-    private RelativeLayout signGoogle;
+    private RelativeLayout signGoogle, signPhone;
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
     private ActivityResultLauncher<IntentSenderRequest> activityResultLauncher;
@@ -80,9 +81,15 @@ public class LoginFragment extends Fragment {
 
         signGoogle.setOnClickListener(v -> googleSignIn());
 
+        signPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainAuthenticationActivity) getActivity()).setFragment(new PhoneVerificationFragment());
+            }
+        });
+
         forgotPassword.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new ForgotPasswordFragment());
-
         });
 
         // for google authentication
@@ -135,6 +142,7 @@ public class LoginFragment extends Fragment {
         forgotPassword = view.findViewById(R.id.labelForgot);
         signUp = view.findViewById(R.id.labelAccount);
         signGoogle = view.findViewById(R.id.signGoogle);
+        signPhone = view.findViewById(R.id.signPhone);
 
         forgotPassword = view.findViewById(R.id.labelForgot);
 
@@ -271,7 +279,7 @@ public class LoginFragment extends Fragment {
                             public void OnSuccess() {
                                 progressBar.dismiss();
 
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                Intent intent = new Intent(getActivity(), FeedActivity.class);
                                 startActivity(intent);
                                 getActivity().finish();
 
