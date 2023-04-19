@@ -3,10 +3,6 @@ package com.example.englishapp.MVP;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -33,8 +29,6 @@ public class DataBase {
         userData.put("TOTAL_SCORE", 0);
         userData.put("BOOKMARKS", 0);
 
-        // TODO добавить надпись о политике конфиденциалоьности
-
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(USER_COLLECTION)
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
@@ -50,21 +44,15 @@ public class DataBase {
         batch.update(docReference, "COUNT", FieldValue.increment(1));
 
         batch.commit()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Log.i(TAG, "User Created");
+                .addOnSuccessListener(unused -> {
+                    Log.i(TAG, "User Created");
 
-                        listener.OnSuccess();
-                    }
+                    listener.OnSuccess();
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "Fail To Create User " + e.getMessage());
+                .addOnFailureListener(e -> {
+                    Log.i(TAG, "Fail To Create User " + e.getMessage());
 
-                        listener.OnFailure();
-                    }
+                    listener.OnFailure();
                 });
     }
 

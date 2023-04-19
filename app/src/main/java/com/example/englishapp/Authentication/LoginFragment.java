@@ -4,6 +4,8 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +25,6 @@ import androidx.fragment.app.Fragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
-import com.example.englishapp.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -81,12 +82,7 @@ public class LoginFragment extends Fragment {
 
         signGoogle.setOnClickListener(v -> googleSignIn());
 
-        signPhone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((MainAuthenticationActivity) getActivity()).setFragment(new PhoneVerificationFragment());
-            }
-        });
+        signPhone.setOnClickListener(v -> ((MainAuthenticationActivity) getActivity()).setFragment(new PhoneVerificationFragment()));
 
         forgotPassword.setOnClickListener(v -> {
             ((MainAuthenticationActivity) getActivity()).setFragment(new ForgotPasswordFragment());
@@ -150,6 +146,7 @@ public class LoginFragment extends Fragment {
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarLogging);
@@ -199,7 +196,7 @@ public class LoginFragment extends Fragment {
                                         public void OnSuccess() {
                                             progressBar.dismiss();
 
-                                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                                            Intent intent = new Intent(getActivity(), FeedActivity.class);
                                             startActivity(intent);
                                             getActivity().finish();
                                         }
@@ -227,7 +224,7 @@ public class LoginFragment extends Fragment {
                                 public void OnSuccess() {
                                     progressBar.dismiss();
 
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
                                 }

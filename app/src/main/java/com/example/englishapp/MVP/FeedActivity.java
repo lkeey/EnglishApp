@@ -1,12 +1,11 @@
 package com.example.englishapp.MVP;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +23,7 @@ import com.google.android.material.navigation.NavigationView;
 
 public class FeedActivity extends AppCompatActivity {
 
+    private static final String TAG = "ActivityFeed";
     private AppBarConfiguration mAppBarConfiguration;
     private BottomNavigationView bottomNavigationView;
     private FrameLayout mainFrame;
@@ -35,11 +35,16 @@ public class FeedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        try {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.activity_feed);
 
-        init();
+            Log.i(TAG, "Success");
 
+            init();
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 
     @Override
@@ -55,9 +60,9 @@ public class FeedActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-    
+
     private void init() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -67,25 +72,22 @@ public class FeedActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.mainFrame);
 
-        onNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        onNavigationItemSelectedListener = item -> {
 
-                switch (item.getItemId()) {
-                    case R.id.nav_home:
+            switch (item.getItemId()) {
+                case R.id.nav_home:
 //                        setFragment(new CategoryFragment());
-                        return true;
+                    return true;
 
-                    case R.id.nav_leader:
+                case R.id.nav_leader:
 //                        setFragment(new LeaderBordFragment());
-                        return true;
+                    return true;
 
-                    case R.id.nav_account:
+                case R.id.nav_account:
 //                        setFragment(new AccountFragment());
-                        return true;
-                }
-                return false;
+                    return true;
             }
+            return false;
         };
 
         bottomNavigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
@@ -120,34 +122,25 @@ public class FeedActivity extends AppCompatActivity {
 
         drawerProfileName.setText(name.toUpperCase().substring(0, 1));
 
-        navigationView.getMenu().findItem(R.id.nav_home).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
+        navigationView.getMenu().findItem(R.id.nav_home).setOnMenuItemClickListener(item -> {
 //                setFragment(new CategoryFragment());
-                bottomNavigationView.setSelectedItemId(R.id.nav_home);
-                drawerLayout.closeDrawers();
-                return true;
-            }
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+            drawerLayout.closeDrawers();
+            return true;
         });
 
-        navigationView.getMenu().findItem(R.id.nav_leader).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
+        navigationView.getMenu().findItem(R.id.nav_leader).setOnMenuItemClickListener(item -> {
 //                setFragment(new LeaderBordFragment());
-                bottomNavigationView.setSelectedItemId(R.id.nav_leader);
-                drawerLayout.closeDrawers();
-                return true;
-            }
+            bottomNavigationView.setSelectedItemId(R.id.nav_leader);
+            drawerLayout.closeDrawers();
+            return true;
         });
 
-        navigationView.getMenu().findItem(R.id.nav_account).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(@NonNull MenuItem item) {
+        navigationView.getMenu().findItem(R.id.nav_account).setOnMenuItemClickListener(item -> {
 //                setFragment(new AccountFragment());
-                bottomNavigationView.setSelectedItemId(R.id.nav_account);
-                drawerLayout.closeDrawers();
-                return true;
-            }
+            bottomNavigationView.setSelectedItemId(R.id.nav_account);
+            drawerLayout.closeDrawers();
+            return true;
         });
     }
 
