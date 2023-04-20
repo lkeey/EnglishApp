@@ -2,8 +2,8 @@ package com.example.englishapp.MVP;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -38,15 +38,25 @@ public class SplashActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+
             // if user exist
             if (mAuth.getCurrentUser() != null) {
 
-                Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
+//                Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
+                DataBase.loadData(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
 
-                Intent intent = new Intent(SplashActivity.this, MainAuthenticationActivity.class);
+                        startActivity(intent);
+                        SplashActivity.this.finish();
+                    }
 
-                startActivity(intent);
-                SplashActivity.this.finish();
+                    @Override
+                    public void OnFailure() {
+                        Toast.makeText(SplashActivity.this, "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             } else {
 

@@ -26,17 +26,18 @@ public class DataBase {
 
     private static final String TAG = "FirestoreDB";
     public static FirebaseFirestore DATA_FIRESTORE;
+    public static UserModel USER_MODEL = new UserModel("NAME", "EMAIL", "DEFAULT", "PHONE", null, null,0, 0);
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
 
         Map<String, Object> userData = new ArrayMap<>();
+
         userData.put(KEY_EMAIL, email);
         userData.put(KEY_NAME, name);
         userData.put(KEY_MOBILE, mobile);
         userData.put(KEY_GENDER, gender);
         userData.put(KEY_DOB, DOB);
         userData.put(KEY_PROFILE_IMG, pathToImage);
-
         userData.put(KEY_SCORE, 0);
         userData.put(KEY_BOOKMARKS, 0);
 
@@ -67,7 +68,40 @@ public class DataBase {
                 });
     }
 
-    public static void loadData(CompleteListener listener) {
-        listener.OnSuccess();
+    public static void getUserData(CompleteListener listener) {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(FirebaseAuth.getInstance().getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
+                    USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
+                    USER_MODEL.setMobile(documentSnapshot.getString(KEY_MOBILE));
+                    USER_MODEL.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
+                    USER_MODEL.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
+                    USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
+                    USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
+                    USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
+
+                    listener.OnSuccess();
+                })
+                .addOnFailureListener(e -> listener.OnFailure());
     }
+
+
+    public static void loadData(CompleteListener listener) {
+        getUserData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                listener.OnSuccess();
+            }
+
+            @Override
+            public void OnFailure() {
+                Log.i(TAG, "Exception: User Data can not be loaded");
+
+                listener.OnFailure();
+            }
+        });
+    }
+
+
 }

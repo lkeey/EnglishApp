@@ -114,10 +114,8 @@ public class FeedActivity extends AppCompatActivity {
         drawerProfileName = navigationView.getHeaderView(0).findViewById(R.id.navDrawerImg);
         drawerProfileText = navigationView.getHeaderView(0).findViewById(R.id.navDrawerTxt);
 
-//        String name = DataBase.userProfile.getName();
-        
-        String name = "CHANGE";
-        
+        String name = DataBase.USER_MODEL.getName();
+
         drawerProfileText.setText(name);
 
         drawerProfileName.setText(name.toUpperCase().substring(0, 1));
