@@ -127,7 +127,7 @@ public class LoggingActivity extends AppCompatActivity {
         //Show or Hide using Eye
         ImageView imageEye = findViewById(R.id.imageEye);
         userPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        imageEye.setImageResource(R.drawable.hidden);
+        imageEye.setImageResource(R.drawable.ic_cake);
 
         imageEye.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,10 +135,10 @@ public class LoggingActivity extends AppCompatActivity {
                 if(userPassword.getTransformationMethod().equals(HideReturnsTransformationMethod.getInstance())){
                     //if visible, hide it
                     userPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-                    imageEye.setImageResource(R.drawable.hidden);
+                    imageEye.setImageResource(R.drawable.ic_cake);
                 } else {
                     userPassword.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-                    imageEye.setImageResource(R.drawable.view);
+                    imageEye.setImageResource(R.drawable.ic_account);
                 }
             }
         });

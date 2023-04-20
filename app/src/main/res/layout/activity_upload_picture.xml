@@ -36,7 +36,7 @@
             android:layout_marginTop="20dp"
             android:adjustViewBounds="true"
             android:layout_centerInParent="true"
-            android:src="@drawable/ic_user"
+            android:src="@drawable/ic_cake"
             app:riv_corner_radius_top_left="10dp"
             app:riv_corner_radius_top_right="10dp"
             app:riv_corner_radius_bottom_left="10dp"

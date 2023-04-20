@@ -100,9 +100,7 @@ public class LoginFragment extends Fragment {
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
-
                 try {
-
                     SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
                     String idToken = credential.getGoogleIdToken();
 
@@ -188,7 +186,7 @@ public class LoginFragment extends Fragment {
                         FirebaseUser user = mAuth.getCurrentUser();
 
                         if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                            DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(), new CompleteListener() {
+                            DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(),user.getPhotoUrl().toString() , new CompleteListener() {
                                 @Override
                                 public void OnSuccess() {
                                     DataBase.loadData(new CompleteListener() {

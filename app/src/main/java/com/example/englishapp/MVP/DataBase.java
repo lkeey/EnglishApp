@@ -1,5 +1,16 @@
 package com.example.englishapp.MVP;
 
+import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
+import static com.example.englishapp.messaging.Constants.KEY_DOB;
+import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
+import static com.example.englishapp.messaging.Constants.KEY_GENDER;
+import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
+import static com.example.englishapp.messaging.Constants.KEY_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
+import static com.example.englishapp.messaging.Constants.KEY_SCORE;
+import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
+
 import android.util.ArrayMap;
 import android.util.Log;
 
@@ -15,22 +26,22 @@ public class DataBase {
 
     private static final String TAG = "FirestoreDB";
     public static FirebaseFirestore DATA_FIRESTORE;
-    public static final String USER_COLLECTION = "USERS";
-    public static final String TOTAL_OF_USERS = "TOTAL_USERS";
 
-    public static void createUserData(String email, String name, String DOB, String gender, String mobile, CompleteListener listener) {
+    public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
+
         Map<String, Object> userData = new ArrayMap<>();
-        userData.put("EMAIL_ID", email);
-        userData.put("NAME", name);
-        userData.put("MOBILE", mobile);
-        userData.put("GENDER", gender);
-        userData.put("DOB", DOB);
+        userData.put(KEY_EMAIL, email);
+        userData.put(KEY_NAME, name);
+        userData.put(KEY_MOBILE, mobile);
+        userData.put(KEY_GENDER, gender);
+        userData.put(KEY_DOB, DOB);
+        userData.put(KEY_PROFILE_IMG, pathToImage);
 
-        userData.put("TOTAL_SCORE", 0);
-        userData.put("BOOKMARKS", 0);
+        userData.put(KEY_SCORE, 0);
+        userData.put(KEY_BOOKMARKS, 0);
 
         DocumentReference userDoc = DATA_FIRESTORE
-                .collection(USER_COLLECTION)
+                .collection(KEY_COLLECTION_USERS)
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         WriteBatch batch = DATA_FIRESTORE.batch();
@@ -38,10 +49,10 @@ public class DataBase {
         batch.set(userDoc, userData);
 
         DocumentReference docReference = DATA_FIRESTORE
-                .collection(USER_COLLECTION)
-                .document(TOTAL_OF_USERS);
+                .collection(KEY_COLLECTION_USERS)
+                .document(KEY_TOTAL_USERS);
 
-        batch.update(docReference, "COUNT", FieldValue.increment(1));
+        batch.update(docReference, KEY_TOTAL_USERS, FieldValue.increment(1));
 
         batch.commit()
                 .addOnSuccessListener(unused -> {

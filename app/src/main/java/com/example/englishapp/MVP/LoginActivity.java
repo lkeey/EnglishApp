@@ -232,7 +232,7 @@ public class LoginActivity extends AppCompatActivity {
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                                DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(), new CompleteListener() {
+                                DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(), user.getProviderData().toString(),new CompleteListener() {
                                     @Override
                                     public void OnSuccess() {
                                         DataBase.loadData(new CompleteListener() {

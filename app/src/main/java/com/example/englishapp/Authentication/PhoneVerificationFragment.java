@@ -238,7 +238,7 @@ public class PhoneVerificationFragment extends Fragment {
                         if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                             Log.i(TAG, "New account");
 
-                            DataBase.createUserData("default@mail.ru", userPhone.getText().toString(), "0" , "DEFAULT", userPhone.getText().toString(), new CompleteListener() {
+                            DataBase.createUserData("default@mail.ru", userPhone.getText().toString(), "0" , "DEFAULT", userPhone.getText().toString(), "nothing",new CompleteListener() {
                                 @Override
                                 public void OnSuccess() {
                                     DataBase.loadData(new CompleteListener() {

@@ -35,7 +35,7 @@ android {
 
 dependencies {
 
-// Import the BoM for the Firebase platform
+    // Import the BoM for the Firebase platform
     implementation platform('com.google.firebase:firebase-bom:31.4.0')
 
     // Add the dependency for the Firebase Authentication library
@@ -59,6 +59,9 @@ dependencies {
 
     // Firebase Authentication can verify the device as legitimate
     implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
+
+    // firebase messaging
+    implementation 'com.google.firebase:firebase-messaging:23.1.0'
 
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
