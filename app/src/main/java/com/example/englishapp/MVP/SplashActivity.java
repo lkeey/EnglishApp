@@ -2,6 +2,7 @@ package com.example.englishapp.MVP;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ public class SplashActivity extends AppCompatActivity {
         // get current user
         mAuth = FirebaseAuth.getInstance();
 
+        mAuth.signOut();
+
         // Access a Cloud Firestore instance from your Activity
         DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
 
@@ -42,7 +45,7 @@ public class SplashActivity extends AppCompatActivity {
             // if user exist
             if (mAuth.getCurrentUser() != null) {
 
-//                Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
+                Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
                 DataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
@@ -59,6 +62,8 @@ public class SplashActivity extends AppCompatActivity {
                 });
 
             } else {
+
+                Log.i(TAG, "User not found");
 
                 Intent intent = new Intent(SplashActivity.this, MainAuthenticationActivity.class);
 

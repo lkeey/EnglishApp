@@ -4,12 +4,14 @@ import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
+import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
 import static com.example.englishapp.messaging.Constants.KEY_SCORE;
 import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
+import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 
 import android.util.ArrayMap;
 import android.util.Log;
@@ -26,12 +28,15 @@ public class DataBase {
 
     private static final String TAG = "FirestoreDB";
     public static FirebaseFirestore DATA_FIRESTORE;
-    public static UserModel USER_MODEL = new UserModel("NAME", "EMAIL", "DEFAULT", "PHONE", null, null,0, 0);
+    public static FirebaseAuth DATA_AUTH;
+    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", null, null,0, 0);
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
+        DATA_AUTH = FirebaseAuth.getInstance();
 
         Map<String, Object> userData = new ArrayMap<>();
 
+        userData.put(KEY_USER_UID, DATA_AUTH.getCurrentUser().getUid());
         userData.put(KEY_EMAIL, email);
         userData.put(KEY_NAME, name);
         userData.put(KEY_MOBILE, mobile);
@@ -69,17 +74,22 @@ public class DataBase {
     }
 
     public static void getUserData(CompleteListener listener) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(FirebaseAuth.getInstance().getUid())
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
-                    USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
-                    USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
-                    USER_MODEL.setMobile(documentSnapshot.getString(KEY_MOBILE));
-                    USER_MODEL.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
-                    USER_MODEL.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
-                    USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
-                    USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
-                    USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
+                    try {
+                        USER_MODEL.setUid(documentSnapshot.getString(KEY_USER_UID));
+                        USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
+                        USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
+                        USER_MODEL.setMobile(documentSnapshot.getString(KEY_MOBILE));
+                        USER_MODEL.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
+                        USER_MODEL.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
+                        USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
+                        USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
+                        USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                    }
 
                     listener.OnSuccess();
                 })
@@ -91,6 +101,8 @@ public class DataBase {
         getUserData(new CompleteListener() {
             @Override
             public void OnSuccess() {
+                Log.i(TAG, "User data loaded");
+
                 listener.OnSuccess();
             }
 
@@ -103,5 +115,35 @@ public class DataBase {
         });
     }
 
+    public static void updateToken(String token, CompleteListener listener) {
 
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        reference.update(KEY_FCM_TOKEN, token)
+            .addOnSuccessListener(unused -> listener.OnSuccess())
+            .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static void updateImage(String path, CompleteListener listener) {
+
+        Log.i(TAG, "Path - " + path);
+
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+            .document(DATA_AUTH.getCurrentUser().getUid());
+
+        reference.update(KEY_PROFILE_IMG, path)
+            .addOnSuccessListener(unused -> {
+                Log.i(TAG, "Image was changed");
+
+                USER_MODEL.setPathToImage(path);
+                listener.OnSuccess();
+            })
+            .addOnFailureListener(e -> {
+                Log.i(TAG, "Can not load image - " + e.getMessage());
+
+                listener.OnFailure();
+            });
+
+    }
 }

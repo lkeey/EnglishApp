@@ -2,6 +2,7 @@ package com.example.englishapp.messaging;
 
 public class Constants {
     public static final String KEY_COLLECTION_USERS = "USERS";
+    public static final String KEY_USER_UID = "USER_UID";
     public static final String KEY_NAME = "NAME";
     public static final String KEY_EMAIL = "EMAIL";
     public static final String KEY_MOBILE = "MOBILE";
@@ -13,5 +14,6 @@ public class Constants {
     public static final String KEY_TOTAL_USERS = "TOTAL_USERS";
     public static final String PATH_PROFILE_IMG = "PROFILE_IMAGES";
     public static final String NAME_USER_PROFILE_IMG = "PROFILE_IMAGE";
+    public static final String KEY_FCM_TOKEN = "FCM_TOKEN";
 
 }

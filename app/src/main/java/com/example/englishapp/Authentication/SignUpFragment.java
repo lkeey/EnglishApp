@@ -38,18 +38,16 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MainActivity;
+import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -65,7 +63,6 @@ public class SignUpFragment extends Fragment {
             userMobile, userPassword,
             userConfirmedPassword;
     private FirebaseAuth mAuth;
-    private View calendarView;
     private Dialog progressBar;
     private Button btnSignUp;
     private ImageView profileImg;
@@ -139,24 +136,14 @@ public class SignUpFragment extends Fragment {
 
                 Log.i(TAG, "Data Checked");
 
-                if(imgUri != null) {
-                    Log.i(TAG, "HAVE IMAGE");
-
-                    uploadPicture(imgUri);
-
-                } else {
-                    Log.i(TAG, "NO IMAGE");
-
-                    signUpUser(
-                            userEmail.getText().toString(),
-                            userPassword.getText().toString(),
-                            userName.getText().toString(),
-                            userDOB,
-                            radioBtnGender.getText().toString(),
-                            userMobile.getText().toString(),
-                            null
-                    );
-                }
+                signUpUser(
+                        userEmail.getText().toString(),
+                        userPassword.getText().toString(),
+                        userName.getText().toString(),
+                        userDOB,
+                        radioBtnGender.getText().toString(),
+                        userMobile.getText().toString()
+                );
 
 
             } else {
@@ -168,7 +155,7 @@ public class SignUpFragment extends Fragment {
 
     }
 
-    private void signUpUser(String textEmail, String textPassword, String textName, String textDOB, String textGender, String textMobile, String path)  {
+    private void signUpUser(String textEmail, String textPassword, String textName, String textDOB, String textGender, String textMobile)  {
 
         progressBar.show();
 
@@ -178,27 +165,35 @@ public class SignUpFragment extends Fragment {
 
                     Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
 
-                    Log.i(TAG, "PATH2 - " + path);
-
                     DataBase.createUserData(
-                            textEmail, textName,
-                            textDOB, textGender, textMobile, path,
-                            new CompleteListener(){
+                        textEmail, textName,
+                        textDOB, textGender, textMobile, "NULL_PATH",
+                        new CompleteListener(){
                         @Override
                         public void OnSuccess() {
-
                             DataBase.loadData(new CompleteListener() {
                                 @Override
                                 public void OnSuccess() {
+
+                                    if(imgUri != null) {
+                                        Log.i(TAG, "HAVE IMAGE");
+
+                                        uploadPicture(imgUri);
+                                    }
+
+                                    Log.i(TAG, "Successfully set data");
+
                                     progressBar.dismiss();
 
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();
                                 }
 
                                 @Override
                                 public void OnFailure() {
+                                    Log.i(TAG, "Can not set user data");
+
                                     Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                     progressBar.dismiss();
                                 }
@@ -206,11 +201,12 @@ public class SignUpFragment extends Fragment {
                         }
                         @Override
                         public void OnFailure() {
+                            Log.i(TAG, "Can not create user data");
+
                             Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
                             progressBar.dismiss();
                         }
                     });
-
 
                 } else {
                     // If sign in fails, display a message to the user.
@@ -347,54 +343,54 @@ public class SignUpFragment extends Fragment {
     }
 
     private void uploadPicture(Uri uriImg) {
-        if (uriImg != null) {
 
-            //Save image
-            StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "/" + NAME_USER_PROFILE_IMG + "." + getFileExtension(uriImg));
+        Log.i(TAG, "Create fileReference");
 
-            //Upload image to Storage
-            fileReference.putFile(uriImg).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        Log.i(TAG, "UID - " + authProfile.getCurrentUser().getUid());
+
+        Log.i(TAG, "EXTENSION - " + getFileExtension(uriImg));
+
+        //Save image
+        StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "/" + NAME_USER_PROFILE_IMG + "." + getFileExtension(uriImg));
+
+        Log.i(TAG, fileReference.toString());
+
+        //Upload image to Storage
+        fileReference.putFile(uriImg).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
+            Log.i(TAG, "PATH00" + uri.toString());
+
+            firebaseUser = authProfile.getCurrentUser();
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(uri).build();
+
+            firebaseUser.updateProfile(profileUpdates);
+
+            pathToImage = uri.toString();
+
+            Log.i(TAG, "PATH01 - " + pathToImage);
+
+            DataBase.updateImage(pathToImage, new CompleteListener() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            Log.i(TAG, "PATH00" + uri.toString());
-
-                            firebaseUser = authProfile.getCurrentUser();
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setPhotoUri(uri).build();
-
-                            firebaseUser.updateProfile(profileUpdates);
-
-                            pathToImage = uri.toString();
-
-                            Log.i(TAG, "PATH01 - " + pathToImage);
-
-                            signUpUser(
-                                    userEmail.getText().toString(),
-                                    userPassword.getText().toString(),
-                                    userName.getText().toString(),
-                                    userDOB,
-                                    radioBtnGender.getText().toString(),
-                                    userMobile.getText().toString(),
-                                    pathToImage
-                            );
-
-                        }
-                    });
+                public void OnSuccess() {
+                    Log.i(TAG, "Photo successfully saved");
                 }
-            }).addOnFailureListener(new OnFailureListener() {
+
                 @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getActivity(), "Something went wrong - " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                public void OnFailure() {
+                    Log.i(TAG, "Unable to save photo");
+
                 }
             });
-        } else {
-            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-        }
 
+        })).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getActivity(), "Something went wrong - " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 
     private String encodeImage(Bitmap bitmap) {
         int previewWidth = 150;

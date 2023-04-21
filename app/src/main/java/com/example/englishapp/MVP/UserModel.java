@@ -1,8 +1,7 @@
 package com.example.englishapp.MVP;
 
 public class UserModel {
-//    String email, String name, String DOB, String gender, String mobile, String pathToImage
-
+    private String uid;
     private String name;
     private String email;
     private String gender;
@@ -12,7 +11,8 @@ public class UserModel {
     private int score;
     private int bookmarksCount;
 
-    public UserModel(String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, int score, int bookmarksCount) {
+    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, int score, int bookmarksCount) {
+        this.uid = uid;
         this.name = name;
         this.email = email;
         this.gender = gender;
@@ -21,6 +21,14 @@ public class UserModel {
         this.dateOfBirth = dateOfBirth;
         this.score = score;
         this.bookmarksCount = bookmarksCount;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getName() {
