@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.englishapp.R;
+import com.example.englishapp.chat.ChatFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
@@ -70,20 +72,20 @@ public class FeedActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         bottomNavigationView = findViewById(R.id.bottomNavBar);
-        mainFrame = findViewById(R.id.mainFrame);
+        mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
 
         onNavigationItemSelectedListener = item -> {
 
             switch (item.getItemId()) {
-                case R.id.nav_home:
+                case R.id.nav_home_menu:
 //                        setFragment(new CategoryFragment());
                     return true;
 
-                case R.id.nav_leader:
-//                        setFragment(new LeaderBordFragment());
+                case R.id.nav_leader_menu:
+                        setFragment(new ChatFragment());
                     return true;
 
-                case R.id.nav_account:
+                case R.id.nav_account_menu:
 //                        setFragment(new AccountFragment());
                     return true;
             }
@@ -121,7 +123,8 @@ public class FeedActivity extends AppCompatActivity {
         drawerProfileName.setText(name.toUpperCase().substring(0, 1));
 
         navigationView.getMenu().findItem(R.id.nav_home).setOnMenuItemClickListener(item -> {
-//                setFragment(new CategoryFragment());
+            Toast.makeText(this, "CHAT", Toast.LENGTH_SHORT).show();
+            setFragment(new ChatFragment());
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
             drawerLayout.closeDrawers();
             return true;
@@ -135,7 +138,7 @@ public class FeedActivity extends AppCompatActivity {
         });
 
         navigationView.getMenu().findItem(R.id.nav_account).setOnMenuItemClickListener(item -> {
-//                setFragment(new AccountFragment());
+//            setFragment(new ChatFragment());
             bottomNavigationView.setSelectedItemId(R.id.nav_account);
             drawerLayout.closeDrawers();
             return true;

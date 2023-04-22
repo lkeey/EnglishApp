@@ -96,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
                             userDOB.getText().toString(),
                             radioBtnGender.getText().toString(),
                             userMobile.getText().toString(),
-                            "",
+                            "NULL_PATH",
 
                             new CompleteListener() {
                                 @Override

@@ -1,6 +1,8 @@
 package com.example.englishapp.MVP;
 
-public class UserModel {
+import java.io.Serializable;
+
+public class UserModel implements Serializable {
     private String uid;
     private String name;
     private String email;

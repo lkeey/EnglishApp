@@ -20,8 +20,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DataBase {
@@ -30,7 +33,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", null, null,0, 0);
-
+    public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
 
@@ -74,7 +77,7 @@ public class DataBase {
     }
 
     public static void getUserData(CompleteListener listener) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid())
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     try {
@@ -102,6 +105,7 @@ public class DataBase {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "User data loaded");
+                Log.i(TAG, USER_MODEL.getUid());
 
                 listener.OnSuccess();
             }
@@ -121,9 +125,10 @@ public class DataBase {
                 .document(USER_MODEL.getUid());
 
         reference.update(KEY_FCM_TOKEN, token)
-            .addOnSuccessListener(unused -> listener.OnSuccess())
-            .addOnFailureListener(e -> listener.OnFailure());
+                .addOnSuccessListener(unused -> listener.OnSuccess())
+                .addOnFailureListener(e -> listener.OnFailure());
     }
+
 
     public static void updateImage(String path, CompleteListener listener) {
 
@@ -145,5 +150,46 @@ public class DataBase {
                 listener.OnFailure();
             });
 
+    }
+
+    public static void getListOfUsers(CompleteListener listener) {
+        LIST_OF_USERS.clear();
+
+        Log.i(TAG, "Begin loading");
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .limit(20)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    Log.i(TAG, "Get data");
+                    try {
+                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                            LIST_OF_USERS.add(
+                                    new UserModel(
+                                            documentSnapshot.getString(KEY_USER_UID),
+                                            documentSnapshot.getString(KEY_NAME),
+                                            documentSnapshot.getString(KEY_EMAIL),
+                                            documentSnapshot.getString(KEY_GENDER),
+                                            documentSnapshot.getString(KEY_MOBILE),
+                                            documentSnapshot.getString(KEY_PROFILE_IMG),
+                                            documentSnapshot.getString(KEY_DOB),
+                                            documentSnapshot.getLong(KEY_SCORE).intValue(),
+                                            documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
+                                    ));
+
+                            Log.i(TAG, "Created - " + documentSnapshot.getString(KEY_NAME) + " - " + documentSnapshot.getString(KEY_PROFILE_IMG));
+
+                        }
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                    }
+
+                    Log.i(TAG, "All good");
+
+                    listener.OnSuccess();
+
+                })
+                .addOnFailureListener(e -> listener.OnFailure());
     }
 }

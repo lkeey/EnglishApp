@@ -37,6 +37,8 @@ public class ChatFragment extends Fragment {
             }
         });
 
+        new UsersFragment().show(getChildFragmentManager(), "UsersFragment");
+
         return view;
     }
 
@@ -44,11 +46,13 @@ public class ChatFragment extends Fragment {
     }
 
     private void getToken(CompleteListener listener) {
+
         FirebaseMessaging.getInstance().getToken()
             .addOnSuccessListener(s -> DataBase.updateToken(s, new CompleteListener() {
                 @Override
                 public void OnSuccess() {
                     listener.OnSuccess();
+                    Log.i(TAG, DataBase.USER_MODEL.getUid());
                 }
 
                 @Override
