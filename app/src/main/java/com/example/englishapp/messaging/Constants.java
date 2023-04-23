@@ -15,5 +15,6 @@ public class Constants {
     public static final String PATH_PROFILE_IMG = "PROFILE_IMAGES";
     public static final String NAME_USER_PROFILE_IMG = "PROFILE_IMAGE";
     public static final String KEY_FCM_TOKEN = "FCM_TOKEN";
+    public static final String KEY_CHOSEN_USER_DATA = "USER_DATA";
 
 }

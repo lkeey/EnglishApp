@@ -10,7 +10,7 @@
     <FrameLayout
         android:id="@+id/nav_host_fragment_content_feed"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="@drawable/main_background"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

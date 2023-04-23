@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Base application theme. -->
     <style name="Theme.EnglishApp" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
@@ -24,4 +24,17 @@
     <style name="Theme.EnglishApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.EnglishApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="android:background">
+            @color/white
+        </item>
+        <item name="cornerSize">
+            24dp
+        </item>
+        <item name="cornerFamily">
+            rounded
+        </item>
+    </style>
+
 </resources>

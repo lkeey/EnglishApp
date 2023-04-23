@@ -1,5 +1,7 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -16,10 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
+import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class UsersFragment extends BottomSheetDialogFragment {
+public class UsersFragment extends BottomSheetDialogFragment implements UserListener {
 
     private static final String TAG = "FragmentUsers";
     private RecyclerView recyclerView;
@@ -55,7 +59,7 @@ public class UsersFragment extends BottomSheetDialogFragment {
             public void OnSuccess() {
                 Log.i(TAG, "Successfully got user data - " + DataBase.LIST_OF_USERS.size());
 
-                UserAdapter userAdapter = new UserAdapter(DataBase.LIST_OF_USERS, getContext());
+                UserAdapter userAdapter = new UserAdapter(DataBase.LIST_OF_USERS, UsersFragment.this, getContext());
                 recyclerView.setAdapter(userAdapter);
 
                 LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -69,5 +73,19 @@ public class UsersFragment extends BottomSheetDialogFragment {
                 Log.i(TAG, "Can not get users");
             }
         });
+    }
+
+    @Override
+    public void onUserClicked(UserModel user) {
+
+        Log.i(TAG, "USER - " + user.getName());
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
+        DiscussFragment fragment = new DiscussFragment();
+        fragment.setArguments(bundle);
+
+        ((FeedActivity) getActivity()).setFragment(fragment);
+
     }
 }

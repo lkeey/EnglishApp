@@ -22,6 +22,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,8 @@ public class DataBase {
     private static final String TAG = "FirestoreDB";
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
-    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", null, null,0, 0);
+    public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
+    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", "PATH", "DATE","TOKEN", 0, 0);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -48,6 +50,7 @@ public class DataBase {
         userData.put(KEY_PROFILE_IMG, pathToImage);
         userData.put(KEY_SCORE, 0);
         userData.put(KEY_BOOKMARKS, 0);
+        userData.put(KEY_FCM_TOKEN, DATA_FIREBASE_MESSAGING.getInstance().getToken());
 
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_USERS)
@@ -174,6 +177,7 @@ public class DataBase {
                                             documentSnapshot.getString(KEY_MOBILE),
                                             documentSnapshot.getString(KEY_PROFILE_IMG),
                                             documentSnapshot.getString(KEY_DOB),
+                                            documentSnapshot.getString(KEY_FCM_TOKEN),
                                             documentSnapshot.getLong(KEY_SCORE).intValue(),
                                             documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
                                     ));

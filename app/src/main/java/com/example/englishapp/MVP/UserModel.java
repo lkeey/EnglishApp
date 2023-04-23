@@ -10,10 +10,11 @@ public class UserModel implements Serializable {
     private String mobile;
     private String pathToImage;
     private String dateOfBirth;
+    private String fcmToken;
     private int score;
     private int bookmarksCount;
 
-    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, int score, int bookmarksCount) {
+    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -21,6 +22,7 @@ public class UserModel implements Serializable {
         this.mobile = mobile;
         this.pathToImage = pathToImage;
         this.dateOfBirth = dateOfBirth;
+        this.fcmToken = fcmToken;
         this.score = score;
         this.bookmarksCount = bookmarksCount;
     }

@@ -24,6 +24,8 @@ public class ChatFragment extends Fragment {
 
         init();
 
+//        Glide.with(getContext()).load(DataBase.USER_MODEL.getPathToImage()).into((ImageView) view.findViewById(R.id.userImg));
+
         getToken(new CompleteListener() {
             @Override
             public void OnSuccess() {
@@ -52,7 +54,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void OnSuccess() {
                     listener.OnSuccess();
-                    Log.i(TAG, DataBase.USER_MODEL.getUid());
+                    Log.i(TAG, "Token for - " + DataBase.USER_MODEL.getUid());
                 }
 
                 @Override

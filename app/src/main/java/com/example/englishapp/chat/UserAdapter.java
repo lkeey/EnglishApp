@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 
@@ -19,10 +20,13 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private static final String TAG = "AdapterUsers";
     private final List<UserModel> users;
+    private final UserListener listener;
+
     private Context context;
 
-    public UserAdapter(List<UserModel> users, Context context) {
+    public UserAdapter(List<UserModel> users, UserListener userListener, Context context) {
         this.users = users;
+        this.listener = userListener;
         this.context = context;
     }
 
@@ -63,9 +67,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             try {
                 Log.i(TAG, user.getPathToImage());
 
-//                Glide.with(context).load(user.getPathToImage()).into(profileImg);
+                Glide.with(context).load(user.getPathToImage()).into(profileImg);
                 userName.setText(user.getName());
                 userEmail.setText(user.getEmail());
+
+                itemView.setOnClickListener(v -> listener.onUserClicked(user));
 
                 Log.i(TAG, "Added - " + user.getName());
             } catch (Exception e) {
