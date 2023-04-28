@@ -1,12 +1,16 @@
 package com.example.englishapp.chat;
 
-public class ChatMessage {
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+public class ChatMessage implements Comparable<ChatMessage> {
     public String senderId;
     public String receiverId;
     public String message;
-    public String dateTime;
+    public Date dateTime;
 
-    public ChatMessage(String senderId, String receiverId, String message, String dateTime) {
+    public ChatMessage(String senderId, String receiverId, String message, Date dateTime) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.message = message;
@@ -37,11 +41,19 @@ public class ChatMessage {
         this.message = message;
     }
 
-    public String getDateTime() {
+    public Date getDateTime() {
         return dateTime;
     }
+    public String getBeautyDateTime() {
+        return new SimpleDateFormat("MMMM dd, yyyy - hh:mm a", Locale.getDefault()).format(dateTime);
+    }
 
-    public void setDateTime(String dateTime) {
+    public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    @Override
+    public int compareTo(ChatMessage o) {
+        return this.dateTime.compareTo(o.dateTime);
     }
 }

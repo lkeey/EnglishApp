@@ -1,6 +1,7 @@
 package com.example.englishapp.chat;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 
@@ -20,9 +23,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final String TAG = "AdapterMessages";
     private static final int VIEW_TYPE_SENT = 0;
     private static final int VIEW_TYPE_RECEIVED = 1;
-    private final Context context;
+    private static Context context = null;
     private final List<ChatMessage> messages;
-    private final UserModel sender;
+    private static UserModel sender = null;
 
     public MessageAdapter(Context context, List<ChatMessage> messages, UserModel sender) {
         this.context = context;
@@ -30,22 +33,24 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         this.sender = sender;
     }
 
-    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         if (viewType == VIEW_TYPE_SENT) {
+            Log.i(TAG, "View - Sent");
+
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_sent_message, parent, false);
 
             return new SentMessageViewHolder(view);
 
         } else {
+            Log.i(TAG, "View - Received");
+
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_received_message, parent, false);
 
-            return new SentMessageViewHolder(view);
+            return new ReceivedMessageViewHolder(view);
 
         }
-
     }
 
     @Override
@@ -64,10 +69,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
+        Log.i(TAG, "SENDER - " + sender.getName() + " - " + messages.get(position).getSenderId());
 
-        if(messages.get(position).getSenderId().equals(sender.getUid())) {
+        if(messages.get(position).getSenderId().equals(DataBase.USER_MODEL.getUid())) {
+            Log.i(TAG, "User's message - " + DataBase.USER_MODEL.getName() + " - " + DataBase.USER_MODEL.getUid());
+
             return VIEW_TYPE_SENT;
         } else {
+            Log.i(TAG, "Received message - " + sender.getName() + " - " + sender.getUid());
+
             return VIEW_TYPE_RECEIVED;
         }
 
@@ -80,14 +90,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         SentMessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textMessage = itemView.findViewById(R.id.textMessage);
-            textDateTime = itemView.findViewById(R.id.textDateTime);
+
+            textMessage = itemView.findViewById(R.id.textMessageSent);
+            textDateTime = itemView.findViewById(R.id.textDateTimeSent);
 
         }
 
         private void setData(ChatMessage message) {
+
             textMessage.setText(message.getMessage());
-            textDateTime.setText(message.getDateTime());
+            textDateTime.setText(message.getBeautyDateTime());
+
+            Log.i(TAG, "MSG - " + message.getMessage());
 
         }
     }
@@ -100,16 +114,18 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         ReceivedMessageViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imgProfile = itemView.findViewById(R.id.imgProfile);
-            textMessage = itemView.findViewById(R.id.textMessage);
-            textDateTime = itemView.findViewById(R.id.textDateTime);
+            imgProfile = itemView.findViewById(R.id.imgProfileReceived);
+            textMessage = itemView.findViewById(R.id.textMessageReceived);
+            textDateTime = itemView.findViewById(R.id.textDateTimeReceived);
 
         }
 
         private void setData(ChatMessage message) {
+            Log.i(TAG, "Set outsider message");
+
             textMessage.setText(message.getMessage());
-            textDateTime.setText(message.getDateTime());
-//            Glide.with(context).load()
+            textDateTime.setText(message.getBeautyDateTime());
+            Glide.with(context).load(sender.getPathToImage()).into(imgProfile);
         }
     }
 
