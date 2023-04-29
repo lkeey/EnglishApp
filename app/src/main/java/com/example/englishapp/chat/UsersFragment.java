@@ -43,7 +43,6 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
 
     private void init(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
-        toolbar = view.findViewById(R.id.toolbar);
 
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
@@ -73,6 +72,8 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
                 Log.i(TAG, "Can not get users");
             }
         });
+
+
     }
 
     @Override
@@ -87,5 +88,12 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
 
         ((FeedActivity) getActivity()).setFragment(fragment);
 
+    }
+
+    @Override
+    public int getTheme() {
+        // to set border radius
+
+        return R.style.AppBottomSheetDialogTheme;
     }
 }

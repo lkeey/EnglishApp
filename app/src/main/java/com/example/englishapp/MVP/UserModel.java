@@ -99,4 +99,12 @@ public class UserModel implements Serializable {
     public void setBookmarksCount(int bookmarksCount) {
         this.bookmarksCount = bookmarksCount;
     }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }

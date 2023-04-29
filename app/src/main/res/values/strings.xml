@@ -8,6 +8,8 @@
     <string name="nameLogin">Login</string>
     <string name="nameSignUp">Sign Up</string>
     <string name="nameForgot">Forgot Password</string>
+    <string name="nameProfileInfo">Profile Info</string>
+
 
     <string name="errorName">Please enter your name</string>
     <string name="errorEmail">Please enter your email</string>

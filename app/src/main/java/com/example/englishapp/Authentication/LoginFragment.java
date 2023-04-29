@@ -59,7 +59,7 @@ public class LoginFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
 
-        ((MainAuthenticationActivity) getActivity()).setTitle(R.string.nameLogin);
+        getActivity().setTitle(R.string.nameLogin);
 
 
         setListeners();

@@ -2,9 +2,11 @@ package com.example.englishapp.chat;
 
 import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
+import static com.example.englishapp.messaging.Constants.KEY_AVAILABILITY;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_LAST_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_RECEIVER_ID;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +57,8 @@ public class DiscussFragment extends Fragment {
     private String conversationId = null;
     private FrameLayout layoutSend;
     private EditText inputMessage;
+    private TextView textStatus;
+    private static Boolean isReceiverAvailable = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,6 +81,7 @@ public class DiscussFragment extends Fragment {
         recyclerMessages = view.findViewById(R.id.recyclerMessages);
         layoutSend = view.findViewById(R.id.layoutSend);
         inputMessage = view.findViewById(R.id.inputMessage);
+        textStatus = view.findViewById(R.id.statusText);
 
         ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
         ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
@@ -171,6 +177,23 @@ public class DiscussFragment extends Fragment {
         }
     }
 
+    private void listenAvailabilityOfReceiver() {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(
+            receivedUser.getUid()
+        ).addSnapshotListener((value, error) -> {
+            if (value != null) {
+                isReceiverAvailable = value.getBoolean(KEY_AVAILABILITY);
+
+                if (isReceiverAvailable) {
+                    textStatus.setText("Online");
+                } else {
+                    textStatus.setText("Offline");
+                }
+
+            }
+        });
+    }
+
     private final com.google.firebase.firestore.EventListener<QuerySnapshot> eventListener = (value, error) -> {
        if (error != null) {
            return ;
@@ -261,5 +284,12 @@ public class DiscussFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        listenAvailabilityOfReceiver();
     }
 }

@@ -114,6 +114,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
     }
 
+
     private void listenConversations() {
         DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
             .whereEqualTo(KEY_SENDER_ID, USER_MODEL.getUid())

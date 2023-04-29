@@ -20,23 +20,21 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import ru.tinkoff.decoro.MaskImpl;
+import ru.tinkoff.decoro.slots.PredefinedSlots;
+import ru.tinkoff.decoro.watchers.FormatWatcher;
+import ru.tinkoff.decoro.watchers.MaskFormatWatcher;
 
 public class PhoneVerificationFragment extends Fragment {
 
@@ -72,7 +70,7 @@ public class PhoneVerificationFragment extends Fragment {
             userPhone.setText(receiveInfo);
 
         } else {
-            Toast.makeText(getActivity(), "Null Number", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Null Number", Toast.LENGTH_SHORT).show();
         }
 
         return view;
@@ -83,6 +81,12 @@ public class PhoneVerificationFragment extends Fragment {
         btnVerify = view.findViewById(R.id.btnVerifyCode);
         userCode = view.findViewById(R.id.userCode);
         userPhone = view.findViewById(R.id.userPhone);
+
+        // for beauty entering phone number
+        MaskImpl mask = MaskImpl.createTerminated(PredefinedSlots.RUS_PHONE_NUMBER);
+        mask.setForbidInputWhenFilled(true);
+        FormatWatcher formatWatcher = new MaskFormatWatcher(mask);
+        formatWatcher.installOn(userPhone);
 
         btnVerify.setEnabled(false);
         userCode.setEnabled(false);
@@ -133,7 +137,7 @@ public class PhoneVerificationFragment extends Fragment {
 
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
-                Log.i(TAG, "Fail");
+                progressBar.dismiss();
 
                 Toast.makeText(getActivity(), "Authentication Failed", Toast.LENGTH_SHORT).show();
 
@@ -151,21 +155,20 @@ public class PhoneVerificationFragment extends Fragment {
                     Toast.makeText(getActivity(), "reCAPTCHA verification attempted with null Activity", Toast.LENGTH_SHORT).show();
 
                 }
+
+                Log.i(TAG, "Fail - " + e.getMessage());
+
             }
         };
 
         btnSend.setOnClickListener(v -> {
-            String mobileRegex = "[6-9][0-9]{9}";
-            Pattern mobilePattern = Pattern.compile(mobileRegex);
-            Matcher mobileMatcher = mobilePattern.matcher(userPhone.getText().toString().trim());
+
+            Log.i(TAG, "Phone is " + userPhone.getText().toString().trim());
+            Log.i(TAG, "Mask is " + formatWatcher);
+
 
             if (TextUtils.isEmpty(userPhone.getText().toString().trim())) {
                 Toast.makeText(getActivity(), R.string.errorMobile, Toast.LENGTH_SHORT).show();
-                userPhone.setError(getResources().getString(R.string.requiredMobile));
-                userPhone.requestFocus();
-
-            } else if (!mobileMatcher.find()) {
-                Toast.makeText(getActivity(),  R.string.errorMobile, Toast.LENGTH_SHORT).show();
                 userPhone.setError(getResources().getString(R.string.requiredMobile));
                 userPhone.requestFocus();
 
@@ -179,17 +182,14 @@ public class PhoneVerificationFragment extends Fragment {
             }
         });
 
-        btnVerify.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btnVerify.setOnClickListener(v -> {
 
-                if(!userCode.getText().toString().isEmpty()) {
-                    Toast.makeText(getActivity(), "Checking - " + userCode.toString(), Toast.LENGTH_SHORT).show();
+            if(!userCode.getText().toString().isEmpty()) {
+//                Toast.makeText(getActivity(), "Checking - " + userCode.toString(), Toast.LENGTH_SHORT).show();
 
-                    verifyCode(userCode.getText().toString().trim());
-                } else {
-                    Toast.makeText(getActivity(), "Write Code", Toast.LENGTH_SHORT).show();
-                }
+                verifyCode(userCode.getText().toString().trim());
+            } else {
+                Toast.makeText(getActivity(), "Write Code", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -224,86 +224,76 @@ public class PhoneVerificationFragment extends Fragment {
 
         Log.i(TAG, "Credential - " + credential);
 
-        //TODO write registration user
-
         mAuth.signInWithCredential(credential)
-            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), "Sign In Was Successful", Toast.LENGTH_SHORT).show();
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Sign In Was Successful", Toast.LENGTH_SHORT).show();
 
-                        FirebaseUser user = mAuth.getCurrentUser();
+                    if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+                        Log.i(TAG, "New account");
 
-                        if (task.getResult().getAdditionalUserInfo().isNewUser()) {
-                            Log.i(TAG, "New account");
+                        DataBase.createUserData("default@mail.ru", userPhone.getText().toString(), "0" , "DEFAULT", userPhone.getText().toString(), "nothing",new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                DataBase.loadData(new CompleteListener() {
+                                    @Override
+                                    public void OnSuccess() {
+                                        progressBar.dismiss();
 
-                            DataBase.createUserData("default@mail.ru", userPhone.getText().toString(), "0" , "DEFAULT", userPhone.getText().toString(), "nothing",new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    DataBase.loadData(new CompleteListener() {
-                                        @Override
-                                        public void OnSuccess() {
-                                            progressBar.dismiss();
+                                        Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                        startActivity(intent);
+                                        getActivity().finish();
+                                    }
 
-                                            Intent intent = new Intent(getActivity(), FeedActivity.class);
-                                            startActivity(intent);
-                                            getActivity().finish();
-                                        }
+                                    @Override
+                                    public void OnFailure() {
+                                        progressBar.dismiss();
 
-                                        @Override
-                                        public void OnFailure() {
-                                            progressBar.dismiss();
+                                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-                                            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                            }
 
-                                }
+                            @Override
+                            public void OnFailure() {
+                                progressBar.dismiss();
 
-                                @Override
-                                public void OnFailure() {
-                                    progressBar.dismiss();
-
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            Log.i(TAG, "Old account");
-
-                            DataBase.loadData(new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    progressBar.dismiss();
-
-                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
-
-                                @Override
-                                public void OnFailure() {
-                                    progressBar.dismiss();
-
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
+                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
-                        Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
-                        Log.i(TAG, "Fail" + task.getException().toString());
-                        progressBar.dismiss();
+                        Log.i(TAG, "Old account");
+
+                        DataBase.loadData(new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                progressBar.dismiss();
+
+                                Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+
+                            @Override
+                            public void OnFailure() {
+                                progressBar.dismiss();
+
+                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+
+                } else {
                     Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "onFail" + e.getMessage());
+                    Log.i(TAG, "Fail" + task.getException().toString());
                     progressBar.dismiss();
                 }
+            })
+            .addOnFailureListener(e -> {
+                Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "onFail" + e.getMessage());
+                progressBar.dismiss();
             });
     }
 }

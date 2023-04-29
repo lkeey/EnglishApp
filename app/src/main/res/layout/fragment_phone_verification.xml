@@ -24,7 +24,7 @@
             android:drawableTint="@color/design_default_color_primary"
             android:drawablePadding="16dp"
             android:textColor="@color/design_default_color_primary"
-            android:hint="Write Phone (+79999999999)"
+            android:hint="Write Phone (+7 (999) 999-99-99)"
             android:ems="10"
             android:inputType="phone|number"
             app:layout_constraintEnd_toEndOf="parent"

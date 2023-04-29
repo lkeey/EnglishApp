@@ -161,39 +161,39 @@ public class DataBase {
         Log.i(TAG, "Begin loading");
 
         DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-                .limit(20)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    Log.i(TAG, "Get data");
-                    try {
-                        for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+            .limit(20)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                Log.i(TAG, "Get data");
+                try {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
-                            LIST_OF_USERS.add(
-                                    new UserModel(
-                                            documentSnapshot.getString(KEY_USER_UID),
-                                            documentSnapshot.getString(KEY_NAME),
-                                            documentSnapshot.getString(KEY_EMAIL),
-                                            documentSnapshot.getString(KEY_GENDER),
-                                            documentSnapshot.getString(KEY_MOBILE),
-                                            documentSnapshot.getString(KEY_PROFILE_IMG),
-                                            documentSnapshot.getString(KEY_DOB),
-                                            documentSnapshot.getString(KEY_FCM_TOKEN),
-                                            documentSnapshot.getLong(KEY_SCORE).intValue(),
-                                            documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
-                                    ));
+                        LIST_OF_USERS.add(
+                                new UserModel(
+                                        documentSnapshot.getString(KEY_USER_UID),
+                                        documentSnapshot.getString(KEY_NAME),
+                                        documentSnapshot.getString(KEY_EMAIL),
+                                        documentSnapshot.getString(KEY_GENDER),
+                                        documentSnapshot.getString(KEY_MOBILE),
+                                        documentSnapshot.getString(KEY_PROFILE_IMG),
+                                        documentSnapshot.getString(KEY_DOB),
+                                        documentSnapshot.getString(KEY_FCM_TOKEN),
+                                        documentSnapshot.getLong(KEY_SCORE).intValue(),
+                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
+                                ));
 
-                            Log.i(TAG, "Created - " + documentSnapshot.getString(KEY_NAME) + " - " + documentSnapshot.getString(KEY_PROFILE_IMG));
+                        Log.i(TAG, "Created - " + documentSnapshot.getString(KEY_NAME) + " - " + documentSnapshot.getString(KEY_PROFILE_IMG));
 
-                        }
-                    } catch (Exception e) {
-                        Log.i(TAG, e.getMessage());
                     }
+                } catch (Exception e) {
+                    Log.i(TAG, e.getMessage());
+                }
 
-                    Log.i(TAG, "All good");
+                Log.i(TAG, "All good");
 
-                    listener.OnSuccess();
+                listener.OnSuccess();
 
-                })
-                .addOnFailureListener(e -> listener.OnFailure());
+            })
+            .addOnFailureListener(e -> listener.OnFailure());
     }
 }
