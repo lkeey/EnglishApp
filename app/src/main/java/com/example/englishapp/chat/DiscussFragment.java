@@ -1,8 +1,11 @@
 package com.example.englishapp.chat;
 
 import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
+import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
+import static com.example.englishapp.messaging.Constants.KEY_LAST_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_SENDER_ID;
@@ -30,10 +33,15 @@ import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.example.englishapp.messaging.Constants;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -43,6 +51,7 @@ public class DiscussFragment extends Fragment {
     private RecyclerView recyclerMessages;
     private ArrayList chatMessages;
     private MessageAdapter messageAdapter;
+    private String conversationId = null;
     private FrameLayout layoutSend;
     private EditText inputMessage;
 
@@ -127,6 +136,18 @@ public class DiscussFragment extends Fragment {
 
             Log.i(TAG, "Created message from - " + DataBase.USER_MODEL.getUid() + " - to - " + receivedUser.getUid());
 
+            if (conversationId != null) {
+                updateConversation(inputMessage.getText().toString());
+            } else {
+                HashMap<String, Object> conversation = new HashMap<>();
+                conversation.put(KEY_SENDER_ID, USER_MODEL.getUid());
+                conversation.put(KEY_RECEIVER_ID, receivedUser.getUid());
+                conversation.put(KEY_LAST_MESSAGE, inputMessage.getText().toString());
+                conversation.put(KEY_TIME_STAMP, new Date());
+
+                addConversation(conversation);
+            }
+
             inputMessage.setText(null);
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
@@ -168,8 +189,7 @@ public class DiscussFragment extends Fragment {
                }
            }
 
-//             TODO
-//            Collections.sort(chatMessages, (obj1, obj2) -> obj1.da);
+            Collections.sort(chatMessages, ChatMessage::compareTo);
 
            if(count == 0) {
                 messageAdapter.notifyDataSetChanged();
@@ -177,6 +197,59 @@ public class DiscussFragment extends Fragment {
                messageAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
                recyclerMessages.smoothScrollToPosition(chatMessages.size() - 1);
            }
+        }
+
+       if (conversationId == null) {
+           checkForConversation();
+       }
+    };
+
+    private void addConversation(HashMap<String, Object> conversation) {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
+                .add(conversation)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        conversationId = documentReference.getId();
+                    }
+                });
+    }
+
+    private void updateConversation(String message) {
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION).document(conversationId);
+
+        reference.update(
+                KEY_LAST_MESSAGE, message,
+                KEY_TIME_STAMP, new Date()
+        );
+    }
+
+    private void checkForConversation() {
+        if (chatMessages.size() != 0) {
+            checkForConversationRemotely(
+                    USER_MODEL.getUid(),
+                    receivedUser.getUid()
+            );
+
+            checkForConversationRemotely(
+                    receivedUser.getUid(),
+                    USER_MODEL.getUid()
+            );
+        }
+    }
+
+    private void checkForConversationRemotely(String senderId, String receiverId) {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
+                .whereEqualTo(KEY_SENDER_ID, senderId)
+                .whereEqualTo(KEY_RECEIVER_ID, receiverId)
+                .get()
+                .addOnCompleteListener(conversationOnComplete);
+    }
+
+    private final OnCompleteListener<QuerySnapshot> conversationOnComplete = task -> {
+        if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
+            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+            conversationId = document.getId();
         }
     };
 

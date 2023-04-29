@@ -22,4 +22,7 @@ public class Constants {
     public static final String KEY_MESSAGE = "MESSAGE_TEXT";
     public static final String KEY_TIME_STAMP = "TIME_STAMP";
 
+    public static final String KEY_COLLECTION_CONVERSATION = "CONVERSATIONS";
+    public static final String KEY_LAST_MESSAGE = "CONVERSATION_LAST_MESSAGE";
+    public static final String KEY_AVAILABILITY = "AVAILABILITY";
 }

@@ -56,4 +56,5 @@ public class ChatMessage implements Comparable<ChatMessage> {
     public int compareTo(ChatMessage o) {
         return this.dateTime.compareTo(o.dateTime);
     }
+
 }

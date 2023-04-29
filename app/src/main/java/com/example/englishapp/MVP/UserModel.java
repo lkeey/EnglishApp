@@ -27,6 +27,7 @@ public class UserModel implements Serializable {
         this.bookmarksCount = bookmarksCount;
     }
 
+
     public String getUid() {
         return uid;
     }
