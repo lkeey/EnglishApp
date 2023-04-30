@@ -2,6 +2,8 @@ package com.example.englishapp.Authentication;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -176,72 +178,80 @@ public class LoginFragment extends Fragment {
 
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(task -> {
+            .addOnCompleteListener(task -> {
 
-                    Log.i(TAG, "Completed task " + task);
+                Log.i(TAG, "Completed task " + task);
 
-                    if (task.isSuccessful()) {
-                        Toast.makeText(getActivity(), "Google Sign In Was Successfully", Toast.LENGTH_SHORT).show();
+                if (task.isSuccessful()) {
+                    Toast.makeText(getActivity(), "Google Sign In Was Successfully", Toast.LENGTH_SHORT).show();
 
-                        FirebaseUser user = mAuth.getCurrentUser();
+                    FirebaseUser user = mAuth.getCurrentUser();
 
-                        if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                            DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), "0" , "MAN", user.getPhoneNumber(),user.getPhotoUrl().toString() , new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    DataBase.loadData(new CompleteListener() {
-                                        @Override
-                                        public void OnSuccess() {
-                                            progressBar.dismiss();
+                    if(task.getResult().getAdditionalUserInfo().isNewUser()) {
+                        DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), null, null, user.getPhoneNumber(), null, new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                DataBase.loadData(new CompleteListener() {
+                                    @Override
+                                    public void OnSuccess() {
+                                        progressBar.dismiss();
+                                        try {
+                                            Log.i(TAG, "STARTING ACTIVITY");
 
                                             Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                            intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
                                             startActivity(intent);
+                                            Log.i(TAG, "STARTED");
+
                                             getActivity().finish();
+                                        } catch (Exception e) {
+                                            Log.i(TAG, e.getMessage());
                                         }
+                                    }
 
-                                        @Override
-                                        public void OnFailure() {
-                                            progressBar.dismiss();
+                                    @Override
+                                    public void OnFailure() {
+                                        progressBar.dismiss();
 
-                                            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
+                                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
 
-                                }
+                            }
 
-                                @Override
-                                public void OnFailure() {
-                                    progressBar.dismiss();
+                            @Override
+                            public void OnFailure() {
+                                progressBar.dismiss();
 
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        } else {
-                            DataBase.loadData(new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    progressBar.dismiss();
-
-                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
-
-                                @Override
-                                public void OnFailure() {
-                                    progressBar.dismiss();
-
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
+                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
-                        progressBar.dismiss();
+                        DataBase.loadData(new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                progressBar.dismiss();
 
-                        Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+
+                            @Override
+                            public void OnFailure() {
+                                progressBar.dismiss();
+
+                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
-                });
+
+                } else {
+                    progressBar.dismiss();
+
+                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     private boolean validateData() {

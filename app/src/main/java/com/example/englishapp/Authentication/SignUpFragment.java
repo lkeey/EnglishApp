@@ -1,6 +1,9 @@
 package com.example.englishapp.Authentication;
 
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +18,9 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.MVP.CompleteListener;
+import com.example.englishapp.MVP.DataBase;
+import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -79,7 +85,39 @@ public class SignUpFragment extends Fragment {
             .addOnCompleteListener(getActivity(), task -> {
                 if (task.isSuccessful()) {
 
-                    Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
+                    DataBase.createUserData(textEmail, null, null, null, null, null, new CompleteListener() {
+                        @Override
+                        public void OnSuccess() {
+                            DataBase.loadData(new CompleteListener() {
+                                @Override
+                                public void OnSuccess() {
+                                    Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
+
+                                    progressBar.dismiss();
+
+                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                    intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
+                                    startActivity(intent);
+                                    getActivity().finish();
+                                }
+
+                                @Override
+                                public void OnFailure() {
+                                    progressBar.dismiss();
+
+                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        @Override
+                        public void OnFailure() {
+                            progressBar.dismiss();
+
+                            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+
 
                     progressBar.dismiss();
 

@@ -65,15 +65,18 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         private void setUserData(UserModel user) {
             try {
-                Log.i(TAG, user.getPathToImage());
 
-                Glide.with(context).load(user.getPathToImage()).into(profileImg);
                 userName.setText(user.getName());
                 userEmail.setText(user.getEmail());
 
                 itemView.setOnClickListener(v -> listener.onUserClicked(user));
 
+                Log.i(TAG, user.getPathToImage());
+
+                Glide.with(context).load(user.getPathToImage()).into(profileImg);
+
                 Log.i(TAG, "Added - " + user.getName());
+
             } catch (Exception e) {
                 Log.i(TAG, e.getMessage());
             }

@@ -1,5 +1,7 @@
 package com.example.englishapp.Authentication;
 
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -139,7 +141,7 @@ public class PhoneVerificationFragment extends Fragment {
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Authentication Failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Authentication Failed - SMS quota exceeded", Toast.LENGTH_SHORT).show();
 
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.i(TAG, "Invalid request");
@@ -207,7 +209,7 @@ public class PhoneVerificationFragment extends Fragment {
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                         // If no activity is passed, reCAPTCHA verification can not be used.
                         .setCallbacks(mCallbacks)// OnVerificationStateChangedCallbacks
-                        .setActivity((MainAuthenticationActivity) getActivity())
+                        .setActivity(getActivity())
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
@@ -232,7 +234,7 @@ public class PhoneVerificationFragment extends Fragment {
                     if (task.getResult().getAdditionalUserInfo().isNewUser()) {
                         Log.i(TAG, "New account");
 
-                        DataBase.createUserData("default@mail.ru", userPhone.getText().toString(), "0" , "DEFAULT", userPhone.getText().toString(), "nothing",new CompleteListener() {
+                        DataBase.createUserData(null, null, null , null, userPhone.getText().toString(), null , new CompleteListener() {
                             @Override
                             public void OnSuccess() {
                                 DataBase.loadData(new CompleteListener() {
@@ -241,6 +243,7 @@ public class PhoneVerificationFragment extends Fragment {
                                         progressBar.dismiss();
 
                                         Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                        intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
                                         startActivity(intent);
                                         getActivity().finish();
                                     }
@@ -252,7 +255,6 @@ public class PhoneVerificationFragment extends Fragment {
                                         Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
                                     }
                                 });
-
                             }
 
                             @Override

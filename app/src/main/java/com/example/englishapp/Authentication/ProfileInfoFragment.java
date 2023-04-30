@@ -1,9 +1,7 @@
 package com.example.englishapp.Authentication;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
-import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
@@ -41,7 +39,6 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -49,12 +46,9 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -147,7 +141,7 @@ public class ProfileInfoFragment extends Fragment {
         userName.setText(USER_MODEL.getName());
         userEmail.setText(USER_MODEL.getEmail());
         Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
-
+        // TODO set date of birth
     }
 
     private void setListeners(View view) {
@@ -215,15 +209,9 @@ public class ProfileInfoFragment extends Fragment {
         userData.put(KEY_DOB, textDOB);
         userData.put(KEY_GENDER, textGender);
 
-        WriteBatch batch = DATA_FIRESTORE.batch();
-
-        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-                        .document(USER_MODEL.getUid());
-
-        batch.update(reference, userData);
-
-        batch.commit()
-            .addOnSuccessListener(unused -> {
+        DataBase.updateProfileData(userData, new CompleteListener() {
+            @Override
+            public void OnSuccess() {
                 Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
                 DataBase.loadData(new CompleteListener() {
                     @Override
@@ -252,15 +240,14 @@ public class ProfileInfoFragment extends Fragment {
                         progressBar.dismiss();
                     }
                 });
-
-            })
-            .addOnFailureListener(e -> {
-
+            }
+            @Override
+            public void OnFailure() {
                 Toast.makeText(getActivity(), "Sign Up Failed",
                         Toast.LENGTH_SHORT).show();
                 progressBar.dismiss();
-            });
-
+            }
+        });
     }
 
     private boolean checkData(View view) {
@@ -322,7 +309,7 @@ public class ProfileInfoFragment extends Fragment {
 
         //Upload image to Storage
         fileReference.putFile(uriImg).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            Log.i(TAG, "PATH00" + uri.toString());
+            Log.i(TAG, "PATH" + uri.toString());
 
             firebaseUser = authProfile.getCurrentUser();
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -347,12 +334,7 @@ public class ProfileInfoFragment extends Fragment {
                 }
             });
 
-        })).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getActivity(), "Something went wrong - " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        })).addOnFailureListener(e -> Toast.makeText(getActivity(), "Something went wrong - " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private String encodeImage(Bitmap bitmap) {

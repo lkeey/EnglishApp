@@ -1,6 +1,7 @@
 package com.example.englishapp.MVP;
 
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
@@ -43,7 +44,13 @@ public class DataBase {
 
         userData.put(KEY_USER_UID, DATA_AUTH.getCurrentUser().getUid());
         userData.put(KEY_EMAIL, email);
-        userData.put(KEY_NAME, name);
+
+        if (name != null) {
+            userData.put(KEY_NAME, name);
+        } else {
+            userData.put(KEY_NAME, FirebaseAuth.getInstance().getCurrentUser().getUid());
+        }
+
         userData.put(KEY_MOBILE, mobile);
         userData.put(KEY_GENDER, gender);
         userData.put(KEY_DOB, DOB);
@@ -61,7 +68,7 @@ public class DataBase {
         batch.set(userDoc, userData);
 
         DocumentReference docReference = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_USERS)
+                .collection(KEY_COLLECTION_STATISTICS)
                 .document(KEY_TOTAL_USERS);
 
         batch.update(docReference, KEY_TOTAL_USERS, FieldValue.increment(1));
@@ -195,5 +202,23 @@ public class DataBase {
 
             })
             .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static void updateProfileData(Map profileMap, CompleteListener listener) {
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        batch.update(reference, profileMap);
+
+        batch.commit()
+            .addOnSuccessListener(unused -> {
+               listener.OnSuccess();
+            })
+            .addOnFailureListener(e -> {
+                listener.OnFailure();
+            });
     }
 }

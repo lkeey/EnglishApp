@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // get current user
         mAuth = FirebaseAuth.getInstance();
-//        mAuth.signOut();
+        mAuth.signOut();
 
         // Access a Cloud Firestore instance from your Activity
         DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
@@ -41,6 +41,11 @@ public class SplashActivity extends AppCompatActivity {
             }
 
             Log.i(TAG, "Launch App");
+
+//            FirebaseApp.initializeApp(/*context=*/ this);
+//            FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
+//            firebaseAppCheck.installAppCheckProviderFactory(
+//                    PlayIntegrityAppCheckProviderFactory.getInstance());
 
             // if user exist
             if (mAuth.getCurrentUser() != null) {

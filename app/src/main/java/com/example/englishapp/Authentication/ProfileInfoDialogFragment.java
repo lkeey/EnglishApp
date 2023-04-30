@@ -1,6 +1,5 @@
 package com.example.englishapp.Authentication;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,11 +35,7 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
     }
 
     private void setListeners() {
-        textClose.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), FeedActivity.class);
-            startActivity(intent);
-            getActivity().finish();
-        });
+        textClose.setOnClickListener(v -> this.dismiss());
 
         btnAgree.setOnClickListener(v -> ((FeedActivity) getActivity()).setFragment(new ProfileInfoFragment()));
     }

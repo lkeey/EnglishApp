@@ -73,7 +73,6 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             }
         });
 
-
     }
 
     @Override

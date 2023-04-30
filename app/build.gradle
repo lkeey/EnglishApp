@@ -75,6 +75,11 @@ dependencies {
 //  for beauty enter phone number
     implementation 'ru.tinkoff.decoro:decoro:1.1.1'
 
+//    to check user
+    implementation 'com.google.firebase:firebase-appcheck-safetynet:16.1.2'
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
+    implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
+
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
