@@ -37,7 +37,14 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
     private void setListeners() {
         textClose.setOnClickListener(v -> this.dismiss());
 
-        btnAgree.setOnClickListener(v -> ((FeedActivity) getActivity()).setFragment(new ProfileInfoFragment()));
+        btnAgree.setOnClickListener(v -> (
+                (FeedActivity) getActivity()).setFragment(new ProfileInfoFragment())
+        );
+
+        btnAgree.setOnClickListener(v -> {
+            ((FeedActivity) getActivity()).setFragment(new ProfileInfoFragment());
+            ProfileInfoDialogFragment.this.dismiss();
+        });
     }
 
     @Override

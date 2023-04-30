@@ -1,21 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Authentication.ProfileInfoDialogFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="32dp">
+
+        <TextView
+            android:id="@+id/textClose"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:drawableStart="@drawable/ic_btn_back"
+            android:drawablePadding="16dp"
+            android:drawableTint="@color/design_default_color_primary"
+            android:hint="Close"
+            android:inputType="textEmailAddress"
+            android:textSize="20sp"
+            android:textColorHint="@color/design_default_color_primary"
+            android:paddingTop="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
 
         <ImageView
             android:id="@+id/imgLogo"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:src="@drawable/app_logo"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textClose"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
@@ -26,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:text="If you complete the full registration, you will receive score"
+            android:text="@string/add_score_text"
             android:gravity="center"
             android:textSize="24sp"
             android:textColor="@color/design_default_color_primary"
@@ -41,30 +61,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:layout_marginLeft="36dp"
-            android:layout_marginRight="36dp"
+            android:paddingLeft="32dp"
+            android:paddingRight="32dp"
+            android:layout_marginBottom="32dp"
             android:text="Let's do it"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textColor="@color/white"
             android:background="@drawable/round_corner_btn"
             app:layout_constraintTop_toBottomOf="@id/textHelper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
-        <TextView
-            android:id="@+id/textClose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Close And Skip"
-            android:gravity="center"
-            android:textSize="24sp"
-            android:layout_marginTop="16dp"
-            android:textColor="#808080"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/textAgree"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

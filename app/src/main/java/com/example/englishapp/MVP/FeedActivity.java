@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -44,9 +43,7 @@ public class FeedActivity extends BaseActivity {
 
         Log.i(TAG, "STATUS" + status);
 
-        if (status) {
-            Toast.makeText(this, "GOT DATA 2", Toast.LENGTH_SHORT).show();
-
+        if (true) {
             new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
         }
 
@@ -116,5 +113,10 @@ public class FeedActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
 
 }
