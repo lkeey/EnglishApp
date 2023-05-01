@@ -13,6 +13,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
+import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
@@ -30,23 +31,21 @@ public class FeedActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed);
 
-        // TODO
-//        change theme in change profile info
-//        update design
-//        close profile page
-//        update point
-
         init();
 
+        receiveData();
+
+    }
+
+    private void receiveData() {
         Intent intent = getIntent();
         boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
 
         Log.i(TAG, "STATUS" + status);
 
-        if (true) {
+        if (status) {
             new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
         }
-
     }
 
     private void init() {
@@ -70,7 +69,7 @@ public class FeedActivity extends BaseActivity {
 
             switch (item.getItemId()) {
                 case R.id.nav_home_menu:
-//                        setFragment(new CategoryFragment());
+                    setFragment(new ProfileInfoFragment());
                     return true;
 
                 case R.id.nav_leader_menu:

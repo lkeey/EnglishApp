@@ -46,7 +46,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/statusText"
-        app:layout_constraintBottom_toTopOf="@id/layoutSend"/>
+        app:layout_constraintBottom_toBottomOf="@id/viewBackground"/>
 
     <FrameLayout
         android:id="@+id/layoutSend"

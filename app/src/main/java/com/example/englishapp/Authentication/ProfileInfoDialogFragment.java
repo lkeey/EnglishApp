@@ -1,5 +1,7 @@
 package com.example.englishapp.Authentication;
 
+import static com.example.englishapp.messaging.Constants.KEY_ADD_SCORE;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,7 +44,13 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
         );
 
         btnAgree.setOnClickListener(v -> {
-            ((FeedActivity) getActivity()).setFragment(new ProfileInfoFragment());
+
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(KEY_ADD_SCORE, true);
+            ProfileInfoFragment fragment = new ProfileInfoFragment();
+            fragment.setArguments(bundle);
+
+            ((FeedActivity) getActivity()).setFragment(fragment);
             ProfileInfoDialogFragment.this.dismiss();
         });
     }

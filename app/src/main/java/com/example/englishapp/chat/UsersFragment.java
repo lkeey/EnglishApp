@@ -1,5 +1,6 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 
 import android.app.Dialog;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,6 +36,9 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.i(TAG, "Show List Of Users");
+
         View view = inflater.inflate(R.layout.fragment_users, container, false);
 
         init(view);
@@ -77,16 +82,18 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
 
     @Override
     public void onUserClicked(UserModel user) {
+        if (!user.getUid().equals(USER_MODEL.getUid())){
+            Log.i(TAG, "USER - " + user.getName());
 
-        Log.i(TAG, "USER - " + user.getName());
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
+            DiscussFragment fragment = new DiscussFragment();
+            fragment.setArguments(bundle);
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
-        DiscussFragment fragment = new DiscussFragment();
-        fragment.setArguments(bundle);
-
-        ((FeedActivity) getActivity()).setFragment(fragment);
-
+            ((FeedActivity) getActivity()).setFragment(fragment);
+        } else {
+            Toast.makeText(getActivity(), "It's You!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -2,10 +2,12 @@ package com.example.englishapp.Authentication;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
+import static com.example.englishapp.messaging.Constants.KEY_ADD_SCORE;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_SCORE;
 import static com.example.englishapp.messaging.Constants.NAME_USER_PROFILE_IMG;
 import static com.example.englishapp.messaging.Constants.PATH_PROFILE_IMG;
 
@@ -29,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -62,7 +63,6 @@ public class ProfileInfoFragment extends Fragment {
     private static final String TAG = "UpdateProfileInfo";
     private String pathToImage, userDOB;
     private EditText userName, userEmail;
-    private FirebaseAuth mAuth;
     private Dialog progressBar;
     private Button btnUpdate;
     private ImageView profileImg;
@@ -75,6 +75,7 @@ public class ProfileInfoFragment extends Fragment {
     private FirebaseAuth authProfile;
     private FirebaseUser firebaseUser;
     private Uri imgUri;
+    private boolean isAddingScore;
 
 
     @Override
@@ -82,17 +83,26 @@ public class ProfileInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile_info, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-
         init(view);
 
-        setPreviousData();
+        setPreviousData(view);
 
         getActivity().setTitle(R.string.nameProfileInfo);
 
         setListeners(view);
 
+        receiveData();
+
         return view;
+    }
+
+    private void receiveData() {
+
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            isAddingScore = bundle.getBoolean(KEY_ADD_SCORE, false);
+        }
     }
 
     private void init(View view) {
@@ -118,11 +128,11 @@ public class ProfileInfoFragment extends Fragment {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        if (result.getData() !=null) {
+                        if (result.getData() != null) {
                             imgUri = result.getData().getData();
 
                             try {
-                                InputStream inputStream = ((MainAuthenticationActivity) getActivity()).getContentResolver().openInputStream(imgUri);
+                                InputStream inputStream = getActivity().getContentResolver().openInputStream(imgUri);
                                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                                 profileImg.setImageBitmap(bitmap);
 //                            encodedImage = encodeImage(bitmap);
@@ -137,11 +147,25 @@ public class ProfileInfoFragment extends Fragment {
 
     }
 
-    private void setPreviousData() {
+    private void setPreviousData(View view) {
         userName.setText(USER_MODEL.getName());
         userEmail.setText(USER_MODEL.getEmail());
+
+        if (USER_MODEL.getDateOfBirth() != null) {
+            userDOB = USER_MODEL.getDateOfBirth();
+            textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
+        }
+
+        if (USER_MODEL.getGender() != null) {
+            if(USER_MODEL.getGender().equals(((RadioButton) view.findViewById(R.id.radioMale)).getText().toString())){
+                ((RadioButton) view.findViewById(R.id.radioMale)).setChecked(true);
+            } else {
+                ((RadioButton) view.findViewById(R.id.radioFemale)).setChecked(true);
+            }
+        }
+
         Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
-        // TODO set date of birth
+
     }
 
     private void setListeners(View view) {
@@ -152,17 +176,14 @@ public class ProfileInfoFragment extends Fragment {
             int month = calendar.get(Calendar.MONTH);
             int year = calendar.get(Calendar.YEAR);
 
-            datePicker = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
-                @Override
-                public void onDateSet(DatePicker view, int yearData, int monthData, int dayOfMonthData) {
+            datePicker = new DatePickerDialog(getActivity(), (view1, yearData, monthData, dayOfMonthData) -> {
 
-                    Calendar newDate = Calendar.getInstance();
-                    newDate.set(yearData, monthData, dayOfMonthData);
+                Calendar newDate = Calendar.getInstance();
+                newDate.set(yearData, monthData, dayOfMonthData);
 
-                    userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
+                userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
 
-                    textChooseDOB.setText("Your Date Of Birth is " + userDOB);
-                }
+                textChooseDOB.setText("Your Date Of Birth is " + userDOB);
             }, year, month, day);
 
             datePicker.show();
@@ -179,26 +200,32 @@ public class ProfileInfoFragment extends Fragment {
         });
 
         btnUpdate.setOnClickListener(v -> {
-            if (checkData(view)) {
+            Log.i(TAG, "CHECKING");
+            try {
+                if (checkData(view)) {
 
-                Log.i(TAG, "Data Checked");
-
-                signUpUser(
-                        userEmail.getText().toString(),
-                        userName.getText().toString(),
-                        userDOB,
-                        radioBtnGender.getText().toString()
-                );
+                    Log.i(TAG, "Data Checked");
 
 
-            } else {
-                Log.i(TAG, "Incorrect data");
+                    updateUser(
+                            userEmail.getText().toString(),
+                            userName.getText().toString(),
+                            userDOB,
+                            radioBtnGender.getText().toString()
+                    );
+
+
+                } else {
+                    Log.i(TAG, "Incorrect data");
+                }
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
 
             }
         });
     }
 
-    private void signUpUser(String textEmail, String textName, String textDOB, String textGender)  {
+    private void updateUser(String textEmail, String textName, String textDOB, String textGender)  {
 
         progressBar.show();
 
@@ -209,10 +236,14 @@ public class ProfileInfoFragment extends Fragment {
         userData.put(KEY_DOB, textDOB);
         userData.put(KEY_GENDER, textGender);
 
+        if(isAddingScore) {
+            userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
+        }
+
         DataBase.updateProfileData(userData, new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
+
                 DataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
@@ -274,7 +305,7 @@ public class ProfileInfoFragment extends Fragment {
             userEmail.setError(getResources().getString(R.string.requiredEmail));
             userEmail.requestFocus();
 
-        } else if (TextUtils.isEmpty(userDOB)) {
+        } else if (TextUtils.isEmpty(userDOB) && !(USER_MODEL.getDateOfBirth() != null)) {
             Toast.makeText(getActivity(), R.string.errorDOB, Toast.LENGTH_SHORT).show();
             textChooseDOB.setError(getResources().getString(R.string.requiredDOB));
             textChooseDOB.requestFocus();

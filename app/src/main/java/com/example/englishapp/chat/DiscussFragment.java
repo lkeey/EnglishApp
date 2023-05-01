@@ -1,5 +1,6 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.MVP.DataBase.CURRENT_CONVERSATION_ID;
 import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.messaging.Constants.KEY_AVAILABILITY;
@@ -7,11 +8,16 @@ import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
+import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_LAST_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_MESSAGE;
+import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_TIME_STAMP;
+import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_DATA;
+import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_REGISTRATION_IDS;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -31,17 +37,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.Authentication.CategoryFragment;
+import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.example.englishapp.messaging.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +64,6 @@ public class DiscussFragment extends Fragment {
     private RecyclerView recyclerMessages;
     private ArrayList chatMessages;
     private MessageAdapter messageAdapter;
-    private String conversationId = null;
     private FrameLayout layoutSend;
     private EditText inputMessage;
     private TextView textStatus;
@@ -64,6 +73,8 @@ public class DiscussFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_discuss, container, false);
+
+        CURRENT_CONVERSATION_ID = null;
 
         receiveData();
 
@@ -110,12 +121,11 @@ public class DiscussFragment extends Fragment {
 
         if (bundle != null) {
             Log.i(TAG, "Data");
+            Log.i(TAG, "SDK - " + Build.VERSION.SDK_INT);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 receivedUser = (UserModel) bundle.getSerializable(KEY_CHOSEN_USER_DATA);
             }
-
-            Toast.makeText(getActivity(), "User - " + receivedUser.getName(), Toast.LENGTH_SHORT).show();
 
         } else {
             Toast.makeText(getActivity(), "Can not find user", Toast.LENGTH_SHORT).show();
@@ -131,33 +141,80 @@ public class DiscussFragment extends Fragment {
     }
 
     private void sendMessage() {
-        try {
+
             HashMap<String, Object> message = new HashMap<>();
             message.put(Constants.KEY_SENDER_ID, DataBase.USER_MODEL.getUid());
             message.put(Constants.KEY_RECEIVER_ID, receivedUser.getUid());
             message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
             message.put(Constants.KEY_TIME_STAMP, new Date());
 
-            DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT).add(message);
+            DataBase.sendMessage(message, new CompleteListener() {
+                @Override
+                public void OnSuccess() {
+                    Log.i(TAG, "Created message from - " + DataBase.USER_MODEL.getUid() + " - to - " + receivedUser.getUid());
 
-            Log.i(TAG, "Created message from - " + DataBase.USER_MODEL.getUid() + " - to - " + receivedUser.getUid());
+                    if (CURRENT_CONVERSATION_ID != null) {
+                        updateConversation(inputMessage.getText().toString());
+                    } else {
+                        HashMap<String, Object> conversation = new HashMap<>();
+                        conversation.put(KEY_SENDER_ID, USER_MODEL.getUid());
+                        conversation.put(KEY_RECEIVER_ID, receivedUser.getUid());
+                        conversation.put(KEY_LAST_MESSAGE, inputMessage.getText().toString());
+                        conversation.put(KEY_TIME_STAMP, new Date());
 
-            if (conversationId != null) {
-                updateConversation(inputMessage.getText().toString());
-            } else {
-                HashMap<String, Object> conversation = new HashMap<>();
-                conversation.put(KEY_SENDER_ID, USER_MODEL.getUid());
-                conversation.put(KEY_RECEIVER_ID, receivedUser.getUid());
-                conversation.put(KEY_LAST_MESSAGE, inputMessage.getText().toString());
-                conversation.put(KEY_TIME_STAMP, new Date());
+                        DataBase.addConversation(conversation, new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                Log.i(TAG, "Discussion Created");
+                            }
+                            @Override
+                            public void OnFailure() {
+                                Log.i(TAG, "Fail To Create Discussion");
 
-                addConversation(conversation);
-            }
+                            }
+                        });
+                    }
 
-            inputMessage.setText(null);
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
+                    try {
+                        JSONObject data = new JSONObject();
+                        data.put(KEY_USER_UID, USER_MODEL.getUid());
+                        data.put(KEY_NAME, USER_MODEL.getName());
+                        data.put(KEY_FCM_TOKEN, USER_MODEL.getFcmToken());
+                        data.put(KEY_MESSAGE, inputMessage.getText().toString());
+
+                        JSONArray tokens = new JSONArray();
+                        tokens.put(receivedUser.getFcmToken());
+
+                        JSONObject body = new JSONObject();
+                        body.put(REMOTE_MESSAGE_DATA, data);
+                        body.put(REMOTE_MESSAGE_REGISTRATION_IDS, tokens);
+
+//                        DataBase.sendNotification(body.toString(), new CompleteListener() {
+//                            @Override
+//                            public void OnSuccess() {
+//                                Log.i(TAG, "Notification successfully sent");
+//                            }
+//
+//                            @Override
+//                            public void OnFailure() {
+//                                Log.i(TAG, "Can not send notification");
+//
+//                            }
+//                        });
+
+                    } catch (Exception e) {
+                        Log.i(TAG, "Exception - " + e.getMessage());
+                    }
+
+
+                    inputMessage.setText(null);
+                }
+
+                @Override
+                public void OnFailure() {
+                    Log.i(TAG, "Can not send message");
+                }
+            });
     }
 
     private void listenMessages() {
@@ -183,96 +240,114 @@ public class DiscussFragment extends Fragment {
         ).addSnapshotListener((value, error) -> {
             if (value != null) {
                 isReceiverAvailable = value.getBoolean(KEY_AVAILABILITY);
+//                receivedUser.getFcmToken() = value.getString(KEY_FCM_TOKEN);
 
                 if (isReceiverAvailable) {
                     textStatus.setText("Online");
                 } else {
                     textStatus.setText("Offline");
                 }
-
             }
         });
     }
 
-    private final com.google.firebase.firestore.EventListener<QuerySnapshot> eventListener = (value, error) -> {
-       if (error != null) {
-           return ;
-       } if (value != null) {
-           int count = chatMessages.size();
-           for (DocumentChange documentChange: value.getDocumentChanges()) {
-               if(documentChange.getType() == DocumentChange.Type.ADDED) {
-                   ChatMessage chatMessage = new ChatMessage(
-                           documentChange.getDocument().getString(KEY_SENDER_ID),
-                           documentChange.getDocument().getString(KEY_RECEIVER_ID),
-                           documentChange.getDocument().getString(KEY_MESSAGE),
-                           documentChange.getDocument().getDate(KEY_TIME_STAMP)
-                   );
+    private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
+       try {
 
-                   chatMessages.add(chatMessage);
+           Log.i(TAG, "Begin Listening");
+
+           if (error != null) {
+               Log.i(TAG, "Error - " + error.getMessage());
+           }
+           if (value != null) {
+               int count = chatMessages.size();
+               for (DocumentChange documentChange : value.getDocumentChanges()) {
+                   if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                       ChatMessage chatMessage = new ChatMessage(
+                               documentChange.getDocument().getString(KEY_SENDER_ID),
+                               documentChange.getDocument().getString(KEY_RECEIVER_ID),
+                               documentChange.getDocument().getString(KEY_MESSAGE),
+                               documentChange.getDocument().getDate(KEY_TIME_STAMP)
+                       );
+
+                       chatMessages.add(chatMessage);
+                       Log.i(TAG, "Message added");
+                   }
+               }
+
+               Collections.sort(chatMessages, ChatMessage::compareTo);
+
+               if (count == 0) {
+                   messageAdapter.notifyDataSetChanged();
+               } else {
+                   messageAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
+                   recyclerMessages.smoothScrollToPosition(chatMessages.size() - 1);
                }
            }
 
-            Collections.sort(chatMessages, ChatMessage::compareTo);
-
-           if(count == 0) {
-                messageAdapter.notifyDataSetChanged();
+           if (CURRENT_CONVERSATION_ID == null) {
+               Log.i(TAG, "Conversation is null");
+               checkForConversation();
            } else {
-               messageAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-               recyclerMessages.smoothScrollToPosition(chatMessages.size() - 1);
+               Log.i(TAG, "Conversation is not null");
            }
-        }
 
-       if (conversationId == null) {
-           checkForConversation();
+       } catch (Exception e) {
+           Log.i(TAG, "eventListener - " + e.getMessage());
        }
     };
 
-    private void addConversation(HashMap<String, Object> conversation) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
-                .add(conversation)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        conversationId = documentReference.getId();
-                    }
-                });
-    }
-
     private void updateConversation(String message) {
-        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION).document(conversationId);
+        try {
+            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION).document(CURRENT_CONVERSATION_ID);
 
-        reference.update(
-                KEY_LAST_MESSAGE, message,
-                KEY_TIME_STAMP, new Date()
-        );
+            reference.update(
+                    KEY_LAST_MESSAGE, message,
+                    KEY_TIME_STAMP, new Date()
+            );
+        } catch (Exception e) {
+            Log.i(TAG, "updateConversation - " + e.getMessage());
+        }
     }
 
     private void checkForConversation() {
-        if (chatMessages.size() != 0) {
-            checkForConversationRemotely(
-                    USER_MODEL.getUid(),
-                    receivedUser.getUid()
-            );
+        try {
+            if (chatMessages.size() != 0) {
+                checkForConversationRemotely(
+                        USER_MODEL.getUid(),
+                        receivedUser.getUid()
+                );
 
-            checkForConversationRemotely(
-                    receivedUser.getUid(),
-                    USER_MODEL.getUid()
-            );
+                checkForConversationRemotely(
+                        receivedUser.getUid(),
+                        USER_MODEL.getUid()
+                );
+            }
+        } catch (Exception e) {
+            Log.i(TAG, "checkForConversation error - " + e.getMessage());
         }
     }
 
     private void checkForConversationRemotely(String senderId, String receiverId) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
-                .whereEqualTo(KEY_SENDER_ID, senderId)
-                .whereEqualTo(KEY_RECEIVER_ID, receiverId)
-                .get()
-                .addOnCompleteListener(conversationOnComplete);
+        try {
+            DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
+                    .whereEqualTo(KEY_SENDER_ID, senderId)
+                    .whereEqualTo(KEY_RECEIVER_ID, receiverId)
+                    .get()
+                    .addOnCompleteListener(conversationOnComplete);
+        } catch (Exception e) {
+            Log.i(TAG, "checkForConversationRemotely error - " + e.getMessage());
+        }
     }
 
     private final OnCompleteListener<QuerySnapshot> conversationOnComplete = task -> {
         if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
             DocumentSnapshot document = task.getResult().getDocuments().get(0);
-            conversationId = document.getId();
+            CURRENT_CONVERSATION_ID = document.getId();
+
+            Log.i(TAG, "ConversationID - " + CURRENT_CONVERSATION_ID);
+        } else {
+            Log.i(TAG, "conversationOnComplete error - " + task.getException());
         }
     };
 

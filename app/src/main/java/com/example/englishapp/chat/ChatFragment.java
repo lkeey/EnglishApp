@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -125,39 +126,52 @@ public class ChatFragment extends Fragment implements ConversationListener {
                 .addSnapshotListener(eventListener);
     }
 
-    private final EventListener<QuerySnapshot> eventListener = new EventListener<QuerySnapshot>() {
+    private final EventListener<QuerySnapshot> eventListener = new EventListener<>() {
+
         @Override
         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-            if(value != null) {
-                for (DocumentChange document: value.getDocumentChanges()) {
-                    if(document.getType() == DocumentChange.Type.ADDED) {
-                        ChatMessage chatMessage = new ChatMessage(
-                                document.getDocument().getString(KEY_SENDER_ID),
-                                document.getDocument().getString(KEY_RECEIVER_ID),
-                                document.getDocument().getString(KEY_LAST_MESSAGE),
-                                document.getDocument().getDate(KEY_TIME_STAMP)
-                        );
+            try {
 
-                        recentChats.add(chatMessage);
-                    } else if(document.getType() == DocumentChange.Type.MODIFIED) {
-                        for (int i = 0; i < recentChats.size(); i++) {
-                            ChatMessage message = (ChatMessage) recentChats.get(i);
+                if(error != null) {
+                    Log.i(TAG, "Error is - " + error.getMessage());
+                }
 
-                            if (((ChatMessage) recentChats.get(i)).getSenderId().equals(document.getDocument().getString(KEY_SENDER_ID)) && ((ChatMessage) recentChats.get(i)).getReceiverId().equals(document.getDocument().getString(KEY_RECEIVER_ID))) {
-                                ((ChatMessage) recentChats.get(i)).message = document.getDocument().getString(KEY_LAST_MESSAGE);
-                                ((ChatMessage) recentChats.get(i)).dateTime = document.getDocument().getDate(KEY_TIME_STAMP);
-                                break;
+                if (value != null) {
+                    for (DocumentChange document : value.getDocumentChanges()) {
+                        if (document.getType() == DocumentChange.Type.ADDED) {
+                            ChatMessage chatMessage = new ChatMessage(
+                                    document.getDocument().getString(KEY_SENDER_ID),
+                                    document.getDocument().getString(KEY_RECEIVER_ID),
+                                    document.getDocument().getString(KEY_LAST_MESSAGE),
+                                    document.getDocument().getDate(KEY_TIME_STAMP)
+                            );
+
+                            recentChats.add(chatMessage);
+                        } else if (document.getType() == DocumentChange.Type.MODIFIED) {
+                            for (int i = 0; i < recentChats.size(); i++) {
+                                if (((ChatMessage) recentChats.get(i)).getSenderId().equals(document.getDocument().getString(KEY_SENDER_ID)) && ((ChatMessage) recentChats.get(i)).getReceiverId().equals(document.getDocument().getString(KEY_RECEIVER_ID))) {
+                                    ((ChatMessage) recentChats.get(i)).message = document.getDocument().getString(KEY_LAST_MESSAGE);
+                                    ((ChatMessage) recentChats.get(i)).dateTime = document.getDocument().getDate(KEY_TIME_STAMP);
+
+                                    Log.i(TAG, "message was found");
+
+//                                    break;
+                                }
                             }
                         }
                     }
-                }
 
 //                Collections.sort(recentChats, ChatMessage::compareTo);
                 Collections.sort(recentChats, (Comparator<ChatMessage>) (o1, o2) -> o2.dateTime.compareTo(o1.dateTime));
 
-                conversationAdapter.notifyDataSetChanged();
-                recyclerRecentlyChats.smoothScrollToPosition(0);
+                    conversationAdapter.notifyDataSetChanged();
+                    recyclerRecentlyChats.smoothScrollToPosition(0);
 
+                    Log.i(TAG, "All okey");
+
+                }
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
             }
         }
     };
@@ -166,11 +180,16 @@ public class ChatFragment extends Fragment implements ConversationListener {
     public void onConversationClicked(UserModel userModel) {
         Log.i(TAG, "USER - " + userModel.getName());
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(KEY_CHOSEN_USER_DATA, userModel);
-        DiscussFragment fragment = new DiscussFragment();
-        fragment.setArguments(bundle);
+        if (!userModel.getUid().equals(USER_MODEL.getUid())) {
 
-        ((FeedActivity) getActivity()).setFragment(fragment);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_CHOSEN_USER_DATA, userModel);
+            DiscussFragment fragment = new DiscussFragment();
+            fragment.setArguments(bundle);
+
+            ((FeedActivity) getActivity()).setFragment(fragment);
+        } else {
+            Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

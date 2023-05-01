@@ -1,5 +1,7 @@
 package com.example.englishapp.messaging;
 
+import java.util.HashMap;
+
 public class Constants {
     public static final String KEY_COLLECTION_USERS = "USERS";
     public static final String KEY_USER_UID = "USER_UID";
@@ -26,4 +28,30 @@ public class Constants {
     public static final String KEY_AVAILABILITY = "AVAILABILITY";
     public static final String KEY_COLLECTION_STATISTICS = "STATISTICS";
     public static final String SHOW_FRAGMENT_DIALOG = "SHOW_FRAGMENT_DIALOG";
+    public static final String KEY_AMOUNT_SENT_MESSAGES = "KEY_AMOUNT_SENT_MESSAGES";
+    public static final String KEY_AMOUNT_DISCUSSIONS = "KEY_AMOUNT_DISCUSSIONS";
+
+    public static final String KEY_ADD_SCORE = "KEY_ADD_SCORE";
+    public static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
+    public static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
+    public static final String REMOTE_MESSAGE_DATA = "data";
+    public static final String REMOTE_MESSAGE_REGISTRATION_IDS = "registration_ids";
+
+    public static HashMap<String, String> remoteMessageHandlers = null;
+    public static HashMap<String, String> getRemoteMessageHandlers() {
+        if (remoteMessageHandlers == null) {
+            remoteMessageHandlers = new HashMap<>();
+            remoteMessageHandlers.put(
+                    REMOTE_MSG_AUTHORIZATION,
+                    "key=AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN"
+            );
+            remoteMessageHandlers.put(
+                    REMOTE_MSG_CONTENT_TYPE,
+                    "application/json"
+            );
+        }
+
+        return remoteMessageHandlers;
+    }
+
 }

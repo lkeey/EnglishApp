@@ -1,6 +1,10 @@
 package com.example.englishapp.MVP;
 
+import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_DISCUSSIONS;
+import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGES;
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
@@ -17,6 +21,11 @@ import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
+import com.example.englishapp.chat.ApiClient;
+import com.example.englishapp.chat.ApiService;
+import com.example.englishapp.messaging.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -25,13 +34,23 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DataBase {
 
     private static final String TAG = "FirestoreDB";
+    public static String CURRENT_CONVERSATION_ID = null;
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
@@ -143,23 +162,25 @@ public class DataBase {
     public static void updateImage(String path, CompleteListener listener) {
 
         Log.i(TAG, "Path - " + path);
+        try {
+            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                    .document(USER_MODEL.getUid());
 
-        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-            .document(DATA_AUTH.getCurrentUser().getUid());
+            reference.update(KEY_PROFILE_IMG, path)
+                    .addOnSuccessListener(unused -> {
+                        Log.i(TAG, "Image was changed");
 
-        reference.update(KEY_PROFILE_IMG, path)
-            .addOnSuccessListener(unused -> {
-                Log.i(TAG, "Image was changed");
+                        USER_MODEL.setPathToImage(path);
+                        listener.OnSuccess();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Can not load image - " + e.getMessage());
 
-                USER_MODEL.setPathToImage(path);
-                listener.OnSuccess();
-            })
-            .addOnFailureListener(e -> {
-                Log.i(TAG, "Can not load image - " + e.getMessage());
-
-                listener.OnFailure();
-            });
-
+                        listener.OnFailure();
+                    });
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 
     public static void getListOfUsers(CompleteListener listener) {
@@ -221,4 +242,94 @@ public class DataBase {
                 listener.OnFailure();
             });
     }
+
+    public static void sendMessage(HashMap<String, Object> mapMsg, CompleteListener listener) {
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT).add(mapMsg)
+                .addOnSuccessListener(documentReference -> {
+
+                    WriteBatch batch = DATA_FIRESTORE.batch();
+
+                    DocumentReference docReference = DATA_FIRESTORE
+                            .collection(KEY_COLLECTION_STATISTICS)
+                            .document(KEY_AMOUNT_SENT_MESSAGES);
+
+                    // increment amount of messages
+                    batch.update(docReference, KEY_AMOUNT_SENT_MESSAGES, FieldValue.increment(1));
+
+                    batch.commit()
+                        .addOnSuccessListener(unused -> {
+                            listener.OnSuccess();
+                        })
+                        .addOnFailureListener(e -> {
+                            listener.OnFailure();
+                        });
+
+                })
+                .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static void addConversation(HashMap<String, Object> conversation, CompleteListener listener) {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
+                .add(conversation)
+                .addOnSuccessListener(documentReference -> {
+
+                    CURRENT_CONVERSATION_ID = documentReference.getId();
+
+                    WriteBatch batch = DATA_FIRESTORE.batch();
+
+                    DocumentReference docReference = DATA_FIRESTORE
+                            .collection(KEY_COLLECTION_STATISTICS)
+                            .document(KEY_AMOUNT_DISCUSSIONS);
+
+                    // increment amount of discussions
+                    batch.update(docReference, KEY_AMOUNT_DISCUSSIONS, FieldValue.increment(1));
+
+                    batch.commit()
+                        .addOnSuccessListener(unused -> {
+                            listener.OnSuccess();
+                        })
+                        .addOnFailureListener(e -> {
+                            listener.OnFailure();
+                        });
+                });
+    }
+
+    public static void sendNotification(String messageBody, CompleteListener listener){
+        ApiClient.getClient().create(ApiService.class).sendMessage(
+                Constants.getRemoteMessageHandlers(),
+                messageBody
+        ).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        if (response.body() != null) {
+                            JSONObject object = new JSONObject(response.body());
+                            JSONArray results = object.getJSONArray("results");
+                            if (object.getInt("failure") == 1) {
+                                JSONObject error = (JSONObject) results.get(0);
+                                Log.i(TAG, "FAILURE - " + error.getString("error"));
+
+                                listener.OnFailure();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        Log.i(TAG, "JSON - " + e.getMessage());
+                    }
+
+                    listener.OnSuccess();
+
+                } else {
+                    Log.i(TAG, "Error - " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                listener.OnFailure();
+            }
+        });
+    }
+
 }
