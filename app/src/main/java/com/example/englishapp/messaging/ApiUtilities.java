@@ -1,14 +1,14 @@
-package com.example.englishapp.chat;
+package com.example.englishapp.messaging;
 
 import static com.example.englishapp.messaging.Constants.BASE_URL;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiClient {
+public class ApiUtilities {
     private static Retrofit retrofit = null;
 
-    public static ApiService getClient() {
+    public static ApiInterface getClient() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(BASE_URL)
@@ -16,6 +16,7 @@ public class ApiClient {
                     .build();
         }
 
-        return retrofit.create(ApiService.class);
+        return retrofit.create(ApiInterface.class);
     }
+
 }

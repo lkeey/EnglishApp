@@ -33,7 +33,6 @@ public class Constants {
 
     public static final String KEY_ADD_SCORE = "KEY_ADD_SCORE";
     public static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
-    public static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
     public static final String REMOTE_MESSAGE_DATA = "data";
     public static final String REMOTE_MESSAGE_REGISTRATION_IDS = "registration_ids";
 
@@ -46,12 +45,17 @@ public class Constants {
                     "key=AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN"
             );
             remoteMessageHandlers.put(
-                    REMOTE_MSG_CONTENT_TYPE,
+                    "content-type",
                     "application/json"
             );
         }
 
         return remoteMessageHandlers;
     }
+
+    public static String BASE_URL = "https://fcm.googleapis.com";
+    public static final String SERVER_KEY = "AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN";
+    public static final String CONTENT_TYPE = "Content-Type:application/json";
+
 
 }

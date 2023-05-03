@@ -21,11 +21,9 @@ import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.example.englishapp.chat.ApiClient;
-import com.example.englishapp.chat.ApiService;
-import com.example.englishapp.messaging.Constants;
+import com.example.englishapp.messaging.NotificationData;
+import com.example.englishapp.messaging.PushNotification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -33,10 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -114,6 +108,7 @@ public class DataBase {
                         USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
                         USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
                         USER_MODEL.setMobile(documentSnapshot.getString(KEY_MOBILE));
+                        USER_MODEL.setFcmToken(documentSnapshot.getString(KEY_FCM_TOKEN));
                         USER_MODEL.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
                         USER_MODEL.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
                         USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
@@ -296,40 +291,83 @@ public class DataBase {
     }
 
     public static void sendNotification(String messageBody, CompleteListener listener){
-        ApiClient.getClient().create(ApiService.class).sendMessage(
-                Constants.getRemoteMessageHandlers(),
-                messageBody
-        ).enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        if (response.body() != null) {
-                            JSONObject object = new JSONObject(response.body());
-                            JSONArray results = object.getJSONArray("results");
-                            if (object.getInt("failure") == 1) {
-                                JSONObject error = (JSONObject) results.get(0);
-                                Log.i(TAG, "FAILURE - " + error.getString("error"));
+//        try {
+//
+//            ApiClient.getClient().sendMessage(
+//                    Constants.getRemoteMessageHandlers(),
+//                    new PushNotification(
+//                            new NotificationData("Title", "Text", "For me"),
+//                            USER_MODEL.getUid()
+//                    )
+//            ).enqueue(new Callback<>() {
+//                @Override
+//                public void onResponse(Call<PushNotification> call, Response<PushNotification> response) {
+//                    if (response.isSuccessful()) {
+//                        try {
+//                            if (response.body() != null) {
+//                                Log.i(TAG, response.body().toString());
+//
+//                                JSONObject object = new JSONObject(String.valueOf(response.body()));
+//                                JSONArray results = object.getJSONArray("results");
+//
+//                                if (object.getInt("failure") == 1) {
+//                                    JSONObject error = (JSONObject) results.get(0);
+//                                    Log.i(TAG, "FAILURE - " + error.getString("error"));
+//
+//                                    listener.OnFailure();
+//                                }
+//
+//                            }
+//                        } catch (JSONException e) {
+//                            Log.i(TAG, "JSON - " + e.getMessage());
+//                        }
+//
+//                        listener.OnSuccess();
+//
+//                    } else {
+//                        Log.i(TAG, "Error - " + response.code());
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<PushNotification> call, Throwable t) {
+//                    listener.OnFailure();
+//
+//                }
+//
+//
+//            });
+//        } catch (Exception e) {
+//            Log.i(TAG, e.getMessage());
+//        }
 
-                                listener.OnFailure();
-                            }
-                        }
-                    } catch (JSONException e) {
-                        Log.i(TAG, "JSON - " + e.getMessage());
+        try {
+            PushNotification notification = new PushNotification(
+                    new NotificationData("title", "text", "author"),
+                    USER_MODEL.getUid()
+            );
+
+            ApiClient.getClient().sendNotification(notification).enqueue(new Callback<PushNotification>() {
+                @Override
+                public void onResponse(Call<PushNotification> call, Response<PushNotification> response) {
+                    if (response.isSuccessful()) {
+                        Log.i(TAG, "Successss");
+                    } else {
+                        Log.i(TAG, "Can not");
+
                     }
-
-                    listener.OnSuccess();
-
-                } else {
-                    Log.i(TAG, "Error - " + response.code());
                 }
-            }
 
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                listener.OnFailure();
-            }
-        });
+                @Override
+                public void onFailure(Call<PushNotification> call, Throwable t) {
+                    Log.i(TAG, "Can not 2");
+
+                }
+            });
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 
 }

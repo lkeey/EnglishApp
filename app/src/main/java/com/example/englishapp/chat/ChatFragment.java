@@ -4,10 +4,16 @@ import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
+import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_LAST_MESSAGE;
+import static com.example.englishapp.messaging.Constants.KEY_MESSAGE;
+import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_TIME_STAMP;
+import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_DATA;
+import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_REGISTRATION_IDS;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -31,6 +37,10 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -66,6 +76,36 @@ public class ChatFragment extends Fragment implements ConversationListener {
         new UsersFragment().show(getChildFragmentManager(), "UsersFragment");
 
         listenConversations();
+        try {
+            JSONObject data = new JSONObject();
+            data.put(KEY_USER_UID, USER_MODEL.getUid());
+            data.put(KEY_NAME, USER_MODEL.getName());
+            data.put(KEY_FCM_TOKEN, USER_MODEL.getFcmToken());
+            data.put(KEY_MESSAGE, "It's notification");
+
+            JSONArray tokens = new JSONArray();
+            tokens.put(USER_MODEL.getFcmToken());
+
+            JSONObject body = new JSONObject();
+            body.put(REMOTE_MESSAGE_DATA, data);
+            body.put(REMOTE_MESSAGE_REGISTRATION_IDS, tokens);
+
+            DataBase.sendNotification(body.toString(), new CompleteListener() {
+                @Override
+                public void OnSuccess() {
+                    Log.i(TAG, "Notification sent");
+                }
+
+                @Override
+                public void OnFailure() {
+                    Log.i(TAG, "Can not send notification");
+                }
+            });
+        } catch (JSONException e) {
+            Log.i(TAG, "JSON - " + e.getMessage());
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
 
         return view;
     }

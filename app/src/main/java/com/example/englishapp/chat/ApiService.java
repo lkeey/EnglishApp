@@ -1,17 +1,20 @@
 package com.example.englishapp.chat;
 
-import java.util.HashMap;
+import static com.example.englishapp.messaging.Constants.SERVER_KEY;
+
+import com.example.englishapp.messaging.PushNotification;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.HeaderMap;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 public interface ApiService {
-    @POST("send")
-    Call<String> sendMessage(
-            @HeaderMap HashMap<String, String> headers,
-            @Body String messageBody
+    @Headers({
+            "Authorization: key=" + SERVER_KEY
+    })
+    @POST("fcm/send")
+    Call<PushNotification> sendNotification(
+            @Body PushNotification notification
     );
-
 }

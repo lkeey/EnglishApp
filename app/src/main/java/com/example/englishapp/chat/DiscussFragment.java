@@ -189,18 +189,18 @@ public class DiscussFragment extends Fragment {
                         body.put(REMOTE_MESSAGE_DATA, data);
                         body.put(REMOTE_MESSAGE_REGISTRATION_IDS, tokens);
 
-//                        DataBase.sendNotification(body.toString(), new CompleteListener() {
-//                            @Override
-//                            public void OnSuccess() {
-//                                Log.i(TAG, "Notification successfully sent");
-//                            }
-//
-//                            @Override
-//                            public void OnFailure() {
-//                                Log.i(TAG, "Can not send notification");
-//
-//                            }
-//                        });
+                        DataBase.sendNotification(body.toString(), new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                Log.i(TAG, "Notification successfully sent");
+                            }
+
+                            @Override
+                            public void OnFailure() {
+                                Log.i(TAG, "Can not send notification");
+
+                            }
+                        });
 
                     } catch (Exception e) {
                         Log.i(TAG, "Exception - " + e.getMessage());

@@ -71,6 +71,7 @@ dependencies {
 //  retrofit
     implementation('com.squareup.retrofit2:retrofit:2.9.0')
     implementation('com.squareup.retrofit2:converter-scalars:2.9.0')
+    implementation('com.squareup.retrofit2:converter-gson:2.9.0')
 
 //  for beauty enter phone number
     implementation 'ru.tinkoff.decoro:decoro:1.1.1'
@@ -79,6 +80,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-appcheck-safetynet:16.1.2'
     implementation 'com.google.firebase:firebase-appcheck-playintegrity'
     implementation 'com.google.firebase:firebase-appcheck-debug:16.0.0'
+
+//    to send notifications
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation 'com.android.volley:volley:1.2.0'
 
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
