@@ -55,6 +55,7 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
         });
     }
 
+
     @Override
     public int getTheme() {
         // to set border radius

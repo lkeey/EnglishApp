@@ -43,6 +43,7 @@ import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.example.englishapp.messaging.Constants;
+import com.example.englishapp.messaging.FCMSend;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -189,18 +190,31 @@ public class DiscussFragment extends Fragment {
                         body.put(REMOTE_MESSAGE_DATA, data);
                         body.put(REMOTE_MESSAGE_REGISTRATION_IDS, tokens);
 
-                        DataBase.sendNotification(body.toString(), new CompleteListener() {
-                            @Override
-                            public void OnSuccess() {
-                                Log.i(TAG, "Notification successfully sent");
-                            }
+                        // send notification
+                        FCMSend send = new FCMSend(
+                                USER_MODEL.getFcmToken(),
+                                "New message from " + USER_MODEL.getName(),
+                                inputMessage.getText().toString(),
+                                getContext(),
+                                getActivity()
+                        );
 
-                            @Override
-                            public void OnFailure() {
-                                Log.i(TAG, "Can not send notification");
+                        Log.i(TAG, USER_MODEL.getFcmToken());
 
-                            }
-                        });
+                        send.SendNotifications();
+
+//                        DataBase.sendNotification(body.toString(), new CompleteListener() {
+//                            @Override
+//                            public void OnSuccess() {
+//                                Log.i(TAG, "Notification successfully sent");
+//                            }
+//
+//                            @Override
+//                            public void OnFailure() {
+//                                Log.i(TAG, "Can not send notification");
+//
+//                            }
+//                        });
 
                     } catch (Exception e) {
                         Log.i(TAG, "Exception - " + e.getMessage());

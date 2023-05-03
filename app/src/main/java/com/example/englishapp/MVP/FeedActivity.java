@@ -18,6 +18,7 @@ import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
+import com.example.englishapp.chat.MapUsersFragment;
 import com.example.englishapp.messaging.FCMSend;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -146,7 +147,7 @@ public class FeedActivity extends BaseActivity {
                     return true;
 
                 case R.id.nav_account_menu:
-//                        setFragment(new AccountFragment());
+                        setFragment(new MapUsersFragment());
                     return true;
             }
             return false;
