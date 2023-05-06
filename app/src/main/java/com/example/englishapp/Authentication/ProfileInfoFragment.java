@@ -150,6 +150,7 @@ public class ProfileInfoFragment extends Fragment {
     private void setPreviousData(View view) {
         userName.setText(USER_MODEL.getName());
         userEmail.setText(USER_MODEL.getEmail());
+        Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
 
         if (USER_MODEL.getDateOfBirth() != null) {
             userDOB = USER_MODEL.getDateOfBirth();
@@ -163,8 +164,6 @@ public class ProfileInfoFragment extends Fragment {
                 ((RadioButton) view.findViewById(R.id.radioFemale)).setChecked(true);
             }
         }
-
-        Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
 
     }
 

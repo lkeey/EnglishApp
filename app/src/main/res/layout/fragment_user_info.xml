@@ -30,10 +30,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
 
-        <ImageView
+        <com.makeramen.roundedimageview.RoundedImageView
             android:id="@+id/imgUser"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="200dp"
+            android:backgroundTint="@color/purple_200"
+            android:contentDescription="@string/add_image"
+            app:riv_oval="true"
+            android:scaleType="center"
             android:src="@drawable/app_logo"
             app:layout_constraintTop_toBottomOf="@id/textClose"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -57,7 +61,7 @@
 
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/textAgree"
+            android:id="@+id/btnSendMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"

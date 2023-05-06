@@ -1,11 +1,17 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -13,7 +19,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 public class UserInfoFragment extends BottomSheetDialogFragment {
 
     private UserModel receivedUser;
-    private TextView userName;
+    private TextView userName, textClose;
+    private ImageView imgUser;
+    private Button btnSendMsg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,25 +30,56 @@ public class UserInfoFragment extends BottomSheetDialogFragment {
 
         init(view);
 
+        setListeners();
+
         receiveData();
 
         return view;
+    }
+
+    private void setListeners() {
+        textClose.setOnClickListener(v -> UserInfoFragment.this.dismiss());
+
+        btnSendMsg.setOnClickListener(v -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
+            DiscussFragment fragment = new DiscussFragment();
+            fragment.setArguments(bundle);
+
+            ((FeedActivity) getActivity()).setFragment(fragment);
+
+            UserInfoFragment.this.dismiss();
+        });
+
     }
 
     private void receiveData() {
         Bundle bundle = this.getArguments();
 
         if (bundle != null) {
-            receivedUser = (UserModel) bundle.getSerializable("USER_MODEL");
+            receivedUser = (UserModel) bundle.getSerializable(KEY_CHOSEN_USER_DATA);
 
-            userName.setText(receivedUser.getName());
+            setData();
+
         }
     }
 
-    private void init(View view) {
-        // TODO close fragment if it needs
+    private void setData() {
 
+        userName.setText(receivedUser.getName());
+
+        Glide.with(getContext()).load(receivedUser.getPathToImage()).into(imgUser);
+
+    }
+
+    private void init(View view) {
+
+        textClose = view.findViewById(R.id.textClose);
+        imgUser = view.findViewById(R.id.imgUser);
         userName = view.findViewById(R.id.userName);
+        btnSendMsg = view.findViewById(R.id.btnSendMessage);
+
     }
 
     @Override

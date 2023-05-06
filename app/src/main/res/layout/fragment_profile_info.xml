@@ -126,7 +126,7 @@
                 android:id="@+id/radioFemale"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:text="Female"
                 android:textColor="@color/secondary_color"
                 android:textSize="16sp" />
@@ -136,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:padding="12dp"
+                android:padding="16dp"
                 android:textColor="@color/secondary_color"
                 android:text="Male"
                 android:textSize="16sp" />

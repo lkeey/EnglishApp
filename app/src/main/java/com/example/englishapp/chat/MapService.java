@@ -1,6 +1,7 @@
 package com.example.englishapp.chat;
 
-import static com.example.englishapp.MVP.DataBase.USER_MODEL;
+import static com.example.englishapp.MVP.DataBase.findUserById;
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.content.Context;
@@ -11,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
-import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.UserModel;
@@ -55,21 +55,36 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
             public void OnSuccess() {
                 for (UserModel user: DataBase.LIST_OF_USERS) {
                     Log.i(TAG, user.getName());
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(1, 1))
-                            .title(user.getUid()));
+                    try {
+
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(new LatLng(1, 1))
+                                .title(user.getName())
+                                .snippet(user.getUid())
+                                .flat(true));
+//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_logo)));
+
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                    }
                 }
 
                 googleMap.setOnMarkerClickListener(marker -> {
-                    marker.getTitle();
+                    try {
 
-                    ProfileInfoDialogFragment fragment = new ProfileInfoDialogFragment();
+                        UserInfoFragment fragment = new UserInfoFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("USER_MODEL", USER_MODEL);
-                    fragment.setArguments(bundle);
+                        UserModel user = findUserById(marker.getSnippet());
 
-                    fragment.show(manager, SHOW_FRAGMENT_DIALOG);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
+                        fragment.setArguments(bundle);
+
+                        fragment.show(manager, SHOW_FRAGMENT_DIALOG);
+
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                    }
 
                     return false;
                 });
