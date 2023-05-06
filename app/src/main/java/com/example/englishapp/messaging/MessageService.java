@@ -1,24 +1,32 @@
 package com.example.englishapp.messaging;
 
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_DATA;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_TITLE;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_USER_SENDER;
+
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import com.example.englishapp.MVP.SplashActivity;
 import com.example.englishapp.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class MessageService extends FirebaseMessagingService {
 
@@ -35,26 +43,25 @@ public class MessageService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         try {
             Log.i(TAG, "Message " + remoteMessage);
-            Log.i(TAG, "ID " + remoteMessage.getMessageId());
-            Log.i(TAG, "ID S - " + remoteMessage.getSenderId());
 
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show();
+            Map<String, String> params = remoteMessage.getData();
+            JSONObject object = new JSONObject(params);
+            Log.i(TAG, object.toString());
 
-
-            });
+//          show toast in ui thread
+//            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show());
 
 //        send notification
             int reqCode = 1;
 
-            String CHANNEL_ID = "channel_name";// The id of the channel.
+            String CHANNEL_ID = "message_notifications";// The id of the channel.
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-                Log.i(TAG, "1");
+                Log.i(TAG, "More O");
 
-                CharSequence name = "Channel Name";// The user-visible name of the channel.
-                int importance = NotificationManager.IMPORTANCE_HIGH;
+                CharSequence name = "Message Notification";// The user-visible name of the channel.
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
                 NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
 
                 NotificationManager notificationManager = getSystemService(NotificationManager.class);
@@ -63,16 +70,28 @@ public class MessageService extends FirebaseMessagingService {
 
             NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(MessageService.this);
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MessageService.this, "channel_name")
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .setContentTitle("Title")
-                    .setContentText("Something text");
+            // what to open after click on notification
+            Intent notificationIntent = new Intent(getApplicationContext(), SplashActivity.class);
+
+            notificationIntent.putExtra(REMOTE_MSG_USER_SENDER, remoteMessage.getData().get(REMOTE_MSG_USER_SENDER));
+
+            notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MessageService.this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_send)
+                    .setContentTitle(remoteMessage.getData().get(REMOTE_MSG_TITLE))
+                    .setContentText(remoteMessage.getData().get(REMOTE_MSG_DATA))
+                    .setContentIntent(contentIntent);
 
             Notification notification = notificationBuilder.build();
 
+            Log.i(TAG, "1");
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
 
-                Log.i(TAG, "11");
+                Log.i(TAG, "tue");
 
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -83,9 +102,13 @@ public class MessageService extends FirebaseMessagingService {
                 // for ActivityCompat#requestPermissions for more details.
                 return;
             }
-            notificationManagerCompat.notify(reqCode, notification);
 
             Log.i(TAG, "2");
+
+
+            notificationManagerCompat.notify(reqCode, notification);
+
+            Log.i(TAG, "3");
 
 
             super.onMessageReceived(remoteMessage);

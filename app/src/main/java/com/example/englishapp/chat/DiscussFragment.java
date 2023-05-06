@@ -8,16 +8,11 @@ import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
-import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_LAST_MESSAGE;
 import static com.example.englishapp.messaging.Constants.KEY_MESSAGE;
-import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.messaging.Constants.KEY_TIME_STAMP;
-import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
-import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_DATA;
-import static com.example.englishapp.messaging.Constants.REMOTE_MESSAGE_REGISTRATION_IDS;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -50,9 +45,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -135,8 +127,14 @@ public class DiscussFragment extends Fragment {
 
     private void setListeners() {
         layoutSend.setOnClickListener(v -> {
-            if (!inputMessage.getText().toString().trim().equals(null)) {
+            Log.i(TAG, String.valueOf(inputMessage.getText().toString().trim().length()));
+
+            if (inputMessage.getText().toString().trim().length() != 0) {
+
                 sendMessage();
+
+            } else {
+                Toast.makeText(getActivity(), "Write text, please", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -177,44 +175,20 @@ public class DiscussFragment extends Fragment {
                     }
 
                     try {
-                        JSONObject data = new JSONObject();
-                        data.put(KEY_USER_UID, USER_MODEL.getUid());
-                        data.put(KEY_NAME, USER_MODEL.getName());
-                        data.put(KEY_FCM_TOKEN, USER_MODEL.getFcmToken());
-                        data.put(KEY_MESSAGE, inputMessage.getText().toString());
-
-                        JSONArray tokens = new JSONArray();
-                        tokens.put(receivedUser.getFcmToken());
-
-                        JSONObject body = new JSONObject();
-                        body.put(REMOTE_MESSAGE_DATA, data);
-                        body.put(REMOTE_MESSAGE_REGISTRATION_IDS, tokens);
 
                         // send notification
-                        FCMSend send = new FCMSend(
-                                USER_MODEL.getFcmToken(),
+                        FCMSend notification = new FCMSend(
+                                receivedUser.getFcmToken(),
                                 "New message from " + USER_MODEL.getName(),
                                 inputMessage.getText().toString(),
-                                getContext(),
-                                getActivity()
+                                USER_MODEL.getUid(),
+                                getContext()
                         );
 
-                        Log.i(TAG, "Sending - " + USER_MODEL.getFcmToken());
+                        Log.i(TAG, "Sending - " + receivedUser.getFcmToken());
 
-                        send.SendNotifications();
+                        notification.SendNotifications();
 
-//                        DataBase.sendNotification(body.toString(), new CompleteListener() {
-//                            @Override
-//                            public void OnSuccess() {
-//                                Log.i(TAG, "Notification successfully sent");
-//                            }
-//
-//                            @Override
-//                            public void OnFailure() {
-//                                Log.i(TAG, "Can not send notification");
-//
-//                            }
-//                        });
 
                     } catch (Exception e) {
                         Log.i(TAG, "Exception - " + e.getMessage());

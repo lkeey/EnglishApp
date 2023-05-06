@@ -1,6 +1,10 @@
 package com.example.englishapp.MVP;
 
+import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
+import static com.example.englishapp.MVP.DataBase.findUserById;
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.content.Intent;
@@ -18,6 +22,7 @@ import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
+import com.example.englishapp.chat.DiscussFragment;
 import com.example.englishapp.chat.MapUsersFragment;
 import com.example.englishapp.messaging.FCMSend;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -39,62 +44,25 @@ public class FeedActivity extends BaseActivity {
 
         receiveData();
 
-
-        // send notification
-
-//        try {
-//            PushNotification notification = new PushNotification(
-//                    new NotificationData("title", "text", "author"),
-//                    USER_MODEL.getUid()
-//            );
-//
-//            ApiClient.getClient().sendNotification(notification).enqueue(new Callback<PushNotification>() {
-//                @Override
-//                public void onResponse(Call<PushNotification> call, Response<PushNotification> response) {
-//
-////                    Log.i(TAG, response.body().toString());
-//
-//                    if (response.isSuccessful()) {
-//                        Log.i(TAG, "Successss");
-//                    } else {
-//                        Log.i(TAG, "Can not");
-//
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<PushNotification> call, Throwable t) {
-//                    Log.i(TAG, "Can not 2");
-//
-//                }
-//            });
-//
-//
-//
-//        } catch (Exception e) {
-//            Log.i(TAG, e.getMessage());
-//        }
-
-
         FirebaseMessaging.getInstance().getToken()
                 .addOnSuccessListener(s -> DataBase.updateToken(s, new CompleteListener() {
                     @Override
                     public void OnSuccess() {
 
-                        Log.i(TAG, "Token for - " + DataBase.USER_MODEL.getUid());
+                        Log.i(TAG, "Token for - " + USER_MODEL.getUid());
 
 
                         FCMSend send = new FCMSend(
                                 USER_MODEL.getFcmToken(),
                                 "title 1111",
                                 "message 1111",
-                                getApplicationContext(),
-                                FeedActivity.this
+                                "nnGOZ78qQIhl1GCG1HFYEd1X6hg2",
+                                getApplicationContext()
                         );
 
                         Log.i(TAG, USER_MODEL.getFcmToken());
 
-                        send.SendNotifications();
+//                        send.SendNotifications();
                     }
 
                     @Override
@@ -108,13 +76,34 @@ public class FeedActivity extends BaseActivity {
     }
 
     private void receiveData() {
-        Intent intent = getIntent();
-        boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
+        try {
+            Intent intent = getIntent();
 
-        Log.i(TAG, "STATUS " + status);
+            boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
+            String userUID = intent.getStringExtra(KEY_USER_UID);
 
-        if (status) {
-            new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
+            Log.i(TAG, "STATUS " + status);
+            Log.i(TAG, "UserUID - " + userUID + LIST_OF_USERS.size());
+
+            if (status) {
+                new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
+
+            }
+
+            if (userUID != null) {
+
+                UserModel receivedUser = findUserById(userUID);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
+                DiscussFragment fragment = new DiscussFragment();
+                fragment.setArguments(bundle);
+
+                setFragment(fragment);
+            }
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
         }
     }
 

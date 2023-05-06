@@ -1,6 +1,10 @@
 package com.example.englishapp.messaging;
 
-import android.app.Activity;
+import static com.example.englishapp.messaging.Constants.BASE_URL;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_DATA;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_TITLE;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_USER_SENDER;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -21,41 +25,42 @@ public class FCMSend  {
     String userFcmToken;
     String title;
     String body;
+    String senderUID;
     Context mContext;
-    Activity mActivity;
-
 
     private RequestQueue requestQueue;
-    private final String postUrl = "https://fcm.googleapis.com/fcm/send";
 
-    public FCMSend(String userFcmToken, String title, String body, Context mContext, Activity mActivity) {
+    public FCMSend(String userFcmToken, String title, String body, String senderUID, Context mContext) {
         this.userFcmToken = userFcmToken;
         this.title = title;
         this.body = body;
+        this.senderUID = senderUID;
         this.mContext = mContext;
-        this.mActivity = mActivity;
-
     }
 
     public void SendNotifications() {
 
-        requestQueue = Volley.newRequestQueue(mActivity);
+        requestQueue = Volley.newRequestQueue(mContext);
         JSONObject mainObj = new JSONObject();
         try {
 
+            Log.i(TAG, "UserUID - " + senderUID);
+
             mainObj.put("to", userFcmToken);
-            JSONObject notiObject = new JSONObject();
-            notiObject.put("title", title);
-            notiObject.put("body", body);
+            JSONObject notificationObject = new JSONObject();
+            notificationObject.put(REMOTE_MSG_TITLE, title);
+            notificationObject.put(REMOTE_MSG_DATA, body);
+            notificationObject.put(REMOTE_MSG_USER_SENDER, senderUID);
 
-            mainObj.put("notification", notiObject);
+            mainObj.put("data", notificationObject);
 
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, postUrl, mainObj, response -> {
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, BASE_URL, mainObj, response -> {
 
                 // code run is got response
                 Log.i(TAG, "Successfully sent notification");
 
                 Log.i(TAG, response.toString());
+
             }, error -> {
                 // code run is got error
 

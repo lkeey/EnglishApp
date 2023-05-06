@@ -1,5 +1,9 @@
 package com.example.englishapp.MVP;
 
+import static com.example.englishapp.MVP.DataBase.loadData;
+import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.messaging.Constants.REMOTE_MSG_USER_SENDER;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -59,9 +63,48 @@ public class SplashActivity extends AppCompatActivity {
 //                    PlayIntegrityAppCheckProviderFactory.getInstance());
 
 //            check user's permissions
-            checkPermissions();
+
+            receiveData();
 
         }).start();
+    }
+
+    private void receiveData() {
+        try {
+            Intent data = getIntent();
+            String userUID = data.getStringExtra(REMOTE_MSG_USER_SENDER);
+
+            Log.i(TAG, "send uid - " + userUID);
+
+            if (userUID != null) {
+                loadData(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
+
+                        intent.putExtra(KEY_USER_UID, userUID);
+
+                        startActivity(intent);
+
+                        SplashActivity.this.finish();
+
+                        Log.i(TAG, "work");
+
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not load data");
+                    }
+                });
+            } else {
+
+                checkPermissions();
+            }
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 
     private void beginWork() {

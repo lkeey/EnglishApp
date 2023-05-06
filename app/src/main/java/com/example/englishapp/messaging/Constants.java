@@ -1,7 +1,5 @@
 package com.example.englishapp.messaging;
 
-import java.util.HashMap;
-
 public class Constants {
     public static final String KEY_COLLECTION_USERS = "USERS";
     public static final String KEY_USER_UID = "USER_UID";
@@ -32,30 +30,14 @@ public class Constants {
     public static final String KEY_AMOUNT_DISCUSSIONS = "KEY_AMOUNT_DISCUSSIONS";
 
     public static final String KEY_ADD_SCORE = "KEY_ADD_SCORE";
-    public static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
-    public static final String REMOTE_MESSAGE_DATA = "data";
-    public static final String REMOTE_MESSAGE_REGISTRATION_IDS = "registration_ids";
+    public static final String REMOTE_MSG_TITLE = "TITLE";
+    public static final String REMOTE_MSG_DATA = "MESSAGE";
+    public static final String REMOTE_MSG_USER_SENDER = "SENDER";
 
-    public static HashMap<String, String> remoteMessageHandlers = null;
-    public static HashMap<String, String> getRemoteMessageHandlers() {
-        if (remoteMessageHandlers == null) {
-            remoteMessageHandlers = new HashMap<>();
-            remoteMessageHandlers.put(
-                    REMOTE_MSG_AUTHORIZATION,
-                    "key=AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN"
-            );
-            remoteMessageHandlers.put(
-                    "content-type",
-                    "application/json"
-            );
-        }
 
-        return remoteMessageHandlers;
-    }
 
-    public static String BASE_URL = "https://fcm.googleapis.com";
+    public static String BASE_URL = "https://fcm.googleapis.com/fcm/send";
     public static final String SERVER_KEY = "AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN";
-    public static final String CONTENT_TYPE = "Content-Type:application/json";
 
 
 }

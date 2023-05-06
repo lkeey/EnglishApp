@@ -21,9 +21,6 @@ import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import android.util.ArrayMap;
 import android.util.Log;
 
-import com.example.englishapp.chat.ApiClient;
-import com.example.englishapp.messaging.NotificationData;
-import com.example.englishapp.messaging.PushNotification;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -36,10 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DataBase {
 
@@ -129,20 +122,31 @@ public class DataBase {
 
 
     public static void loadData(CompleteListener listener) {
-        getUserData(new CompleteListener() {
+        getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "User data loaded");
-                Log.i(TAG, USER_MODEL.getUid());
+                getUserData(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Log.i(TAG, "User data loaded");
+                        Log.i(TAG, USER_MODEL.getUid());
 
-                listener.OnSuccess();
+                        listener.OnSuccess();
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Exception: User Data can not be loaded");
+
+                        listener.OnFailure();
+                    }
+                });
+
             }
 
             @Override
             public void OnFailure() {
-                Log.i(TAG, "Exception: User Data can not be loaded");
-
-                listener.OnFailure();
+                Log.i(TAG, "can not load users");
             }
         });
     }
@@ -294,84 +298,9 @@ public class DataBase {
                 });
     }
 
-    public static void sendNotification(String messageBody, CompleteListener listener){
-//        try {
-//
-//            ApiClient.getClient().sendMessage(
-//                    Constants.getRemoteMessageHandlers(),
-//                    new PushNotification(
-//                            new NotificationData("Title", "Text", "For me"),
-//                            USER_MODEL.getUid()
-//                    )
-//            ).enqueue(new Callback<>() {
-//                @Override
-//                public void onResponse(Call<PushNotification> call, Response<PushNotification> response) {
-//                    if (response.isSuccessful()) {
-//                        try {
-//                            if (response.body() != null) {
-//                                Log.i(TAG, response.body().toString());
-//
-//                                JSONObject object = new JSONObject(String.valueOf(response.body()));
-//                                JSONArray results = object.getJSONArray("results");
-//
-//                                if (object.getInt("failure") == 1) {
-//                                    JSONObject error = (JSONObject) results.get(0);
-//                                    Log.i(TAG, "FAILURE - " + error.getString("error"));
-//
-//                                    listener.OnFailure();
-//                                }
-//
-//                            }
-//                        } catch (JSONException e) {
-//                            Log.i(TAG, "JSON - " + e.getMessage());
-//                        }
-//
-//                        listener.OnSuccess();
-//
-//                    } else {
-//                        Log.i(TAG, "Error - " + response.code());
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(Call<PushNotification> call, Throwable t) {
-//                    listener.OnFailure();
-//
-//                }
-//
-//
-//            });
-//        } catch (Exception e) {
-//            Log.i(TAG, e.getMessage());
-//        }
+    public static UserModel findUserById(String userUID) {
 
-        try {
-            PushNotification notification = new PushNotification(
-                    new NotificationData("title", "text", "author"),
-                    USER_MODEL.getUid()
-            );
-
-            ApiClient.getClient().sendNotification(notification).enqueue(new Callback<PushNotification>() {
-                @Override
-                public void onResponse(Call<PushNotification> call, Response<PushNotification> response) {
-                    if (response.isSuccessful()) {
-                        Log.i(TAG, "Successss");
-                    } else {
-                        Log.i(TAG, "Can not");
-
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PushNotification> call, Throwable t) {
-                    Log.i(TAG, "Can not 2");
-
-                }
-            });
-
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
+        return LIST_OF_USERS.stream().filter(user -> user.getUid().equals(userUID)).findAny()
+                .orElseThrow(() -> new RuntimeException("not found"));
     }
-
 }
