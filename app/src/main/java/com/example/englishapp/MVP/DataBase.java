@@ -72,6 +72,10 @@ public class DataBase {
         userData.put(KEY_BOOKMARKS, 0);
         userData.put(KEY_FCM_TOKEN, DATA_FIREBASE_MESSAGING.getInstance().getToken());
 
+        // set default image
+        userData.put(KEY_PROFILE_IMG, "gs://englishapp-341d3.appspot.com/PROFILE_IMAGES/no-image.jpg");
+
+
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_USERS)
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid());

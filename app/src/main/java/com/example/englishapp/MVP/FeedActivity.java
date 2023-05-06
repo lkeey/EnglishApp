@@ -122,15 +122,19 @@ public class FeedActivity extends BaseActivity {
         try {
             toolbar = findViewById(R.id.toolbar);
 
+            Log.i(TAG, "Toolbar found");
+
+            setSupportActionBar(toolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+            getSupportActionBar().setTitle("Home");
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+            getSupportActionBar().setHomeButtonEnabled(true);
+
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
 
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setTitle("Home");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
 
         bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
@@ -158,6 +162,7 @@ public class FeedActivity extends BaseActivity {
     }
 
     public void setFragment(Fragment fragment) {
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(mainFrame.getId(), fragment)

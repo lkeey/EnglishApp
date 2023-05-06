@@ -199,7 +199,7 @@ public class DiscussFragment extends Fragment {
                                 getActivity()
                         );
 
-                        Log.i(TAG, USER_MODEL.getFcmToken());
+                        Log.i(TAG, "Sending - " + USER_MODEL.getFcmToken());
 
                         send.SendNotifications();
 

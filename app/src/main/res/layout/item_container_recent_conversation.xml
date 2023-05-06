@@ -4,13 +4,12 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/round_view"
-    android:layout_marginBottom="8dp">
+    android:padding="8dp">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imgProfile"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:padding="4dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:background="@drawable/ic_user"

@@ -44,7 +44,6 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
         this.conversationListener = conversationListener;
     }
 
-
     @Override
     public RecentConversationAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_container_recent_conversation, parent, false);
