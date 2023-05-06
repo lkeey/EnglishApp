@@ -94,12 +94,11 @@
 
             <RelativeLayout
                 android:id="@+id/signGoogle"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:paddingHorizontal="8dp"
                 android:layout_marginTop="48dp"
                 android:background="@drawable/round_corner_btn"
-                android:layout_marginLeft="64dp"
-                android:layout_marginRight="64dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/labelAccount"
@@ -127,14 +126,13 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
+        <RelativeLayout
             android:id="@+id/signPhone"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:paddingHorizontal="8dp"
             android:layout_marginTop="32dp"
             android:background="@drawable/round_corner_btn"
-            android:layout_marginLeft="64dp"
-            android:layout_marginRight="64dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/signGoogle"

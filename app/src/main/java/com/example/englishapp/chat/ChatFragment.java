@@ -154,7 +154,6 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
                                     Log.i(TAG, "message was found");
 
-//                                    break;
                                 }
                             }
                         }

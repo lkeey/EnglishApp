@@ -4,6 +4,8 @@ import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -182,6 +184,7 @@ public class SignUpFragment extends Fragment {
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarCreating);

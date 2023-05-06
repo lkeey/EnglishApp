@@ -1,6 +1,8 @@
 package com.example.englishapp.Authentication;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -31,7 +33,6 @@ public class ForgotPasswordFragment extends Fragment {
     private TextView dialogText, lblLogin, lblSignUp;
     private Dialog progressBar;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,8 +47,7 @@ public class ForgotPasswordFragment extends Fragment {
 
         setListeners();
 
-        new CustomBottomSheetDialog().show(getChildFragmentManager(), "MyFragment");
-
+//        new CustomBottomSheetDialog().show(getChildFragmentManager(), "MyFragment");
 
         return view;
     }
@@ -89,6 +89,7 @@ public class ForgotPasswordFragment extends Fragment {
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarSending);

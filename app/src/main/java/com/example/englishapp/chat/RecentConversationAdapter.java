@@ -7,6 +7,8 @@ import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
+import static com.example.englishapp.messaging.Constants.KEY_LATITUDE;
+import static com.example.englishapp.messaging.Constants.KEY_LONGITUDE;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
@@ -103,7 +105,9 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
                                         documentSnapshot.getString(KEY_DOB),
                                         documentSnapshot.getString(KEY_FCM_TOKEN),
                                         documentSnapshot.getLong(KEY_SCORE).intValue(),
-                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
+                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue(),
+                                        documentSnapshot.getLong(KEY_LATITUDE).intValue(),
+                                        documentSnapshot.getLong(KEY_LONGITUDE).intValue()
                                 );
 
                                 conversationListener.onConversationClicked(userModel);

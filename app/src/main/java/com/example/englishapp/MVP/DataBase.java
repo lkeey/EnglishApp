@@ -11,6 +11,8 @@ import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
+import static com.example.englishapp.messaging.Constants.KEY_LATITUDE;
+import static com.example.englishapp.messaging.Constants.KEY_LONGITUDE;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
@@ -41,7 +43,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", "PATH", "DATE","TOKEN", 0, 0);
+    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", "PATH", "DATE","TOKEN", 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -210,7 +212,9 @@ public class DataBase {
                                         documentSnapshot.getString(KEY_DOB),
                                         documentSnapshot.getString(KEY_FCM_TOKEN),
                                         documentSnapshot.getLong(KEY_SCORE).intValue(),
-                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue()
+                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue(),
+                                        documentSnapshot.getLong(KEY_LATITUDE).doubleValue(),
+                                        documentSnapshot.getLong(KEY_LONGITUDE).doubleValue()
                                 ));
 
                         Log.i(TAG, "Created - " + documentSnapshot.getString(KEY_NAME) + " - " + documentSnapshot.getString(KEY_PROFILE_IMG));
