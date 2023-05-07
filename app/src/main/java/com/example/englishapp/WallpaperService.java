@@ -44,12 +44,14 @@ public class WallpaperService extends Service {
     @Override
     public void onCreate() {
         // сообщение о создании службы
+
         Toast.makeText(this, "Service created", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // сообщение о запуске службы
+
         Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
 
         WallManager wallpaper = new WallManager();

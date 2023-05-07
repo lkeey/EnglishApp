@@ -88,6 +88,11 @@ dependencies {
 //    for google maps
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
+//    location
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
+
+    implementation 'androidx.work:work-runtime:2.8.1'
+
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'

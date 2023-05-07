@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
         // get current user
         mAuth = FirebaseAuth.getInstance();
 
-        mAuth.signOut();
+//        mAuth.signOut();
 
         // Access a Cloud Firestore instance from your Activity
         DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
