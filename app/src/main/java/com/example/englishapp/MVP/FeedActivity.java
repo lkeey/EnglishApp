@@ -1,7 +1,6 @@
 package com.example.englishapp.MVP;
 
 import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
-import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.MVP.DataBase.findUserById;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
@@ -24,9 +23,7 @@ import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
 import com.example.englishapp.chat.DiscussFragment;
 import com.example.englishapp.chat.MapUsersFragment;
-import com.example.englishapp.messaging.FCMSend;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class FeedActivity extends BaseActivity {
     private static final String TAG = "ActivityFeed";
@@ -44,35 +41,6 @@ public class FeedActivity extends BaseActivity {
 
         receiveData();
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnSuccessListener(s -> DataBase.updateToken(s, new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-
-                        Log.i(TAG, "Token for - " + USER_MODEL.getUid());
-
-
-                        FCMSend send = new FCMSend(
-                                USER_MODEL.getFcmToken(),
-                                "title 1111",
-                                "message 1111",
-                                "nnGOZ78qQIhl1GCG1HFYEd1X6hg2",
-                                getApplicationContext()
-                        );
-
-                        Log.i(TAG, USER_MODEL.getFcmToken());
-
-//                        send.SendNotifications();
-                    }
-
-                    @Override
-                    public void OnFailure() {
-
-                    }
-                }));
-
-
-
     }
 
     private void receiveData() {
@@ -88,9 +56,7 @@ public class FeedActivity extends BaseActivity {
             if (status) {
                 new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
 
-            }
-
-            if (userUID != null) {
+            } else if (userUID != null) {
 
                 UserModel receivedUser = findUserById(userUID);
 

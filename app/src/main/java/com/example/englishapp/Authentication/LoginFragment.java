@@ -63,7 +63,6 @@ public class LoginFragment extends Fragment {
 
         getActivity().setTitle(R.string.nameLogin);
 
-
         setListeners();
 
         return view;

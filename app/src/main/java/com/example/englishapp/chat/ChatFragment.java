@@ -50,6 +50,8 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
         init(view);
 
+//        Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into((ImageView) view.findViewById(R.id.imgview));
+
         getToken(new CompleteListener() {
             @Override
             public void OnSuccess() {

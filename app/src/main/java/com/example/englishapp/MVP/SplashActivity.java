@@ -42,7 +42,7 @@ public class SplashActivity extends AppCompatActivity {
         // get current user
         mAuth = FirebaseAuth.getInstance();
 
-//        mAuth.signOut();
+        mAuth.signOut();
 
         // Access a Cloud Firestore instance from your Activity
         DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
@@ -110,23 +110,36 @@ public class SplashActivity extends AppCompatActivity {
     private void beginWork() {
         // if user exist
         if (mAuth.getCurrentUser() != null) {
+            try {
 
-            Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
-            DataBase.loadData(new CompleteListener() {
-                @Override
-                public void OnSuccess() {
-                    Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
+                Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
 
-                    startActivity(intent);
-                    SplashActivity.this.finish();
-                }
+                DataBase.loadData(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
 
-                @Override
-                public void OnFailure() {
-                    Toast.makeText(SplashActivity.this, "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
-                }
-            });
+                        startActivity(intent);
+                        SplashActivity.this.finish();
+                    }
 
+                    @Override
+                    public void OnFailure() {
+                        Toast.makeText(SplashActivity.this, "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
+
+                mAuth.signOut();
+
+                Intent intent = new Intent(SplashActivity.this, MainAuthenticationActivity.class);
+
+                startActivity(intent);
+                SplashActivity.this.finish();
+
+            }
         } else {
 
             Log.i(TAG, "User not found");

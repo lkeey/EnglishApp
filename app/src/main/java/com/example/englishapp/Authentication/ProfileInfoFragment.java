@@ -17,6 +17,8 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
@@ -87,7 +89,11 @@ public class ProfileInfoFragment extends Fragment {
 
         setPreviousData(view);
 
-        getActivity().setTitle(R.string.nameProfileInfo);
+        try {
+            getActivity().setTitle(R.string.nameLogin);
+        } catch (Exception e) {
+            Log.i(TAG, "e - " + e.getMessage());
+        }
 
         setListeners(view);
 
@@ -117,6 +123,7 @@ public class ProfileInfoFragment extends Fragment {
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarCreating);
@@ -132,9 +139,14 @@ public class ProfileInfoFragment extends Fragment {
                             imgUri = result.getData().getData();
 
                             try {
+                                Log.i(TAG, "set bitmap");
+
                                 InputStream inputStream = getActivity().getContentResolver().openInputStream(imgUri);
                                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                                 profileImg.setImageBitmap(bitmap);
+
+                                Log.i(TAG, "set bitmap 2");
+
 //                            encodedImage = encodeImage(bitmap);
 
                             } catch (FileNotFoundException e) {
@@ -148,23 +160,31 @@ public class ProfileInfoFragment extends Fragment {
     }
 
     private void setPreviousData(View view) {
-        userName.setText(USER_MODEL.getName());
-        userEmail.setText(USER_MODEL.getEmail());
-        Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
+        Log.i(TAG, "Set previous data");
+        
+        try {
+            userName.setText(USER_MODEL.getName());
+            userEmail.setText(USER_MODEL.getEmail());
 
-        if (USER_MODEL.getDateOfBirth() != null) {
-            userDOB = USER_MODEL.getDateOfBirth();
-            textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
-        }
+            Log.i(TAG, "PATH - " + USER_MODEL.getPathToImage());
 
-        if (USER_MODEL.getGender() != null) {
-            if(USER_MODEL.getGender().equals(((RadioButton) view.findViewById(R.id.radioMale)).getText().toString())){
-                ((RadioButton) view.findViewById(R.id.radioMale)).setChecked(true);
-            } else {
-                ((RadioButton) view.findViewById(R.id.radioFemale)).setChecked(true);
+            Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
+
+            if (USER_MODEL.getDateOfBirth() != null) {
+                userDOB = USER_MODEL.getDateOfBirth();
+                textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
             }
-        }
 
+            if (USER_MODEL.getGender() != null) {
+                if (USER_MODEL.getGender().equals(((RadioButton) view.findViewById(R.id.radioMale)).getText().toString())) {
+                    ((RadioButton) view.findViewById(R.id.radioMale)).setChecked(true);
+                } else {
+                    ((RadioButton) view.findViewById(R.id.radioFemale)).setChecked(true);
+                }
+            }
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
     }
 
     private void setListeners(View view) {

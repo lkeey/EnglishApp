@@ -43,7 +43,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel("ID","NAME", "EMAIL", "DEFAULT", "PHONE", "PATH", "DATE","TOKEN", 0, 0, 1, 1);
+    public static UserModel USER_MODEL = new UserModel(null,null, null, null, null, null, null,null, 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -65,11 +65,15 @@ public class DataBase {
         userData.put(KEY_PROFILE_IMG, pathToImage);
         userData.put(KEY_SCORE, 0);
         userData.put(KEY_BOOKMARKS, 0);
-        userData.put(KEY_FCM_TOKEN, DATA_FIREBASE_MESSAGING.getInstance().getToken());
+
+        DATA_FIREBASE_MESSAGING.getInstance().getToken()
+                .addOnSuccessListener(s -> userData.put(KEY_FCM_TOKEN, s))
+                .addOnFailureListener(e -> Log.i(TAG, e.getMessage()));
+
+//        userData.put("location", new GeoPoint())
 
         // set default image
-        userData.put(KEY_PROFILE_IMG, "gs://englishapp-341d3.appspot.com/PROFILE_IMAGES/no-image.jpg");
-
+        userData.put(KEY_PROFILE_IMG, "https://firebasestorage.googleapis.com/v0/b/englishapp-341d3.appspot.com/o/PROFILE_IMAGES%2Fno-image.jpg?alt=media&token=eaa4fa62-9cc9-4dbd-b300-96a61a3955a6");
 
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_USERS)
@@ -124,6 +128,8 @@ public class DataBase {
 
 
     public static void loadData(CompleteListener listener) {
+        Log.i(TAG, "Load Data");
+
         getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
@@ -148,7 +154,7 @@ public class DataBase {
 
             @Override
             public void OnFailure() {
-                Log.i(TAG, "can not load users");
+                Log.i(TAG, "Cn not load users");
             }
         });
     }

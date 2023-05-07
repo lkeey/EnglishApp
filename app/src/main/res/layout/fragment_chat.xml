@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".chat.ChatFragment">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerRecentlyChats"
         android:layout_width="0dp"
