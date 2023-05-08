@@ -11,8 +11,7 @@ import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
-import static com.example.englishapp.messaging.Constants.KEY_LATITUDE;
-import static com.example.englishapp.messaging.Constants.KEY_LONGITUDE;
+import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
@@ -27,6 +26,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -70,7 +70,7 @@ public class DataBase {
                 .addOnSuccessListener(s -> userData.put(KEY_FCM_TOKEN, s))
                 .addOnFailureListener(e -> Log.i(TAG, e.getMessage()));
 
-//        userData.put("location", new GeoPoint())
+        userData.put(KEY_LOCATION, new GeoPoint(0, 0));
 
         // set default image
         userData.put(KEY_PROFILE_IMG, "https://firebasestorage.googleapis.com/v0/b/englishapp-341d3.appspot.com/o/PROFILE_IMAGES%2Fno-image.jpg?alt=media&token=eaa4fa62-9cc9-4dbd-b300-96a61a3955a6");
@@ -207,23 +207,38 @@ public class DataBase {
                 try {
                     for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
 
-                        LIST_OF_USERS.add(
-                                new UserModel(
-                                        documentSnapshot.getString(KEY_USER_UID),
-                                        documentSnapshot.getString(KEY_NAME),
-                                        documentSnapshot.getString(KEY_EMAIL),
-                                        documentSnapshot.getString(KEY_GENDER),
-                                        documentSnapshot.getString(KEY_MOBILE),
-                                        documentSnapshot.getString(KEY_PROFILE_IMG),
-                                        documentSnapshot.getString(KEY_DOB),
-                                        documentSnapshot.getString(KEY_FCM_TOKEN),
-                                        documentSnapshot.getLong(KEY_SCORE).intValue(),
-                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue(),
-                                        documentSnapshot.getLong(KEY_LATITUDE).doubleValue(),
-                                        documentSnapshot.getLong(KEY_LONGITUDE).doubleValue()
-                                ));
+                        UserModel userModel = new UserModel();
 
-                        Log.i(TAG, "Created - " + documentSnapshot.getString(KEY_NAME) + " - " + documentSnapshot.getString(KEY_PROFILE_IMG));
+                        userModel.setUid(documentSnapshot.getString(KEY_USER_UID));
+                        userModel.setName(documentSnapshot.getString(KEY_NAME));
+                        userModel.setEmail(documentSnapshot.getString(KEY_EMAIL));
+                        userModel.setGender(documentSnapshot.getString(KEY_GENDER));
+                        userModel.setMobile(documentSnapshot.getString(KEY_MOBILE));
+                        userModel.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
+                        userModel.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
+                        userModel.setFcmToken(documentSnapshot.getString(KEY_FCM_TOKEN));
+                        userModel.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
+                        userModel.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
+                        userModel.setLatitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLatitude());
+                        userModel.setLongitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLongitude());
+//                        LIST_OF_USERS.add(
+//                                new UserModel(
+//                                        documentSnapshot.getString(KEY_USER_UID),
+//                                        documentSnapshot.getString(KEY_NAME),
+//                                        documentSnapshot.getString(KEY_EMAIL),
+//                                        documentSnapshot.getString(KEY_GENDER),
+//                                        documentSnapshot.getString(KEY_MOBILE),
+//                                        documentSnapshot.getString(KEY_PROFILE_IMG),
+//                                        documentSnapshot.getString(KEY_DOB),
+//                                        documentSnapshot.getString(KEY_FCM_TOKEN),
+//                                        documentSnapshot.getLong(KEY_SCORE).intValue(),
+//                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue(),
+//                                        documentSnapshot.getLong(KEY_LATITUDE).doubleValue(),
+//                                        documentSnapshot.getLong(KEY_LONGITUDE).doubleValue()
+//                                ));
+                        LIST_OF_USERS.add(userModel);
+
+                        Log.i(TAG, "Created - " + userModel.getName() + " - " + userModel.getUid());
 
                     }
                 } catch (Exception e) {
@@ -299,18 +314,27 @@ public class DataBase {
                     batch.update(docReference, KEY_AMOUNT_DISCUSSIONS, FieldValue.increment(1));
 
                     batch.commit()
-                        .addOnSuccessListener(unused -> {
-                            listener.OnSuccess();
-                        })
-                        .addOnFailureListener(e -> {
-                            listener.OnFailure();
-                        });
+                        .addOnSuccessListener(unused -> listener.OnSuccess())
+                        .addOnFailureListener(e -> listener.OnFailure());
                 });
     }
 
     public static UserModel findUserById(String userUID) {
 
+        Log.i(TAG, "Amount users" + LIST_OF_USERS.size());
+
         return LIST_OF_USERS.stream().filter(user -> user.getUid().equals(userUID)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
+
+    public static void updateUserGeoPosition(String latitude, String longitude, CompleteListener listener) {
+
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        reference.update(KEY_LOCATION, new GeoPoint(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                .addOnSuccessListener(unused -> listener.OnSuccess())
+                .addOnFailureListener(e -> listener.OnFailure());
+    }
+
 }

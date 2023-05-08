@@ -12,7 +12,10 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -49,7 +52,7 @@ public class MessageService extends FirebaseMessagingService {
             Log.i(TAG, object.toString());
 
 //          show toast in ui thread
-//            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show());
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show());
 
 //        send notification
             int reqCode = 1;
@@ -62,7 +65,11 @@ public class MessageService extends FirebaseMessagingService {
 
                 CharSequence name = "Message Notification";// The user-visible name of the channel.
                 int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+                NotificationChannel mChannel = new NotificationChannel(
+                        CHANNEL_ID,
+                        name,
+                        importance
+                );
 
                 NotificationManager notificationManager = getSystemService(NotificationManager.class);
                 notificationManager.createNotificationChannel(mChannel);

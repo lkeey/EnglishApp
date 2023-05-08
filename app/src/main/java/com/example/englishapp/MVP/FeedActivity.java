@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -59,6 +60,11 @@ public class FeedActivity extends BaseActivity {
 
         receiveData();
 
+        startCheckingPosition();
+
+    }
+
+    private void startCheckingPosition() {
         PermissionManager permissionManager = PermissionManager.getInstance(this);
         LocationManager locationManager = LocationManager.getInstance(this);
 
@@ -74,7 +80,7 @@ public class FeedActivity extends BaseActivity {
 
                 startLocationWork();
             } else {
-
+                Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show();
             }
         }
     }

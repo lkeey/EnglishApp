@@ -16,6 +16,8 @@ public class UserModel implements Serializable {
     private double latitude;
     private double longitude;
 
+    public UserModel() {}
+
     public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount, double latitude, double longitude) {
         this.uid = uid;
         this.name = name;

@@ -55,7 +55,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
         getToken(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "Token successfully got");
+                Log.i(TAG, "Token successfully got " + USER_MODEL.getFcmToken());
             }
 
             @Override
@@ -65,7 +65,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
             }
         });
 
-        new UsersFragment().show(getChildFragmentManager(), "UsersFragment");
+//        new UsersFragment().show(getChildFragmentManager(), "UsersFragment");
 
         listenConversations();
 
@@ -82,18 +82,28 @@ public class ChatFragment extends Fragment implements ConversationListener {
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
 
         recentChats = new ArrayList<>();
+        DataBase.getListOfUsers(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                conversationAdapter = new RecentConversationAdapter(
+                        getContext(),
+                        recentChats,
+                        ChatFragment.this
+                );
 
-        conversationAdapter = new RecentConversationAdapter(
-                getContext(),
-                recentChats,
-                this
-        );
+                recyclerRecentlyChats.setAdapter(conversationAdapter);
 
-        recyclerRecentlyChats.setAdapter(conversationAdapter);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                manager.setOrientation(RecyclerView.VERTICAL);
+                recyclerRecentlyChats.setLayoutManager(manager);
+            }
 
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        manager.setOrientation(RecyclerView.VERTICAL);
-        recyclerRecentlyChats.setLayoutManager(manager);
+            @Override
+            public void OnFailure() {
+                Log.i(TAG, "can not load users list");
+            }
+        });
+
 
     }
 
@@ -148,6 +158,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
                             );
 
                             recentChats.add(chatMessage);
+
                         } else if (document.getType() == DocumentChange.Type.MODIFIED) {
                             for (int i = 0; i < recentChats.size(); i++) {
                                 if (((ChatMessage) recentChats.get(i)).getSenderId().equals(document.getDocument().getString(KEY_SENDER_ID)) && ((ChatMessage) recentChats.get(i)).getReceiverId().equals(document.getDocument().getString(KEY_RECEIVER_ID))) {

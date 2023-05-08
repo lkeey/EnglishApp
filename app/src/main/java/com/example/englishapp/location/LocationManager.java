@@ -1,5 +1,9 @@
 package com.example.englishapp.location;
 
+import static com.example.englishapp.messaging.Constants.KEY_LATITUDE;
+import static com.example.englishapp.messaging.Constants.KEY_LONGITUDE;
+import static com.example.englishapp.messaging.Constants.LOCAL_BROADCAST_ACTION;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +21,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
@@ -30,7 +33,7 @@ import com.google.android.gms.tasks.Task;
 public class LocationManager {
 
     private static final String TAG = "ManagerLocation";
-    private static final int REQUEST_CHECK = 1000;
+    private static final int REQUEST_CHECK = 10_000;
     private static LocationManager instance = null;
     private Context context;
     private FusedLocationProviderClient fusedLocationProviderClient;
@@ -57,23 +60,13 @@ public class LocationManager {
         this.context = context;
 
         this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
-        Intent intent = new Intent("broadcast");
-        StringBuilder stringBuilder = new StringBuilder();
+        Intent intent = new Intent(LOCAL_BROADCAST_ACTION);
+//        StringBuilder stringBuilder = new StringBuilder();
 
         Log.i(TAG, "init 2");
 
         try {
             locationCallback = new LocationCallback() {
-
-                @Override
-                public void onLocationAvailability(LocationAvailability locationAvailability) {
-                    Log.i(TAG, "init 3");
-
-                    super.onLocationAvailability(locationAvailability);
-
-                    Log.i(TAG, "init 4");
-
-                }
 
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
@@ -89,10 +82,11 @@ public class LocationManager {
                     for (Location location : locationResult.getLocations()) {
                         Log.i(TAG, "Location - " + location.getLatitude() + " - " + location.getLongitude());
 
-                        stringBuilder.setLength(0);
-                        stringBuilder.append("Time: " + System.currentTimeMillis() + " Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
+//                        stringBuilder.setLength(0);
+//                        stringBuilder.append("Time: " + System.currentTimeMillis() + " Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude());
 
-                        intent.putExtra("location", stringBuilder.toString());
+                        intent.putExtra(KEY_LATITUDE, String.valueOf(location.getLatitude()));
+                        intent.putExtra(KEY_LONGITUDE, String.valueOf(location.getLongitude()));
 
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                     }

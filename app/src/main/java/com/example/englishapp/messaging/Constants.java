@@ -17,7 +17,7 @@ public class Constants {
     public static final String KEY_FCM_TOKEN = "FCM_TOKEN";
     public static final String KEY_LATITUDE = "KEY_LATITUDE";
     public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
-
+    public static final String KEY_LOCATION = "KEY_LOCATION";
     public static final String KEY_CHOSEN_USER_DATA = "USER_DATA";
     public static final String KEY_COLLECTION_CHAT = "CHAT";
     public static final String KEY_SENDER_ID = "SENDER_ID";
@@ -36,11 +36,8 @@ public class Constants {
     public static final String REMOTE_MSG_TITLE = "TITLE";
     public static final String REMOTE_MSG_DATA = "MESSAGE";
     public static final String REMOTE_MSG_USER_SENDER = "SENDER";
-
-
-
     public static String BASE_URL = "https://fcm.googleapis.com/fcm/send";
     public static final String SERVER_KEY = "AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN";
 
-
+    public static String LOCAL_BROADCAST_ACTION = "broadcast";
 }
