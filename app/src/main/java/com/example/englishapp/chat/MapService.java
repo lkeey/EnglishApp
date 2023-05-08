@@ -1,16 +1,13 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
+import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.MVP.DataBase.findUserById;
-import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.MVP.DataBase.getListOfUsers;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
-import static com.example.englishapp.messaging.Constants.KEY_DOB;
-import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
-import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
-import static com.example.englishapp.messaging.Constants.KEY_GENDER;
-import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
+import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
-import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
-import static com.example.englishapp.messaging.Constants.KEY_SCORE;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
@@ -23,31 +20,29 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.englishapp.MVP.CompleteListener;
-import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.UserModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 //    TODO https://stackoverflow.com/questions/44670356/how-to-store-location-in-firebase-in-real-time
     private static final String TAG = "MapService";
     private final Context context;
     private final FragmentManager manager;
-    private static ArrayList<MarkerOptions> markers;
+    private static List<MarkerOptions> markers;
 
     public MapService(Context context, FragmentManager manager) {
         this.context = context;
         this.manager = manager;
+        this.markers = new ArrayList<>();
     }
 
     @Override
@@ -69,76 +64,78 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
         Log.i(TAG, "ready");
 
-        DataBase.getListOfUsers(new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-                for (UserModel user: DataBase.LIST_OF_USERS) {
-                    Log.i(TAG, user.getName());
-                    try {
+        listenMarkers();
 
+        try {
+
+            Log.i(TAG, "size - " + markers.size());
+            getListOfUsers(new CompleteListener() {
+                @Override
+                public void OnSuccess() {
+                    for(UserModel user: LIST_OF_USERS) {
                         MarkerOptions marker = new MarkerOptions()
-                                .position(new LatLng(1, 1))
+                                .position(new LatLng(
+                                        user.getLatitude(),
+                                        user.getLongitude()
+
+                                ))
                                 .title(user.getName())
                                 .snippet(user.getUid())
                                 .flat(true);
 
+                        Log.i(TAG, "added2 - " + marker.getTitle());
+
                         googleMap.addMarker(marker);
+
                         markers.add(marker);
 
-//                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.app_logo)));
-
-                    } catch (Exception e) {
-                        Log.i(TAG, e.getMessage());
                     }
                 }
 
-                googleMap.setOnMarkerClickListener(marker -> {
-                    try {
+                @Override
+                public void OnFailure() {
+                    Log.i(TAG, "OnFailure: ");
+                }
+            });
+//            for(MarkerOptions marker: markers) {
+//                Log.i(TAG, "title " + marker.getTitle());
+//
+//                googleMap.addMarker(marker);
+//
+//                Log.i(TAG, "Added - " + marker.getTitle());
+//            }
 
-                        UserInfoFragment fragment = new UserInfoFragment();
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
 
-                        UserModel user = findUserById(marker.getSnippet());
 
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
-                        fragment.setArguments(bundle);
+        googleMap.setOnMarkerClickListener(marker -> {
+            try {
+                UserInfoFragment fragment = new UserInfoFragment();
 
-                        fragment.show(manager, SHOW_FRAGMENT_DIALOG);
+                UserModel user = findUserById(marker.getSnippet());
 
-                    } catch (Exception e) {
-                        Log.i(TAG, e.getMessage());
-                    }
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
+                fragment.setArguments(bundle);
 
-                    return false;
-                });
+                fragment.show(manager, SHOW_FRAGMENT_DIALOG);
+
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
             }
 
-            @Override
-            public void OnFailure() {
-                Log.i(TAG, "fail");
-                Toast.makeText(context, "Please, Try Later", Toast.LENGTH_SHORT).show();
-            }
+            return false;
         });
 
     }
 
-    ValueEventListener valueEventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
+    private void listenMarkers() {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .addSnapshotListener(eventListener);
+    }
 
-            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                Log.i(TAG, (String) snapshot.child("longitude").getValue());
-                Log.i(TAG, (String) snapshot.child("latitute").getValue());
-
-            }
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            Log.i(TAG, "Error - " + databaseError);
-        }
-    };
 
     private final EventListener<QuerySnapshot> eventListener = (value, error) -> {
         try {
@@ -151,38 +148,58 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
             if (value != null) {
                 for (DocumentChange documentChange : value.getDocumentChanges()) {
+
+                    // update name or location
                     if (documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                        UserModel user = new UserModel(
-                                documentChange.getDocument().getString(KEY_USER_UID),
-                                documentChange.getDocument().getString(KEY_NAME),
-                                documentChange.getDocument().getString(KEY_EMAIL),
-                                documentChange.getDocument().getString(KEY_GENDER),
-                                documentChange.getDocument().getString(KEY_MOBILE),
-                                documentChange.getDocument().getString(KEY_PROFILE_IMG),
-                                documentChange.getDocument().getString(KEY_DOB),
-                                documentChange.getDocument().getString(KEY_FCM_TOKEN),
-                                documentChange.getDocument().getLong(KEY_SCORE).intValue(),
-                                documentChange.getDocument().getLong(KEY_BOOKMARKS).intValue(),
-                                documentChange.getDocument().getLong(KEY_SCORE).doubleValue(),
-                                documentChange.getDocument().getLong(KEY_BOOKMARKS).doubleValue()
-                        );
 
-                        Log.i(TAG, "Message added");
+                        try {
+                            MarkerOptions marker = findMarkerByUserId(documentChange.getDocument().getString(KEY_USER_UID));
 
-//                        TODO link to SnapShot
-                        for (MarkerOptions markerOptions: markers) {
-                            if (markerOptions.getSnippet().equals(user.getUid())) {
-                                markerOptions.position(new LatLng(user.getLatitude(), user.getLongitude()));
-                            }
+                            marker.position(new LatLng(
+                                    documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLatitude(),
+                                    documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLongitude()
+                            ));
+
+                            marker.title(documentChange.getDocument().getString(KEY_NAME));
+
+                            Log.i(TAG, "modified " + marker.getTitle());
+
+                        } catch (Exception e) {
+                            Log.i(TAG, "err - " + e.getMessage());
+                        } catch (Throwable e) {
+                            throw new RuntimeException(e);
                         }
+
+                        // create new marker if new user
+                    } else if (documentChange.getType() == DocumentChange.Type.ADDED) {
+                        MarkerOptions marker = new MarkerOptions()
+                                .position(new LatLng(
+                                        documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLatitude(),
+                                        documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLongitude()
+
+                                ))
+                                .title(documentChange.getDocument().getString(KEY_NAME))
+                                .snippet(documentChange.getDocument().getString(KEY_USER_UID))
+                                .flat(true);
+
+                        Log.i(TAG, "added2 - " + marker.getTitle());
+
+                        markers.add(marker);
                     }
                 }
 
             }
 
         } catch (Exception e) {
-            Log.i(TAG, "eventListener - " + e.getMessage());
+            Log.i(TAG, "eventListener err - " + e.getMessage());
         }
     };
 
+    private MarkerOptions findMarkerByUserId(String userUID) {
+
+        Log.i(TAG, "Amount markers - " + markers.size());
+
+        return markers.stream().filter(marker -> marker.getSnippet().equals(userUID)).findAny()
+                .orElseThrow(() -> new RuntimeException("not found"));
+    }
 }

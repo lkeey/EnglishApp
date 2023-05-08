@@ -1,5 +1,6 @@
 package com.example.englishapp.chat;
 
+import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.MVP.FeedActivity;
@@ -41,15 +43,18 @@ public class UserInfoFragment extends BottomSheetDialogFragment {
         textClose.setOnClickListener(v -> UserInfoFragment.this.dismiss());
 
         btnSendMsg.setOnClickListener(v -> {
+            if (!receivedUser.getUid().equals(USER_MODEL.getUid())) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
+                DiscussFragment fragment = new DiscussFragment();
+                fragment.setArguments(bundle);
 
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
-            DiscussFragment fragment = new DiscussFragment();
-            fragment.setArguments(bundle);
+                ((FeedActivity) getActivity()).setFragment(fragment);
 
-            ((FeedActivity) getActivity()).setFragment(fragment);
-
-            UserInfoFragment.this.dismiss();
+                UserInfoFragment.this.dismiss();
+            } else {
+                Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
+            }
         });
 
     }
