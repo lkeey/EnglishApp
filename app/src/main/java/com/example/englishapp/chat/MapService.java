@@ -23,6 +23,7 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.UserModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.DocumentChange;
@@ -33,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
-//    TODO https://stackoverflow.com/questions/44670356/how-to-store-location-in-firebase-in-real-time
+
     private static final String TAG = "MapService";
     private final Context context;
     private final FragmentManager manager;
@@ -67,6 +68,9 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
         listenMarkers();
 
         try {
+
+            googleMap.addCircle(new CircleOptions()
+                    );
 
             Log.i(TAG, "size - " + markers.size());
             getListOfUsers(new CompleteListener() {

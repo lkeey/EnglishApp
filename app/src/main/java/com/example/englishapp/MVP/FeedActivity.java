@@ -75,17 +75,34 @@ public class FeedActivity extends BaseActivity {
             permissionManager.askPermissions(FeedActivity.this, background_location_permission, 2);
 
         } else {
+
+//            TODO launch worker from service
+//            and check there if location enables, then start worker
+//            worker will live always
             if (locationManager.isLocationEnabled()) {
+                Log.i(TAG, "location enable");
+
                 locationManager.createLocationRequest();
 
                 startLocationWork();
+
             } else {
+                Log.i(TAG, "location does not enabled");
+
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                locationManager.createLocationRequest();
+
+                startLocationWork();
+
                 Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void startLocationWork() {
+        Log.i(TAG, "startLocationWork");
+
         OneTimeWorkRequest foregroundWorkRequest = new OneTimeWorkRequest.Builder(LocationWork.class)
                 .addTag("LocationWork")
                 .setBackoffCriteria(

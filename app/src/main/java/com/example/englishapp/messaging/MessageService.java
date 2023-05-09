@@ -12,10 +12,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -30,6 +27,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.json.JSONObject;
 
 import java.util.Map;
+import java.util.Random;
 
 public class MessageService extends FirebaseMessagingService {
 
@@ -52,10 +50,12 @@ public class MessageService extends FirebaseMessagingService {
             Log.i(TAG, object.toString());
 
 //          show toast in ui thread
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show());
+//            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(MessageService.this, "My Awesome service toast...", Toast.LENGTH_SHORT).show());
 
 //        send notification
-            int reqCode = 1;
+
+//            must be random to always show on screen
+            int NOTIFICATION_ID = new Random().nextInt();
 
             String CHANNEL_ID = "message_notifications";// The id of the channel.
 
@@ -113,7 +113,7 @@ public class MessageService extends FirebaseMessagingService {
             Log.i(TAG, "2");
 
 
-            notificationManagerCompat.notify(reqCode, notification);
+            notificationManagerCompat.notify(NOTIFICATION_ID, notification);
 
             Log.i(TAG, "3");
 

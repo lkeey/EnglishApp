@@ -52,7 +52,7 @@ public class LocationWork extends Worker {
     public Result doWork() {
         Log.i(TAG, "doWork");
 
-        setForegroundAsync(showNotification("begin", "begin"));
+        setForegroundAsync(showNotification("loading", "loading"));
 
         while (true) {
 

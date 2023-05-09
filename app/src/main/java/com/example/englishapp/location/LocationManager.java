@@ -122,7 +122,7 @@ public class LocationManager {
                     ResolvableApiException resolvableApiException = (ResolvableApiException) e;
                     resolvableApiException.startResolutionForResult((Activity) context, REQUEST_CHECK);
                 } catch (Exception ex) {
-
+                    Log.i(TAG, "error - " + ex.getMessage());
                 }
             }
         });
