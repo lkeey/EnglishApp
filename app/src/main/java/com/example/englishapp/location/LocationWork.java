@@ -102,7 +102,7 @@ public class LocationWork extends Worker {
                 .setTicker(title)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_location)
-//                .setOngoing(true)
+                .setOngoing(true)
                 .setOnlyAlertOnce(true)
                 .build();
 

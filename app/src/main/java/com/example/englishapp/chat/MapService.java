@@ -23,7 +23,6 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.UserModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.DocumentChange;
@@ -69,10 +68,8 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
         try {
 
-            googleMap.addCircle(new CircleOptions()
-                    );
-
             Log.i(TAG, "size - " + markers.size());
+
             getListOfUsers(new CompleteListener() {
                 @Override
                 public void OnSuccess() {

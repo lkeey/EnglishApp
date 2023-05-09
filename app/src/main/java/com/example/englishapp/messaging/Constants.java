@@ -38,6 +38,11 @@ public class Constants {
     public static final String REMOTE_MSG_USER_SENDER = "SENDER";
     public static String BASE_URL = "https://fcm.googleapis.com/fcm/send";
     public static final String SERVER_KEY = "AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN";
-
     public static String LOCAL_BROADCAST_ACTION = "broadcast";
+    public static final String KEY_COLLECTION_CATEGORIES = "CATEGORIES";
+    public static final String KEY_CATEGORY_ID = "CATEGORY_ID";
+    public static final String KEY_CATEGORY_NAME = "CATEGORY_NAME";
+    public static final String KEY_CATEGORY_NUMBER_OF_TESTS = "CATEGORY_NUMBER_OF_TESTS";
+    public static final String KEY_AMOUNT_CATEGORIES = "AMOUNT_CATEGORIES";
+
 }

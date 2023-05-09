@@ -18,7 +18,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -26,12 +25,10 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
@@ -338,16 +335,6 @@ public class DiscussFragment extends Fragment {
             Log.i(TAG, "conversationOnComplete error - " + task.getException());
         }
     };
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if (item.getItemId() == android.R.id.home) {
-            ((FeedActivity) getActivity()).setFragment(new CategoryFragment());
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     @Override
     public void onResume() {

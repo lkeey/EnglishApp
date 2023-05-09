@@ -1,8 +1,13 @@
 package com.example.englishapp.MVP;
 
+import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_DISCUSSIONS;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGES;
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_ID;
+import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NUMBER_OF_TESTS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
@@ -22,6 +27,7 @@ import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import android.util.ArrayMap;
 import android.util.Log;
 
+import com.example.englishapp.Authentication.CategoryModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
@@ -30,6 +36,8 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +53,8 @@ public class DataBase {
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
     public static UserModel USER_MODEL = new UserModel(null,null, null, null, null, null, null,null, 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
+    public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
+
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
 
@@ -133,28 +143,37 @@ public class DataBase {
         getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
+                Log.i(TAG, "Users loaded");
                 getUserData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "User data loaded");
-                        Log.i(TAG, USER_MODEL.getUid());
-
-                        listener.OnSuccess();
+                        getListOfCategories(new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+                                Log.i(TAG, "Categories were successfully loaded");
+                                listener.OnSuccess();
+                            }
+                            @Override
+                            public void OnFailure() {
+                                Log.i(TAG, "Can not load categories");
+                                listener.OnFailure();
+                            }
+                        });
                     }
 
                     @Override
                     public void OnFailure() {
                         Log.i(TAG, "Exception: User Data can not be loaded");
-
                         listener.OnFailure();
                     }
                 });
 
             }
-
             @Override
             public void OnFailure() {
-                Log.i(TAG, "Cn not load users");
+                Log.i(TAG, "Can not load users");
+                listener.OnFailure();
             }
         });
     }
@@ -253,6 +272,92 @@ public class DataBase {
             .addOnFailureListener(e -> listener.OnFailure());
     }
 
+    public static void getListOfCategories(CompleteListener listener) {
+        LIST_OF_CATEGORIES.clear();
+
+        Log.i(TAG, "Begin loading categories");
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CATEGORIES)
+            .limit(20)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                Log.i(TAG, "Get category");
+
+                try {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                        CategoryModel categoryModel = new CategoryModel();
+
+                        categoryModel.setId(documentSnapshot.getString(KEY_CATEGORY_ID));
+                        categoryModel.setName(documentSnapshot.getString(KEY_CATEGORY_NAME));
+                        categoryModel.setNumberOfTests(documentSnapshot.getLong(KEY_CATEGORY_NUMBER_OF_TESTS).intValue());
+
+                        LIST_OF_CATEGORIES.add(categoryModel);
+
+                        Log.i(TAG, "Created - " + categoryModel.getName() + " - " + categoryModel.getId());
+
+                    }
+                } catch (Exception e) {
+                    Log.i(TAG, "Category error - " + e.getMessage());
+                }
+
+                Log.i(TAG, "All good");
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static void createCategory(String name, CompleteListener listener) {
+        Map<String, Object> categoryData = new ArrayMap<>();
+
+//        String randomID = new Random()
+//                .ints(0, 99)
+//                .limit(20)
+//                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+//                .toString();
+
+        String randomID = RandomStringUtils.random(20, true, true);
+
+        categoryData.put(KEY_CATEGORY_ID, randomID);
+        categoryData.put(KEY_CATEGORY_NAME, name);
+        categoryData.put(KEY_CATEGORY_NUMBER_OF_TESTS, 0);
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference categoryDocument = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_CATEGORIES)
+                .document(randomID);
+
+
+        batch.set(categoryDocument, categoryData);
+
+        DocumentReference docReference = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_STATISTICS)
+                .document(KEY_AMOUNT_CATEGORIES);
+
+        batch.update(docReference, KEY_AMOUNT_CATEGORIES, FieldValue.increment(1));
+
+        batch.commit().addOnSuccessListener(unused -> {
+
+            Log.i(TAG, "Category was successfully created");
+
+            LIST_OF_CATEGORIES.add(new CategoryModel(
+                    name,
+                    randomID,
+                    0
+            ));
+
+            listener.OnSuccess();
+
+        }).addOnFailureListener(e -> {
+            Log.i(TAG, "Can not create category - " + e.getMessage());
+
+            listener.OnFailure();
+        });
+    }
+
     public static void updateProfileData(Map profileMap, CompleteListener listener) {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
@@ -321,7 +426,7 @@ public class DataBase {
 
     public static UserModel findUserById(String userUID) {
 
-        Log.i(TAG, "Amount users" + LIST_OF_USERS.size());
+        Log.i(TAG, "Amount users - " + LIST_OF_USERS.size());
 
         return LIST_OF_USERS.stream().filter(user -> user.getUid().equals(userUID)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));

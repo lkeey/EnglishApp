@@ -21,6 +21,7 @@ import androidx.work.BackoffPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
+import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
 import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
@@ -60,7 +61,10 @@ public class FeedActivity extends BaseActivity {
 
         receiveData();
 
-        startCheckingPosition();
+//        startCheckingPosition();
+
+        // start CategoryFragment at first
+        setFragment(new CategoryFragment());
 
     }
 
@@ -152,7 +156,6 @@ public class FeedActivity extends BaseActivity {
 
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setTitle("Home");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
             getSupportActionBar().setHomeButtonEnabled(true);
