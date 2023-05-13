@@ -11,13 +11,9 @@ import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Dialog;
 import android.app.PendingIntent;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,14 +21,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.work.BackoffPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
 
 import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
@@ -45,12 +37,8 @@ import com.example.englishapp.chat.DiscussFragment;
 import com.example.englishapp.chat.MainChatFragment;
 import com.example.englishapp.chat.MapUsersFragment;
 import com.example.englishapp.location.LocationManager;
-import com.example.englishapp.location.LocationService;
-import com.example.englishapp.location.LocationWork;
 import com.example.englishapp.location.PermissionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.concurrent.TimeUnit;
 
 public class FeedActivity extends BaseActivity {
     private static final String TAG = "ActivityFeed";
@@ -126,80 +114,80 @@ public class FeedActivity extends BaseActivity {
         }
     }
 
-    private void showDialogLocationOld() {
-        Log.i(TAG, "Enable - " + LocationManager.getInstance(this).isLocationEnabled());
-
-        JobScheduler jobScheduler = getSystemService(JobScheduler.class);
-        ComponentName componentName = new ComponentName(this, LocationService.class);
-        JobInfo.Builder info = new JobInfo.Builder(1111, componentName);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            info.setRequiresBatteryNotLow(true);
-        }
-
-        info.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
-
-        info.setPeriodic(1*60*100); // 1 minute
-        info.setMinimumLatency(100);
-
-        if (jobScheduler != null) {
-            int result = jobScheduler.schedule(info.build());
-
-            if (result == JobScheduler.RESULT_SUCCESS) {
-                Log.i(TAG, "Job started");
-            } else {
-                Log.i(TAG, "Can not start job");
-            }
-
-        }
-    }
-
-    private void startCheckingPosition() {
-        PermissionManager permissionManager = PermissionManager.getInstance(this);
-        LocationManager locationManager = LocationManager.getInstance(this);
-
-        permissionManager.askPermissions(FeedActivity.this, foreground_location_permissions, 1);
-
-        if (!permissionManager.checkPermissions(background_location_permission)) {
-            Log.i(TAG, String.valueOf(permissionManager.checkPermissions(background_location_permission)));
-            permissionManager.askPermissions(FeedActivity.this, background_location_permission, 2);
-
-        } else {
-
-            if (locationManager.isLocationEnabled()) {
-                Log.i(TAG, "location enable");
-
-                locationManager.createLocationRequest();
-
-                startLocationWork();
-
-            } else {
-                Log.i(TAG, "location does not enabled");
-
-                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-
-                locationManager.createLocationRequest();
-
-                startLocationWork();
-
-                Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void startLocationWork() {
-        Log.i(TAG, "startLocationWork");
-
-        OneTimeWorkRequest foregroundWorkRequest = new OneTimeWorkRequest.Builder(LocationWork.class)
-                .addTag("LocationWork")
-                .setBackoffCriteria(
-                        BackoffPolicy.LINEAR,
-                        OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
-                        TimeUnit.SECONDS
-                ).build();
-
-        WorkManager.getInstance(FeedActivity.this).enqueue(foregroundWorkRequest);
-    }
+//    private void showDialogLocationOld() {
+//        Log.i(TAG, "Enable - " + LocationManager.getInstance(this).isLocationEnabled());
+//
+//        JobScheduler jobScheduler = getSystemService(JobScheduler.class);
+//        ComponentName componentName = new ComponentName(this, LocationService.class);
+//        JobInfo.Builder info = new JobInfo.Builder(1111, componentName);
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            info.setRequiresBatteryNotLow(true);
+//        }
+//
+//        info.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+//
+//        info.setPeriodic(1*60*100); // 1 minute
+//        info.setMinimumLatency(100);
+//
+//        if (jobScheduler != null) {
+//            int result = jobScheduler.schedule(info.build());
+//
+//            if (result == JobScheduler.RESULT_SUCCESS) {
+//                Log.i(TAG, "Job started");
+//            } else {
+//                Log.i(TAG, "Can not start job");
+//            }
+//
+//        }
+//    }
+//
+//    private void startCheckingPosition() {
+//        PermissionManager permissionManager = PermissionManager.getInstance(this);
+//        LocationManager locationManager = LocationManager.getInstance(this);
+//
+//        permissionManager.askPermissions(FeedActivity.this, foreground_location_permissions, 1);
+//
+//        if (!permissionManager.checkPermissions(background_location_permission)) {
+//            Log.i(TAG, String.valueOf(permissionManager.checkPermissions(background_location_permission)));
+//            permissionManager.askPermissions(FeedActivity.this, background_location_permission, 2);
+//
+//        } else {
+//
+//            if (locationManager.isLocationEnabled()) {
+//                Log.i(TAG, "location enable");
+//
+//                locationManager.createLocationRequest();
+//
+//                startLocationWork();
+//
+//            } else {
+//                Log.i(TAG, "location does not enabled");
+//
+//                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+//
+//                locationManager.createLocationRequest();
+//
+//                startLocationWork();
+//
+//                Toast.makeText(this, "Please turn on your location", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//    }
+//
+//    private void startLocationWork() {
+//        Log.i(TAG, "startLocationWork");
+//
+//        OneTimeWorkRequest foregroundWorkRequest = new OneTimeWorkRequest.Builder(LocationWork.class)
+//                .addTag("LocationWork")
+//                .setBackoffCriteria(
+//                        BackoffPolicy.LINEAR,
+//                        OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+//                        TimeUnit.SECONDS
+//                ).build();
+//
+//        WorkManager.getInstance(FeedActivity.this).enqueue(foregroundWorkRequest);
+//    }
 
     private void receiveData() {
         try {
@@ -232,31 +220,25 @@ public class FeedActivity extends BaseActivity {
     }
 
     private void init() {
-        try {
 
-            progressLocation = new Dialog(this);
-            progressLocation.setContentView(R.layout.dialog_check_location);
-            progressLocation.setCancelable(false);
-            progressLocation.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            progressLocation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        progressLocation = new Dialog(this);
+        progressLocation.setContentView(R.layout.dialog_check_location);
+        progressLocation.setCancelable(false);
+        progressLocation.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressLocation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-            textClose = progressLocation.findViewById(R.id.textCancel);
-            btnOpenSettings = progressLocation.findViewById(R.id.btnOpenSettings);
+        textClose = progressLocation.findViewById(R.id.textCancel);
+        btnOpenSettings = progressLocation.findViewById(R.id.btnOpenSettings);
 
-            toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
-            Log.i(TAG, "Toolbar found");
+        Log.i(TAG, "Toolbar found");
 
-            setSupportActionBar(toolbar);
-            getSupportActionBar().setDisplayShowTitleEnabled(true);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
-            getSupportActionBar().setHomeButtonEnabled(true);
-
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
-
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.nav_host_fragment_content_feed);

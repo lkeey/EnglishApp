@@ -3,6 +3,7 @@ package com.example.englishapp.MVP;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_DISCUSSIONS;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGES;
+import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_TESTS;
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NAME;
@@ -11,6 +12,7 @@ import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORI
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_TESTS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
@@ -21,19 +23,26 @@ import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
 import static com.example.englishapp.messaging.Constants.KEY_SCORE;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_ID;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
+import static com.example.englishapp.messaging.Constants.KEY_USER_PERSONAL_INFORMATION;
+import static com.example.englishapp.messaging.Constants.KEY_USER_SCORES;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 
 import android.util.ArrayMap;
 import android.util.Log;
 
 import com.example.englishapp.Authentication.CategoryModel;
+import com.example.englishapp.testsAndWords.TestModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -48,12 +57,14 @@ public class DataBase {
 
     private static final String TAG = "FirestoreDB";
     public static String CURRENT_CONVERSATION_ID = null;
+    public static final String CHOSEN_CATEGORY_ID = null;
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
     public static UserModel USER_MODEL = new UserModel(null,null, null, null, null, null, null,null, 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
+    public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -317,6 +328,7 @@ public class DataBase {
 //                .limit(20)
 //                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
 //                .toString();
+
         String randomID = null;
 
         while (true) {
@@ -462,8 +474,139 @@ public class DataBase {
 
         return LIST_OF_CATEGORIES.stream().filter(category -> category.getId().equals(categoryId)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
+    }
+
+    public static void loadTestsData(CompleteListener listener) {
+        LIST_OF_TESTS.clear();
+
+        Log.i(TAG, "Begin loading tests");
+
+        CategoryModel chosenCategory = findCategoryById(CHOSEN_CATEGORY_ID);
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_TESTS)
+            .limit(20)
+            .whereEqualTo(KEY_CATEGORY_ID, chosenCategory.getId())
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                Log.i(TAG, "Get tests");
+
+                try {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                        TestModel testModel = new TestModel();
+
+                        testModel.setId(documentSnapshot.getString(KEY_TEST_ID));
+                        testModel.setName(documentSnapshot.getString(KEY_TEST_NAME));
+                        testModel.setTopScore(0);
+                        testModel.setTime(documentSnapshot.getLong(KEY_TEST_TIME).intValue());
+
+                        LIST_OF_TESTS.add(testModel);
+
+                        Log.i(TAG, "Created - " + testModel.getId());
+
+                    }
+                } catch (Exception e) {
+                    Log.i(TAG, "Test error - " + e.getMessage());
+                }
+
+                Log.i(TAG, "All good");
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> listener.OnFailure());
+
+    }
+
+    public static void createTestData(String name, int time, CompleteListener listener) {
+        Map<String, Object> testData = new ArrayMap<>();
+
+        String randomID = null;
+
+        while (true) {
+            try {
+
+                randomID = RandomStringUtils.random(20, true, true);
+
+                Log.i(TAG, "random id - " + randomID);
+
+                findTestById(randomID);
+
+            } catch (Exception e) {
+                Log.i(TAG, "not found category");
+
+                break;
+            }
+        }
+
+        testData.put(KEY_TEST_ID, randomID);
+        testData.put(KEY_TEST_NAME, name);
+        testData.put(KEY_TEST_TIME, time);
+        testData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference testDocument = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_TESTS)
+                .document(randomID);
 
 
+        batch.set(testDocument, testData);
+
+        // update statistics
+        DocumentReference docReference = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_STATISTICS)
+                .document(KEY_AMOUNT_TESTS);
+
+        batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+
+        String randomId = randomID;
+        batch.commit().addOnSuccessListener(unused -> {
+
+            Log.i(TAG, "Test was successfully created");
+
+            LIST_OF_TESTS.add(new TestModel(
+                    randomId,
+                    name,
+                    0,
+                    time
+            ));
+
+            listener.OnSuccess();
+
+        }).addOnFailureListener(e -> {
+            Log.i(TAG, "Can not create test - " + e.getMessage());
+
+            listener.OnFailure();
+        });
+
+    }
+
+    public static void setBestScore(int score, CompleteListener listener) {
+        // add info about the best score of chosen test
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference userDoc = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid())
+                .collection(KEY_USER_PERSONAL_INFORMATION)
+                .document(KEY_USER_SCORES);
+
+        Map<String, Object> userData = new ArrayMap<>();
+
+        userData.put(CHOSEN_CATEGORY_ID, score);
+        batch.set(userDoc, userData, SetOptions.merge());
+
+        batch.commit().addOnSuccessListener(unused -> listener.OnSuccess()).addOnFailureListener(e -> listener.OnFailure());
+    }
+
+
+
+    public static TestModel findTestById(String testId) {
+
+        return LIST_OF_TESTS.stream().filter(test -> test.getId().equals(testId)).findAny()
+                .orElseThrow(() -> new RuntimeException("not found"));
     }
 
 }

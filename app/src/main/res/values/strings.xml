@@ -32,6 +32,7 @@
     <string name="progressBarSending">Sending email...</string>
     <string name="progressBarSendingOTP">Sending key...</string>
     <string name="progressBarLoadingUserData">Loading users data...</string>
+    <string name="progressBarOpening">Opening...</string>
 
     <string name="failExist">User does not exist</string>
 

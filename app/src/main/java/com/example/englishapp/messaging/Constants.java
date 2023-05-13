@@ -45,6 +45,13 @@ public class Constants {
     public static final String KEY_CATEGORY_NUMBER_OF_TESTS = "CATEGORY_NUMBER_OF_TESTS";
     public static final String KEY_AMOUNT_CATEGORIES = "AMOUNT_CATEGORIES";
     public static final String KEY_CHECK_LOCATION = "KEY_CHECK_LOCATION";
-
+    public static final String KEY_COLLECTION_TESTS = "TESTS";
+    public static final String KEY_AMOUNT_TESTS = "AMOUNT_TESTS";
+    public static final String KEY_TEST_ID = "TEST_ID";
+    public static final String KEY_TOP_SCORE = "TOP_SCORE";
+    public static final String KEY_TEST_TIME = "TEST_TIME";
+    public static final String KEY_TEST_NAME = "TEST_NAME";
+    public static final String KEY_USER_PERSONAL_INFORMATION = "KEY_USER_PERSONAL_INFORMATION";
+    public static final String KEY_USER_SCORES = "USER_SCORES";
 
 }

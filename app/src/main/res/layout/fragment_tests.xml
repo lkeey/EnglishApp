@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Authentication.CategoryFragment">
+    tools:context=".testsAndWords.TestsFragment">
 
     <LinearLayout
         android:id="@+id/layoutSearch"
@@ -16,10 +16,10 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/recyclerCategories">
+        app:layout_constraintBottom_toTopOf="@id/testRecyclerView">
 
         <ImageView
-            android:id="@+id/imgAddCategory"
+            android:id="@+id/imgAddTest"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginStart="12dp"
@@ -38,7 +38,7 @@
             android:drawablePadding="16dp"
             android:drawableTint="@color/secondary_color"
             android:ems="10"
-            android:hint="Write Name Of Category"
+            android:hint="Write Name Of Test"
             android:inputType="text"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
@@ -47,17 +47,14 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerCategories"
+        android:id="@+id/testRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:padding="16dp"
-        android:numColumns="2"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/layoutSearch"/>
 
 
