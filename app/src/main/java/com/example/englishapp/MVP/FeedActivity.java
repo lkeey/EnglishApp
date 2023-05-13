@@ -2,16 +2,29 @@ package com.example.englishapp.MVP;
 
 import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.MVP.DataBase.findUserById;
+import static com.example.englishapp.messaging.Constants.KEY_CHECK_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.Manifest;
+import android.app.AlarmManager;
+import android.app.Dialog;
+import android.app.PendingIntent;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -25,11 +38,14 @@ import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
 import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
+import com.example.englishapp.alarm.AlarmReceiver;
 import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
 import com.example.englishapp.chat.DiscussFragment;
+import com.example.englishapp.chat.MainChatFragment;
 import com.example.englishapp.chat.MapUsersFragment;
 import com.example.englishapp.location.LocationManager;
+import com.example.englishapp.location.LocationService;
 import com.example.englishapp.location.LocationWork;
 import com.example.englishapp.location.PermissionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -46,10 +62,13 @@ public class FeedActivity extends BaseActivity {
     };
 
     private final String[] background_location_permission = {
-//            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
     };
 
     private Toolbar toolbar;
+    private TextView textClose;
+    private Button btnOpenSettings;
+    private Dialog progressLocation;
     private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener;
 
     @Override
@@ -59,13 +78,80 @@ public class FeedActivity extends BaseActivity {
 
         init();
 
+        setListeners();
+
         receiveData();
 
-//        startCheckingPosition();
+        showDialogLocation();
 
         // start CategoryFragment at first
         setFragment(new CategoryFragment());
 
+    }
+
+    private void setListeners() {
+        textClose.setOnClickListener(v -> progressLocation.dismiss());
+
+        btnOpenSettings.setOnClickListener(v -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
+    }
+
+    private void showDialogLocation() {
+
+        if(!LocationManager.getInstance(this).isLocationEnabled()) {
+            progressLocation.show();
+        }
+
+        try {
+            PermissionManager permissionManager = PermissionManager.getInstance(this);
+
+            permissionManager.askPermissions(FeedActivity.this, foreground_location_permissions, 1);
+
+            if (!permissionManager.checkPermissions(background_location_permission)) {
+                Log.i(TAG, String.valueOf(permissionManager.checkPermissions(background_location_permission)));
+                permissionManager.askPermissions(FeedActivity.this, background_location_permission, 2);
+            }
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+            Intent intent = new Intent(FeedActivity.this, AlarmReceiver.class);
+            intent.putExtra(KEY_CHECK_LOCATION, true);
+
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(FeedActivity.this, 1, intent, PendingIntent.FLAG_MUTABLE);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 15 * 100, pendingIntent);
+
+            Log.i(TAG, "Successfully set");
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
+    }
+
+    private void showDialogLocationOld() {
+        Log.i(TAG, "Enable - " + LocationManager.getInstance(this).isLocationEnabled());
+
+        JobScheduler jobScheduler = getSystemService(JobScheduler.class);
+        ComponentName componentName = new ComponentName(this, LocationService.class);
+        JobInfo.Builder info = new JobInfo.Builder(1111, componentName);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            info.setRequiresBatteryNotLow(true);
+        }
+
+        info.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE);
+
+        info.setPeriodic(1*60*100); // 1 minute
+        info.setMinimumLatency(100);
+
+        if (jobScheduler != null) {
+            int result = jobScheduler.schedule(info.build());
+
+            if (result == JobScheduler.RESULT_SUCCESS) {
+                Log.i(TAG, "Job started");
+            } else {
+                Log.i(TAG, "Can not start job");
+            }
+
+        }
     }
 
     private void startCheckingPosition() {
@@ -80,9 +166,6 @@ public class FeedActivity extends BaseActivity {
 
         } else {
 
-//            TODO launch worker from service
-//            and check there if location enables, then start worker
-//            worker will live always
             if (locationManager.isLocationEnabled()) {
                 Log.i(TAG, "location enable");
 
@@ -150,6 +233,16 @@ public class FeedActivity extends BaseActivity {
 
     private void init() {
         try {
+
+            progressLocation = new Dialog(this);
+            progressLocation.setContentView(R.layout.dialog_check_location);
+            progressLocation.setCancelable(false);
+            progressLocation.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            progressLocation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+            textClose = progressLocation.findViewById(R.id.textCancel);
+            btnOpenSettings = progressLocation.findViewById(R.id.btnOpenSettings);
+
             toolbar = findViewById(R.id.toolbar);
 
             Log.i(TAG, "Toolbar found");
@@ -175,6 +268,10 @@ public class FeedActivity extends BaseActivity {
                     setFragment(new ProfileInfoFragment());
                     return true;
 
+                case R.id.nav_chat_menu:
+                    setFragment(new MainChatFragment());
+                    return true;
+
                 case R.id.nav_leader_menu:
                     setFragment(new ChatFragment());
                     return true;
@@ -182,6 +279,7 @@ public class FeedActivity extends BaseActivity {
                 case R.id.nav_account_menu:
                         setFragment(new MapUsersFragment());
                     return true;
+
             }
             return false;
         };

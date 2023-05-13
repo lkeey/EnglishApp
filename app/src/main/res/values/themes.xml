@@ -1,17 +1,29 @@
 <resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- Base application theme. -->
     <style name="Theme.EnglishApp" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
+
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorSecondary">@color/design_default_color_primary</item>
+        <item name="colorSecondaryVariant">@color/design_default_color_primary</item>
         <item name="colorOnSecondary">@color/black</item>
+
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/design_default_color_primary</item>
+
         <!-- Customize your theme here. -->
+        <item name="android:textSelectHandle">@color/design_default_color_primary</item>
+        <item name="android:textSelectHandleLeft">@color/design_default_color_primary</item>
+        <item name="android:textSelectHandleRight">@color/design_default_color_primary</item>
+        <item name="android:textCursorDrawable">@drawable/color_cursor</item>
+
+        <!--bottom navigation-->
+        <item name="android:navigationBarColor">@color/white</item>
+
     </style>
 
     <style name="ThemeWithActionBar" parent="Theme.AppCompat.Light.DarkActionBar" />

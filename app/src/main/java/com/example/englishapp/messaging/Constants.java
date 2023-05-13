@@ -44,5 +44,7 @@ public class Constants {
     public static final String KEY_CATEGORY_NAME = "CATEGORY_NAME";
     public static final String KEY_CATEGORY_NUMBER_OF_TESTS = "CATEGORY_NUMBER_OF_TESTS";
     public static final String KEY_AMOUNT_CATEGORIES = "AMOUNT_CATEGORIES";
+    public static final String KEY_CHECK_LOCATION = "KEY_CHECK_LOCATION";
+
 
 }

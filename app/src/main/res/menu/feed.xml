@@ -7,11 +7,14 @@
         android:title="Home"/>
 
     <item
+        android:id="@+id/nav_chat_menu"
+        android:icon="@drawable/ic_chat"
+        android:title="Chat"/>
+
+    <item
         android:id="@+id/nav_leader_menu"
         android:icon="@drawable/ic_leader"
-        android:title="Leader Bord"
-
-        />
+        android:title="Leader Bord"/>
 
     <item
         android:id="@+id/nav_account_menu"

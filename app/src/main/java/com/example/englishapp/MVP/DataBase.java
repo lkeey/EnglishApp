@@ -317,8 +317,23 @@ public class DataBase {
 //                .limit(20)
 //                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
 //                .toString();
+        String randomID = null;
 
-        String randomID = RandomStringUtils.random(20, true, true);
+        while (true) {
+            try {
+
+                randomID = RandomStringUtils.random(20, true, true);
+
+                Log.i(TAG, "random id - " + randomID);
+
+                findCategoryById(randomID);
+
+            } catch (Exception e) {
+                Log.i(TAG, "not found category");
+
+                break;
+            }
+        }
 
         categoryData.put(KEY_CATEGORY_ID, randomID);
         categoryData.put(KEY_CATEGORY_NAME, name);
@@ -339,13 +354,14 @@ public class DataBase {
 
         batch.update(docReference, KEY_AMOUNT_CATEGORIES, FieldValue.increment(1));
 
+        String randomId = randomID;
         batch.commit().addOnSuccessListener(unused -> {
 
             Log.i(TAG, "Category was successfully created");
 
             LIST_OF_CATEGORIES.add(new CategoryModel(
                     name,
-                    randomID,
+                    randomId,
                     0
             ));
 
@@ -440,6 +456,14 @@ public class DataBase {
         reference.update(KEY_LOCATION, new GeoPoint(Double.parseDouble(latitude), Double.parseDouble(longitude)))
                 .addOnSuccessListener(unused -> listener.OnSuccess())
                 .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static CategoryModel findCategoryById(String categoryId) {
+
+        return LIST_OF_CATEGORIES.stream().filter(category -> category.getId().equals(categoryId)).findAny()
+                .orElseThrow(() -> new RuntimeException("not found"));
+
+
     }
 
 }

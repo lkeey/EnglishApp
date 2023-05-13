@@ -1,28 +1,14 @@
 package com.example.englishapp;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.content.Context;
-import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.media.RingtoneManager;
-import android.os.Build;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 
 public class ArrayActivity {
     private static Context context;
@@ -36,7 +22,7 @@ public class ArrayActivity {
 
     public void createWallPaper() {
 
-        int[] colors = new int[300*300];
+        int[] colors = new int[300 * 300];
 
         Bitmap bitmapAlpha = Bitmap.createBitmap(colors, 300, 300, Bitmap.Config.ARGB_8888);
 
@@ -61,6 +47,18 @@ public class ArrayActivity {
 
         Notification notification = notificationBuilder.build();
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context.getApplicationContext());
+
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
         notificationManagerCompat.notify(reqCode, notification);
     }
 
