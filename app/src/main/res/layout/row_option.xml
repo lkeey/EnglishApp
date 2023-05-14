@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingTop="8dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
+
+        <EditText
+            android:id="@+id/editTextOption"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Option"
+            android:textSize="16sp"
+            android:paddingLeft="10dp"
+            android:background="@drawable/round_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintWidth_percent="0.5"/>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/round_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/editTextOption">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinnerOptions"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp" />
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/imageRemoveOption"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_close"
+            app:tint="@color/red"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/frameLayout"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_layout_test"
+        android:elevation="5dp"
+        android:layout_margin="4dp"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="8dp"
+                android:padding="8dp"
+                android:paddingLeft="12dp"
+                android:hint="Write Question"
+                android:textSize="20sp"
+                android:textColorHint="@color/white"
+                android:textColor="@color/white"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/imageRemove"/>
+
+            <ImageView
+                android:id="@+id/imageRemove"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginRight="8dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_close"
+                app:tint="@color/red"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layoutListOptions"
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAddOption"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Add Option"
+            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginBottom="8dp"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:drawableLeft="@drawable/ic_add"
+            android:drawablePadding="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/round_primary"/>
+
+    </LinearLayout>
+
+</LinearLayout>

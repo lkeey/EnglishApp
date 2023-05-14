@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
+import com.example.englishapp.testsAndWords.CategoryClickedListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +23,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     private static final String TAG = "AdapterCategory";
     private List<CategoryModel> categoryModelList;
+    private CategoryClickedListener listener;
     private List<CategoryModel> allCategories;
     private Context context;
     private Timer timer;
 
-    public CategoryAdapter(List<CategoryModel> categoryModelList, Context context) {
+    public CategoryAdapter(List<CategoryModel> categoryModelList, CategoryClickedListener listener, Context context) {
         this.categoryModelList = categoryModelList;
         this.context = context;
+        this.listener = listener;
         allCategories = categoryModelList;
     }
 
@@ -107,27 +109,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
 
         public void setData(int position) {
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    try {
-
-//                        DbQuery.selectedCategoryIndex = position;
-//                        Log.i(TAG, String.valueOf(position));
-//                        Intent intent = new Intent(context, TestActivity.class);
-//                        intent.putExtra("position_selected", position); // or uid
-//                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        context.startActivity(intent);
-
-                        Toast.makeText(context, "Clicked on - " + categoryModelList.get(position).getName(), Toast.LENGTH_SHORT).show();
-
-                    } catch (Exception e) {
-                        Log.i(TAG, e.getMessage());
-                    }
-
-                }
-            });
+            itemView.setOnClickListener(v -> listener.onCategoryClicked(categoryModelList.get(position)));
 
             categoryName.setText(categoryModelList.get(position).getName());
             numberOfTests.setText(String.valueOf(categoryModelList.get(position).getNumberOfTests()));

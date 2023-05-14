@@ -57,7 +57,7 @@ public class DataBase {
 
     private static final String TAG = "FirestoreDB";
     public static String CURRENT_CONVERSATION_ID = null;
-    public static final String CHOSEN_CATEGORY_ID = null;
+    public static String CHOSEN_CATEGORY_ID = null;
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;

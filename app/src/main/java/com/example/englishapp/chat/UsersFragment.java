@@ -91,6 +91,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             fragment.setArguments(bundle);
 
             ((FeedActivity) getActivity()).setFragment(fragment);
+
         } else {
             Toast.makeText(getActivity(), "It's You!", Toast.LENGTH_SHORT).show();
         }

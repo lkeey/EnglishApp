@@ -81,6 +81,11 @@ public class FeedActivity extends BaseActivity {
         textClose.setOnClickListener(v -> progressLocation.dismiss());
 
         btnOpenSettings.setOnClickListener(v -> startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS)));
+
+        btnOpenSettings.setOnClickListener(v -> {
+            startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            progressLocation.dismiss();
+        });
     }
 
     private void showDialogLocation() {
@@ -300,6 +305,5 @@ public class FeedActivity extends BaseActivity {
     public void setTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
-
 
 }

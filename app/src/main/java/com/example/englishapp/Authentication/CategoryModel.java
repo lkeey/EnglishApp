@@ -1,6 +1,8 @@
 package com.example.englishapp.Authentication;
 
-public class CategoryModel {
+import java.io.Serializable;
+
+public class CategoryModel implements Serializable {
     private String name;
     private String id;
     private int numberOfTests;

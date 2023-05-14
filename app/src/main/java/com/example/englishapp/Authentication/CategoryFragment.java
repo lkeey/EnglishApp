@@ -1,5 +1,7 @@
 package com.example.englishapp.Authentication;
 
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_CATEGORY;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,8 +27,10 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.testsAndWords.CategoryClickedListener;
+import com.example.englishapp.testsAndWords.SplashLearningFragment;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements CategoryClickedListener {
 
     private static final String TAG = "CategoryFragment";
     private CategoryAdapter categoryAdapter;
@@ -124,11 +128,17 @@ public class CategoryFragment extends Fragment {
 
     private void init(View view) {
 
+        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        ((FeedActivity) getActivity()).getSupportActionBar().setTitle("Categories");
+        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+
         recyclerCategories = view.findViewById(R.id.recyclerCategories);
         imgAddCategory = view.findViewById(R.id.imgAddCategory);
         inputSearch = view.findViewById(R.id.inputSearch);
 
-        categoryAdapter = new CategoryAdapter(DataBase.LIST_OF_CATEGORIES, getActivity());
+        categoryAdapter = new CategoryAdapter(DataBase.LIST_OF_CATEGORIES, this, getActivity());
         recyclerCategories.setAdapter(categoryAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -156,5 +166,19 @@ public class CategoryFragment extends Fragment {
         ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
         ((FeedActivity) getActivity()).getSupportActionBar().setTitle("Feed");
 
+    }
+
+    @Override
+    public void onCategoryClicked(CategoryModel category) {
+        Log.i(TAG, "Category - " + category.getName());
+
+        DataBase.CHOSEN_CATEGORY_ID = category.getId();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_CHOSEN_CATEGORY, category);
+        SplashLearningFragment fragment = new SplashLearningFragment();
+        fragment.setArguments(bundle);
+
+        ((FeedActivity) getActivity()).setFragment(fragment);
     }
 }

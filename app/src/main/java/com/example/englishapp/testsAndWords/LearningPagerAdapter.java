@@ -29,7 +29,7 @@ public class LearningPagerAdapter extends FragmentStateAdapter {
             default:
                 Log.i(TAG, "WordsFragment");
 
-                return new ChatFragment();
+                return new TestsFragment();
         }
     }
 
