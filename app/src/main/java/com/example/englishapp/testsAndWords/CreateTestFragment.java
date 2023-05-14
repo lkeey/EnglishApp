@@ -1,5 +1,8 @@
 package com.example.englishapp.testsAndWords;
 
+import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,11 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.MVP.CompleteListener;
+import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.FeedActivity;
 import com.example.englishapp.R;
 
@@ -25,6 +32,11 @@ public class CreateTestFragment extends Fragment {
     private static final String TAG = "CreateTestFragment";
     private LinearLayout layoutList;
     private Button btnAdd, btnSubmit;
+    private NumberPicker numberPicker;
+    private EditText testName;
+    private int timeDoing;
+    private Dialog progressBar;
+    private TextView dialogText;
     private final ArrayList<QuestionModel> listOfQuestions = new ArrayList<>();
     private List<String> stringListOption = new ArrayList<>();
 
@@ -50,9 +62,25 @@ public class CreateTestFragment extends Fragment {
         layoutList = view.findViewById(R.id.layoutList);
         btnAdd = view.findViewById(R.id.btnAddQuestion);
         btnSubmit = view.findViewById(R.id.btnSubmit);
+        testName = view.findViewById(R.id.testName);
+        numberPicker = view.findViewById(R.id.numberPicker);
+
+        progressBar = new Dialog(getActivity());
+        progressBar.setContentView(R.layout.dialog_layout);
+        progressBar.setCancelable(false);
+        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialogText = progressBar.findViewById(R.id.dialogText);
+        dialogText.setText(R.string.progressBarSaving);
 
         stringListOption.add("Wrong");
         stringListOption.add("Correct");
+
+        numberPicker.setMinValue(1);
+        numberPicker.setMaxValue(60);
+
+        timeDoing = 0;
     }
 
     private void setListeners() {
@@ -60,11 +88,34 @@ public class CreateTestFragment extends Fragment {
             if (readData()) {
                 // if data is valid
 
-                Toast.makeText(getActivity(), "All okay", Toast.LENGTH_SHORT).show();
+                progressBar.show();
+
+                DataBase.createTestData(listOfQuestions, testName.getText().toString(), timeDoing, new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Log.i(TAG, "Successfully created");
+
+                        Toast.makeText(getActivity(), "Test successfully created", Toast.LENGTH_SHORT).show();
+
+                        progressBar.dismiss();
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not create test");
+
+                        Toast.makeText(getActivity(), "Error occurred while saving test data", Toast.LENGTH_SHORT).show();
+
+                        progressBar.dismiss();
+                    }
+                });
+
             }
         });
 
         btnAdd.setOnClickListener(view -> addView());
+
+        numberPicker.setOnValueChangedListener((picker, oldVal, newVal) -> timeDoing = newVal);
     }
 
     private boolean readData() {
@@ -72,6 +123,18 @@ public class CreateTestFragment extends Fragment {
         boolean resultOption;
 
         listOfQuestions.clear();
+
+        if (testName.getText().toString().isEmpty()) {
+            Toast.makeText(getActivity(), "Name must be not empty", Toast.LENGTH_SHORT).show();
+
+            return false;
+        }
+
+        if (timeDoing < 1) {
+            Toast.makeText(getActivity(), "Please, choose time doing", Toast.LENGTH_SHORT).show();
+
+            return false;
+        }
 
         for(int i=0; i < layoutList.getChildCount(); i++) {
             resultOption = false;
@@ -112,9 +175,13 @@ public class CreateTestFragment extends Fragment {
                 if (spinnerOption.getSelectedItemPosition() == 1) {
 
                     resultOption = true;
+
+                    optionModel.setCorrect(true);
+
+                } else {
+                    optionModel.setCorrect(false);
                 }
 
-                optionModel.setCorrect(Boolean.parseBoolean(stringListOption.get(spinnerOption.getSelectedItemPosition())));
 
                 Log.i(TAG, "Option - " + optionModel.getOption() + " - " + optionModel.isCorrect());
 
@@ -147,7 +214,7 @@ public class CreateTestFragment extends Fragment {
 
         }
 
-        Toast.makeText(getActivity(), "Sending", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Data Is Valid", Toast.LENGTH_SHORT).show();
 
         return true;
     }

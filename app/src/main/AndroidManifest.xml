@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" >
 
     <uses-feature
         android:name="android.hardware.telephony"
@@ -14,7 +13,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -23,13 +22,15 @@
         android:icon="@drawable/app_logo"
         android:label="@string/app_name"
         android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/app_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.EnglishApp"
-        tools:targetApi="28"
-        android:requestLegacyExternalStorage="true" >
-
-        <!--TODO change-->
+        tools:targetApi="28" >
+        <activity
+            android:name=".testsAndWords.MainActivity"
+            android:exported="false" />
+        <!-- TODO change -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
@@ -37,7 +38,7 @@
         <activity
             android:name=".MVP.FeedActivity"
             android:exported="false"
-            android:label="@string/title_activity_feed"/>
+            android:label="@string/title_activity_feed" />
         <activity
             android:name=".Authentication.MainAuthenticationActivity"
             android:exported="false" />
@@ -48,32 +49,29 @@
             android:name=".MVP.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
             android:name=".CreateTestActivity"
-            android:exported="false">
+            android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".TestsFeed"
-            android:exported="false">
+            android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".DeleteProfileActivity"
-            android:exported="false">
+            android:exported="false" >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".MVP.SplashActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -87,7 +85,7 @@
         <activity
             android:name=".LoggingActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -99,7 +97,7 @@
         <activity
             android:name=".CheckingActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -111,7 +109,7 @@
         <activity
             android:name=".GreetingActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -123,7 +121,7 @@
         <activity
             android:name=".RegisterActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -136,7 +134,7 @@
             android:name=".ProfileActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeWithActionBar">
+            android:theme="@style/ThemeWithActionBar" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -148,7 +146,7 @@
         <activity
             android:name=".MVP.ForgotPasswordActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -161,7 +159,7 @@
             android:name=".UploadProfilePictureActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeWithActionBar">
+            android:theme="@style/ThemeWithActionBar" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -174,7 +172,7 @@
             android:name=".UpdateProfileActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeWithActionBar">
+            android:theme="@style/ThemeWithActionBar" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -187,7 +185,7 @@
             android:name=".UpdateEmailActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeWithActionBar">
+            android:theme="@style/ThemeWithActionBar" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -200,7 +198,7 @@
             android:name=".ChangePasswordActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeWithActionBar">
+            android:theme="@style/ThemeWithActionBar" >
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
@@ -214,27 +212,25 @@
             android:name=".WallpaperService"
             android:enabled="true"
             android:exported="false" />
-
         <service
             android:name=".messaging.MessageService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".chat.LocationService"
             android:enabled="true"
-            android:exported="false">
+            android:exported="false" >
         </service>
         <service
-            android:name="com.example.englishapp.location.LocationService"
+            android:name=".location.LocationService"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <receiver android:name="com.example.englishapp.alarm.AlarmReceiver" />
+        <receiver android:name=".alarm.AlarmReceiver" />
     </application>
 
 </manifest>

@@ -40,7 +40,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         boolean isChecking = intent.getBooleanExtra(KEY_CHECK_LOCATION, false);
 
         if (isChecking) {
-            startCheckingPosition(context);
+            Log.i(TAG, "received");
+            //startCheckingPosition(context);
 
         } else {
             sendNotification(context);

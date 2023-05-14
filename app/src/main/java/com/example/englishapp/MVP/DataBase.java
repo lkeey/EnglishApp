@@ -4,13 +4,16 @@ import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_DISCUSSIONS;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_TESTS;
+import static com.example.englishapp.messaging.Constants.KEY_ANSWER;
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NUMBER_OF_TESTS;
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_CATEGORY;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_QUESTIONS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_TESTS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
@@ -21,10 +24,14 @@ import static com.example.englishapp.messaging.Constants.KEY_GENDER;
 import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_NUMBER_OF_QUESTIONS;
+import static com.example.englishapp.messaging.Constants.KEY_OPTION;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
+import static com.example.englishapp.messaging.Constants.KEY_QUESTION_ID;
 import static com.example.englishapp.messaging.Constants.KEY_SCORE;
 import static com.example.englishapp.messaging.Constants.KEY_TEST_ID;
 import static com.example.englishapp.messaging.Constants.KEY_TEST_NAME;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_QUESTION;
 import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_USER_PERSONAL_INFORMATION;
@@ -35,6 +42,8 @@ import android.util.ArrayMap;
 import android.util.Log;
 
 import com.example.englishapp.Authentication.CategoryModel;
+import com.example.englishapp.testsAndWords.OptionModel;
+import com.example.englishapp.testsAndWords.QuestionModel;
 import com.example.englishapp.testsAndWords.TestModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -65,6 +74,8 @@ public class DataBase {
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
+    public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
+
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -357,14 +368,16 @@ public class DataBase {
                 .collection(KEY_COLLECTION_CATEGORIES)
                 .document(randomID);
 
-
         batch.set(categoryDocument, categoryData);
 
+        // update statistics
         DocumentReference docReference = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_STATISTICS)
                 .document(KEY_AMOUNT_CATEGORIES);
 
         batch.update(docReference, KEY_AMOUNT_CATEGORIES, FieldValue.increment(1));
+
+        Log.i(TAG, "set category data");
 
         String randomId = randomID;
         batch.commit().addOnSuccessListener(unused -> {
@@ -518,65 +531,129 @@ public class DataBase {
 
     }
 
-    public static void createTestData(String name, int time, CompleteListener listener) {
-        Map<String, Object> testData = new ArrayMap<>();
+    public static void createTestData(ArrayList<QuestionModel> listOfQuestions, String name, int time, CompleteListener listener) {
+        try {
+            Map<String, Object> testData = new ArrayMap<>();
 
-        String randomID = null;
+            String randomID = null;
 
-        while (true) {
-            try {
+            while (true) {
+                try {
 
-                randomID = RandomStringUtils.random(20, true, true);
+                    randomID = RandomStringUtils.random(20, true, true);
 
-                Log.i(TAG, "random id - " + randomID);
+                    Log.i(TAG, "random id - " + randomID);
 
-                findTestById(randomID);
+                    findTestById(randomID);
 
-            } catch (Exception e) {
-                Log.i(TAG, "not found category");
+                } catch (Exception e) {
+                    Log.i(TAG, "not found test");
 
-                break;
+                    break;
+                }
             }
-        }
 
-        testData.put(KEY_TEST_ID, randomID);
-        testData.put(KEY_TEST_NAME, name);
-        testData.put(KEY_TEST_TIME, time);
-        testData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
+            testData.put(KEY_TEST_ID, randomID);
+            testData.put(KEY_TEST_NAME, name);
+            testData.put(KEY_TEST_TIME, time);
+            testData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
+
+            Log.i(TAG, "set test data");
+
+            WriteBatch batch = DATA_FIRESTORE.batch();
+
+            DocumentReference testDocument = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_TESTS)
+                    .document(randomID);
+
+            batch.set(testDocument, testData);
+
+            Log.i(TAG, "set batch");
+
+            // update amount of tests in category
+            DocumentReference docCategory = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_CATEGORIES)
+                    .document(KEY_CHOSEN_CATEGORY);
+
+            batch.update(docCategory, KEY_CATEGORY_NUMBER_OF_TESTS, FieldValue.increment(1));
+
+            Log.i(TAG, "update amount");
+
+            // update statistics
+            DocumentReference docReference = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_STATISTICS)
+                    .document(KEY_AMOUNT_TESTS);
+
+            batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+
+            Log.i(TAG, "update statistics");
+
+            String randomId = randomID;
+            batch.commit().addOnSuccessListener(unused -> {
+
+                Log.i(TAG, "Test was successfully created");
+
+                LIST_OF_TESTS.add(new TestModel(
+                        randomId,
+                        name,
+                        0,
+                        time
+                ));
+
+                createQuestionData(listOfQuestions, randomId, listener);
+
+            }).addOnFailureListener(e -> {
+                Log.i(TAG, "Can not create test - " + e.getMessage());
+
+                listener.OnFailure();
+            });
+        } catch (Exception e) {
+            Log.i(TAG, "error - " + e.getMessage());
+        }
+    }
+
+    public static void createQuestionData(ArrayList<QuestionModel> listOfQuestions, String testID, CompleteListener listener) {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
 
-        DocumentReference testDocument = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_TESTS)
-                .document(randomID);
+        for(int i=0; i < listOfQuestions.size(); i++) {
 
+            Map<String, Object> questionData = new ArrayMap<>();
 
-        batch.set(testDocument, testData);
+            QuestionModel questionModel = listOfQuestions.get(i);
 
-        // update statistics
-        DocumentReference docReference = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_STATISTICS)
-                .document(KEY_AMOUNT_TESTS);
+            Log.i(TAG, "questionModel - " + questionModel.getQuestion());
 
-        batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+            questionData.put(KEY_QUESTION_ID, CHOSEN_CATEGORY_ID + "_" + testID + "_" + i);
+            questionData.put(KEY_TEST_QUESTION, questionModel.getQuestion());
+            questionData.put(KEY_NUMBER_OF_QUESTIONS, questionModel.getOptionsList().size());
 
-        String randomId = randomID;
+            for (int n=0; n < questionModel.getOptionsList().size(); n++) {
+                OptionModel optionModel = questionModel.getOptionsList().get(n);
+
+                Log.i(TAG, "optionModel - " + optionModel.getOption());
+
+                if (optionModel.isCorrect()) {
+                    questionData.put(KEY_ANSWER, n);
+                }
+
+                questionData.put(KEY_OPTION + "_" + n, optionModel.getOption());
+
+            }
+
+            DocumentReference questionDocument = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_QUESTIONS)
+                    .document(KEY_CHOSEN_CATEGORY + "_" + i);
+
+            batch.set(questionDocument, questionData);
+
+        }
+
         batch.commit().addOnSuccessListener(unused -> {
-
-            Log.i(TAG, "Test was successfully created");
-
-            LIST_OF_TESTS.add(new TestModel(
-                    randomId,
-                    name,
-                    0,
-                    time
-            ));
-
+            Log.i(TAG, "Questions successfully added");
             listener.OnSuccess();
-
         }).addOnFailureListener(e -> {
-            Log.i(TAG, "Can not create test - " + e.getMessage());
-
+            Log.i(TAG, "Fail to save test - " + e.getMessage());
             listener.OnFailure();
         });
 
@@ -608,5 +685,6 @@ public class DataBase {
         return LIST_OF_TESTS.stream().filter(test -> test.getId().equals(testId)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
+
 
 }

@@ -70,7 +70,7 @@ public class FeedActivity extends BaseActivity {
 
         receiveData();
 
-        showDialogLocation();
+//        showDialogLocation();
 
         // start CategoryFragment at first
         setFragment(new CategoryFragment());

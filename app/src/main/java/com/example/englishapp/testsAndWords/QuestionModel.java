@@ -5,14 +5,24 @@ import java.util.ArrayList;
 
 public class QuestionModel implements Serializable {
 
+    private String id;
     private String question;
     private ArrayList<OptionModel> optionsList;
 
     public QuestionModel () {}
 
-    public QuestionModel(String question, ArrayList<OptionModel> optionsList) {
+    public QuestionModel(String id, String question, ArrayList<OptionModel> optionsList) {
+        this.id = id;
         this.question = question;
         this.optionsList = optionsList;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getQuestion() {

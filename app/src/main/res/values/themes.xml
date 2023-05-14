@@ -16,9 +16,6 @@
         <item name="android:statusBarColor">@color/design_default_color_primary</item>
 
         <!-- Customize your theme here. -->
-        <item name="android:textSelectHandle">@color/design_default_color_primary</item>
-        <item name="android:textSelectHandleLeft">@color/design_default_color_primary</item>
-        <item name="android:textSelectHandleRight">@color/design_default_color_primary</item>
         <item name="android:textCursorDrawable">@drawable/color_cursor</item>
 
         <!--bottom navigation-->
