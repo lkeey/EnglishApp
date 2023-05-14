@@ -27,16 +27,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EnglishApp"
         tools:targetApi="28" >
-        <activity
-            android:name=".testsAndWords.MainActivity"
-            android:exported="false" />
         <!-- TODO change -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
 
         <activity
-            android:name=".MVP.FeedActivity"
+            android:name=".MVP.MainActivity"
             android:exported="false"
             android:label="@string/title_activity_feed" />
         <activity

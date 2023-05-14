@@ -78,7 +78,7 @@ public class SplashActivity extends AppCompatActivity {
                 loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
+                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
                         intent.putExtra(KEY_USER_UID, userUID);
 
@@ -115,7 +115,7 @@ public class SplashActivity extends AppCompatActivity {
                 DataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        Intent intent = new Intent(SplashActivity.this, FeedActivity.class);
+                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
                         startActivity(intent);
                         SplashActivity.this.finish();

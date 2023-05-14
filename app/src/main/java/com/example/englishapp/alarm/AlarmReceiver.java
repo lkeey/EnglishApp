@@ -21,7 +21,7 @@ import androidx.work.BackoffPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.example.englishapp.location.LocationManager;
 import com.example.englishapp.location.LocationWork;
@@ -102,7 +102,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
 
         // what to open after click on notification
-        Intent notificationIntent = new Intent(context, FeedActivity.class);
+        Intent notificationIntent = new Intent(context, MainActivity.class);
 
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 

@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.example.englishapp.messaging.Constants;
@@ -84,11 +84,7 @@ public class DiscussFragment extends Fragment {
         inputMessage = view.findViewById(R.id.inputMessage);
         textStatus = view.findViewById(R.id.statusText);
 
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle(receivedUser.getName());
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle(receivedUser.getName());
 
         chatMessages = new ArrayList<>();
 

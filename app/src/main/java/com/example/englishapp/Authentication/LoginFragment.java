@@ -26,7 +26,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -197,7 +197,7 @@ public class LoginFragment extends Fragment {
                                         try {
                                             Log.i(TAG, "STARTING ACTIVITY");
 
-                                            Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                            Intent intent = new Intent(getActivity(), MainActivity.class);
                                             intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
                                             startActivity(intent);
                                             Log.i(TAG, "STARTED");
@@ -231,7 +231,7 @@ public class LoginFragment extends Fragment {
                             public void OnSuccess() {
                                 progressBar.dismiss();
 
-                                Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
                                 getActivity().finish();
                             }
@@ -283,7 +283,7 @@ public class LoginFragment extends Fragment {
                             public void OnSuccess() {
                                 progressBar.dismiss();
 
-                                Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
                                 getActivity().finish();
 

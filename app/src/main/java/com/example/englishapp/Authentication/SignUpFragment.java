@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -97,7 +97,7 @@ public class SignUpFragment extends Fragment {
 
                                     progressBar.dismiss();
 
-                                    Intent intent = new Intent(getActivity(), FeedActivity.class);
+                                    Intent intent = new Intent(getActivity(), MainActivity.class);
                                     intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
                                     startActivity(intent);
                                     getActivity().finish();

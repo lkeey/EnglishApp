@@ -1,7 +1,5 @@
 package com.example.englishapp.testsAndWords;
 
-import static com.example.englishapp.MVP.DataBase.CHOSEN_CATEGORY_ID;
-
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -21,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 
 public class TestsFragment extends Fragment {
@@ -54,16 +52,12 @@ public class TestsFragment extends Fragment {
             CreateTestFragment fragment = new CreateTestFragment();
             fragment.setArguments(bundle);
 
-            ((FeedActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) getActivity()).setFragment(fragment);
         });
     }
 
     private void init(View view) {
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle(CHOSEN_CATEGORY_ID);
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle(R.string.nameTests);
 
         testRecycler = view.findViewById(R.id.testRecyclerView);
         imgAddTest = view.findViewById(R.id.imgAddTest);

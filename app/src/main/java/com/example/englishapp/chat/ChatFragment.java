@@ -23,9 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -42,6 +43,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
     private RecyclerView recyclerRecentlyChats;
     private RecentConversationAdapter conversationAdapter;
     private ArrayList recentChats;
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,7 +52,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
         init(view);
 
-//        Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into((ImageView) view.findViewById(R.id.imgview));
+        setListeners();
 
         getToken(new CompleteListener() {
             @Override
@@ -72,14 +74,15 @@ public class ChatFragment extends Fragment implements ConversationListener {
         return view;
     }
 
+    private void setListeners() {
+        fab.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new MapUsersFragment()));
+    }
+
     private void init(View view) {
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle(USER_MODEL.getName());
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle("Chats");
 
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
+        fab = view.findViewById(R.id.fab);
 
         recentChats = new ArrayList<>();
         DataBase.getListOfUsers(new CompleteListener() {
@@ -103,7 +106,6 @@ public class ChatFragment extends Fragment implements ConversationListener {
                 Log.i(TAG, "can not load users list");
             }
         });
-
 
     }
 
@@ -198,7 +200,8 @@ public class ChatFragment extends Fragment implements ConversationListener {
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((FeedActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) getActivity()).setFragment(fragment);
+
         } else {
             Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
         }

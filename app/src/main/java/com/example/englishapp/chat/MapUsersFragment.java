@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MapUsersFragment extends Fragment {
 
     private static final String TAG = "MapUsersFragment";
+    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,11 +42,10 @@ public class MapUsersFragment extends Fragment {
 
     private void init(View view) {
 
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle("Map");
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle("Map");
+        fab = view.findViewById(R.id.fab);
+
+        fab.setOnClickListener(v -> new UsersFragment().show(getChildFragmentManager(), "UsersFragment"));
 
     }
 }

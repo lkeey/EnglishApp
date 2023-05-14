@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.example.englishapp.testsAndWords.CategoryClickedListener;
 import com.example.englishapp.testsAndWords.SplashLearningFragment;
@@ -128,11 +128,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     private void init(View view) {
 
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle("Categories");
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle("Feed");
 
         recyclerCategories = view.findViewById(R.id.recyclerCategories);
         imgAddCategory = view.findViewById(R.id.imgAddCategory);
@@ -160,12 +156,6 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
         dialogText.setText(R.string.progressBarCreating);
 
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle("Feed");
-
     }
 
     @Override
@@ -179,6 +169,6 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         SplashLearningFragment fragment = new SplashLearningFragment();
         fragment.setArguments(bundle);
 
-        ((FeedActivity) getActivity()).setFragment(fragment);
+        ((MainActivity) getActivity()).setFragment(fragment);
     }
 }

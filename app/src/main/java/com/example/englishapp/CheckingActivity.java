@@ -2,8 +2,6 @@ package com.example.englishapp;
 
 import static android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,7 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.englishapp.MVP.MainActivity;
 
 import java.util.Random;
 

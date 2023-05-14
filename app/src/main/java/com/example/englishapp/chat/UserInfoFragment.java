@@ -13,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -49,7 +49,7 @@ public class UserInfoFragment extends BottomSheetDialogFragment {
                 DiscussFragment fragment = new DiscussFragment();
                 fragment.setArguments(bundle);
 
-                ((FeedActivity) getActivity()).setFragment(fragment);
+                ((MainActivity) getActivity()).setFragment(fragment);
 
                 UserInfoFragment.this.dismiss();
             } else {

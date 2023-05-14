@@ -28,20 +28,18 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.Authentication.ProfileInfoDialogFragment;
-import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.alarm.AlarmReceiver;
 import com.example.englishapp.chat.BaseActivity;
 import com.example.englishapp.chat.ChatFragment;
 import com.example.englishapp.chat.DiscussFragment;
-import com.example.englishapp.chat.MainChatFragment;
-import com.example.englishapp.chat.MapUsersFragment;
 import com.example.englishapp.location.LocationManager;
 import com.example.englishapp.location.PermissionManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
-public class FeedActivity extends BaseActivity {
-    private static final String TAG = "ActivityFeed";
+public class MainActivity extends BaseActivity {
+    private static final String TAG = "ActivityMain";
     private BottomNavigationView bottomNavigationView;
     private FrameLayout mainFrame;
     private final String[] foreground_location_permissions = {
@@ -57,12 +55,12 @@ public class FeedActivity extends BaseActivity {
     private TextView textClose;
     private Button btnOpenSettings;
     private Dialog progressLocation;
-    private BottomNavigationView.OnNavigationItemSelectedListener onNavigationItemSelectedListener;
+    private NavigationBarView.OnItemSelectedListener onNavigationItemSelectedListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_feed);
+        setContentView(R.layout.activity_main);
 
         init();
 
@@ -97,19 +95,19 @@ public class FeedActivity extends BaseActivity {
         try {
             PermissionManager permissionManager = PermissionManager.getInstance(this);
 
-            permissionManager.askPermissions(FeedActivity.this, foreground_location_permissions, 1);
+            permissionManager.askPermissions(MainActivity.this, foreground_location_permissions, 1);
 
             if (!permissionManager.checkPermissions(background_location_permission)) {
                 Log.i(TAG, String.valueOf(permissionManager.checkPermissions(background_location_permission)));
-                permissionManager.askPermissions(FeedActivity.this, background_location_permission, 2);
+                permissionManager.askPermissions(MainActivity.this, background_location_permission, 2);
             }
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-            Intent intent = new Intent(FeedActivity.this, AlarmReceiver.class);
+            Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
             intent.putExtra(KEY_CHECK_LOCATION, true);
 
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(FeedActivity.this, 1, intent, PendingIntent.FLAG_MUTABLE);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 1, intent, PendingIntent.FLAG_MUTABLE);
             alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 15 * 100, pendingIntent);
 
             Log.i(TAG, "Successfully set");
@@ -252,26 +250,35 @@ public class FeedActivity extends BaseActivity {
 
             switch (item.getItemId()) {
                 case R.id.nav_home_menu:
-                    setFragment(new ProfileInfoFragment());
+//                    setFragment(new ProfileInfoFragment());
+
+                    setFragment(new CategoryFragment());
+
                     return true;
 
                 case R.id.nav_chat_menu:
-                    setFragment(new MainChatFragment());
+
+                    setFragment(new ChatFragment());
+
                     return true;
 
                 case R.id.nav_leader_menu:
+
                     setFragment(new ChatFragment());
+
                     return true;
 
                 case R.id.nav_account_menu:
-                        setFragment(new MapUsersFragment());
+
+                    setFragment(new ProfileFragment());
+
                     return true;
 
             }
             return false;
         };
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener);
+        bottomNavigationView.setOnItemSelectedListener(onNavigationItemSelectedListener);
 
     }
 
@@ -288,10 +295,10 @@ public class FeedActivity extends BaseActivity {
 
         if (item.getItemId() == android.R.id.home) {
 
-            Log.i(TAG, "Stack of Fragments - " + getFragmentManager().getBackStackEntryCount());
+            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-            if (getFragmentManager().getBackStackEntryCount() > 2){
-                getFragmentManager().popBackStackImmediate();
+            if (getSupportFragmentManager().getBackStackEntryCount() > 2){
+                getSupportFragmentManager().popBackStackImmediate();
 
             } else {
                 super.onBackPressed();

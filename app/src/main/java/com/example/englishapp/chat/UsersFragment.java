@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.UserModel;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -90,7 +90,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((FeedActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) getActivity()).setFragment(fragment);
 
         } else {
             Toast.makeText(getActivity(), "It's You!", Toast.LENGTH_SHORT).show();

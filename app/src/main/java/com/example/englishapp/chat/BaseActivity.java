@@ -3,16 +3,15 @@ package com.example.englishapp.chat;
 import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.USER_MODEL;
 
-import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.englishapp.messaging.Constants;
 import com.google.firebase.firestore.DocumentReference;
+import com.instabug.library.Instabug;
+import com.instabug.library.invocation.InstabugInvocationEvent;
 
 public class BaseActivity extends AppCompatActivity {
 
@@ -25,19 +24,10 @@ public class BaseActivity extends AppCompatActivity {
         document = DATA_FIRESTORE.collection(Constants.KEY_COLLECTION_USERS)
                 .document(USER_MODEL.getUid());
 
-        LocationListener locationListener = new android.location.LocationListener() {
-
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-
-                double latitude = location.getLatitude();
-                double longitude = location.getLongitude();
-
-                document.set(location);
-
-
-            }
-        };
+        // instabug
+        new Instabug.Builder(getApplication(), "90431510fb778d8222a6eab9d08c4e3c")
+                .setInvocationEvents(InstabugInvocationEvent.SHAKE, InstabugInvocationEvent.SCREENSHOT, InstabugInvocationEvent.TWO_FINGER_SWIPE_LEFT)
+                .build();
     }
 
     @Override

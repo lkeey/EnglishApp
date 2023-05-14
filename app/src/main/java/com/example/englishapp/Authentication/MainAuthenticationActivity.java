@@ -23,7 +23,7 @@ public class MainAuthenticationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_authentication);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -51,10 +51,10 @@ public class MainAuthenticationActivity extends AppCompatActivity {
 
         if (item.getItemId() == android.R.id.home) {
 
-            Log.i(TAG, "Stack of Fragments - " + getFragmentManager().getBackStackEntryCount());
+            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-            if (getFragmentManager().getBackStackEntryCount() > 2){
-                getFragmentManager().popBackStackImmediate();
+            if (getSupportFragmentManager().getBackStackEntryCount() > 2){
+                getSupportFragmentManager().popBackStackImmediate();
 
             } else {
                 super.onBackPressed();

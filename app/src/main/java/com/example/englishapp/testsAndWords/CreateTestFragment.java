@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 
 import java.util.ArrayList;
@@ -53,11 +53,7 @@ public class CreateTestFragment extends Fragment {
     }
 
     private void init(View view) {
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setTitle(R.string.nameCreateTest);
-        ((FeedActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((FeedActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).setTitle(R.string.nameCreateTest);
 
         layoutList = view.findViewById(R.id.layoutList);
         btnAdd = view.findViewById(R.id.btnAddQuestion);

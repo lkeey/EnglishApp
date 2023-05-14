@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.englishapp.MVP.FeedActivity;
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -40,7 +40,7 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
         textClose.setOnClickListener(v -> this.dismiss());
 
         btnAgree.setOnClickListener(v -> (
-                (FeedActivity) getActivity()).setFragment(new ProfileInfoFragment())
+                (MainActivity) getActivity()).setFragment(new ProfileInfoFragment())
         );
 
         btnAgree.setOnClickListener(v -> {
@@ -50,7 +50,7 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
             ProfileInfoFragment fragment = new ProfileInfoFragment();
             fragment.setArguments(bundle);
 
-            ((FeedActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) getActivity()).setFragment(fragment);
             ProfileInfoDialogFragment.this.dismiss();
         });
     }
