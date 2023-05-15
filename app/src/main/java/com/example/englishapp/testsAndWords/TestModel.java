@@ -1,6 +1,8 @@
 package com.example.englishapp.testsAndWords;
 
-public class TestModel {
+import java.io.Serializable;
+
+public class TestModel implements Serializable {
     private String id;
     private String name;
     private int amountOfQuestion;

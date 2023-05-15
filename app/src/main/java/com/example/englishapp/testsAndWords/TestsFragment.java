@@ -1,5 +1,8 @@
 package com.example.englishapp.testsAndWords;
 
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_TEST;
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -105,6 +108,15 @@ public class TestsFragment extends Fragment implements TestClickedListener {
         Toast.makeText(getActivity(), "clicked - " + test.getName(), Toast.LENGTH_SHORT).show();
 
         DataBase.CHOSEN_TEST_ID = test.getId();
+
+        TestInfoDialogFragment fragment = new TestInfoDialogFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_CHOSEN_TEST, test);
+        fragment.setArguments(bundle);
+
+        fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+
 
     }
 }

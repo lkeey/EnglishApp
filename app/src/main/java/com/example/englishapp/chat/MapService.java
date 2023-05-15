@@ -4,20 +4,16 @@ import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
 import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.MVP.DataBase.findUserById;
 import static com.example.englishapp.MVP.DataBase.getListOfUsers;
-import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
-import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.content.Context;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentManager;
 
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.UserModel;
@@ -36,12 +32,12 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
     private static final String TAG = "MapService";
     private final Context context;
-    private final FragmentManager manager;
+    private final UserListener listener;
     private static List<MarkerOptions> markers;
 
-    public MapService(Context context, FragmentManager manager) {
+    public MapService(UserListener listener, Context context) {
+        this.listener = listener;
         this.context = context;
-        this.manager = manager;
         this.markers = new ArrayList<>();
     }
 
@@ -98,13 +94,6 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
                     Log.i(TAG, "OnFailure: ");
                 }
             });
-//            for(MarkerOptions marker: markers) {
-//                Log.i(TAG, "title " + marker.getTitle());
-//
-//                googleMap.addMarker(marker);
-//
-//                Log.i(TAG, "Added - " + marker.getTitle());
-//            }
 
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
@@ -113,15 +102,10 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
         googleMap.setOnMarkerClickListener(marker -> {
             try {
-                UserInfoFragment fragment = new UserInfoFragment();
 
                 UserModel user = findUserById(marker.getSnippet());
 
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(KEY_CHOSEN_USER_DATA, user);
-                fragment.setArguments(bundle);
-
-                fragment.show(manager, SHOW_FRAGMENT_DIALOG);
+                listener.onUserClicked(user);
 
             } catch (Exception e) {
                 Log.i(TAG, e.getMessage());

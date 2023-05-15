@@ -61,5 +61,6 @@ public class Constants {
     public static final String KEY_ANSWER = "ANSWER";
     public static final String KEY_COLLECTION_QUESTIONS = "QUESTIONS";
     public static final String KEY_QUESTION_ID = "QUESTION_ID";
+    public static final String KEY_CHOSEN_TEST = "KEY_CHOSEN_TEST";
 
 }
