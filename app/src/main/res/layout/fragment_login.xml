@@ -20,7 +20,7 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:drawableStart="@drawable/ic_account"
+            android:drawableStart="@drawable/ic_dog"
             android:drawableTint="@color/design_default_color_primary"
             android:drawablePadding="16dp"
             android:textColor="@color/design_default_color_primary"

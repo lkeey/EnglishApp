@@ -2,6 +2,7 @@ package com.example.englishapp.MVP;
 
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_DISCUSSIONS;
+import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_OF_QUESTIONS;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGES;
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_TESTS;
 import static com.example.englishapp.messaging.Constants.KEY_ANSWER;
@@ -9,7 +10,6 @@ import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NUMBER_OF_TESTS;
-import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_CATEGORY;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
@@ -67,6 +67,7 @@ public class DataBase {
     private static final String TAG = "FirestoreDB";
     public static String CURRENT_CONVERSATION_ID = null;
     public static String CHOSEN_CATEGORY_ID = null;
+    public static String CHOSEN_TEST_ID = null;
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
@@ -510,6 +511,7 @@ public class DataBase {
 
                         testModel.setId(documentSnapshot.getString(KEY_TEST_ID));
                         testModel.setName(documentSnapshot.getString(KEY_TEST_NAME));
+                        testModel.setAmountOfQuestion(documentSnapshot.getLong(KEY_AMOUNT_OF_QUESTIONS).intValue());
                         testModel.setTopScore(0);
                         testModel.setTime(documentSnapshot.getLong(KEY_TEST_TIME).intValue());
 
@@ -556,6 +558,7 @@ public class DataBase {
             testData.put(KEY_TEST_ID, randomID);
             testData.put(KEY_TEST_NAME, name);
             testData.put(KEY_TEST_TIME, time);
+            testData.put(KEY_AMOUNT_OF_QUESTIONS, listOfQuestions.size());
             testData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
 
             Log.i(TAG, "set test data");
@@ -571,9 +574,11 @@ public class DataBase {
             Log.i(TAG, "set batch");
 
             // update amount of tests in category
+            Log.i(TAG, "CHOSEN_CATEGORY_ID - " + CHOSEN_CATEGORY_ID);
+
             DocumentReference docCategory = DATA_FIRESTORE
                     .collection(KEY_COLLECTION_CATEGORIES)
-                    .document(KEY_CHOSEN_CATEGORY);
+                    .document(CHOSEN_CATEGORY_ID);
 
             batch.update(docCategory, KEY_CATEGORY_NUMBER_OF_TESTS, FieldValue.increment(1));
 
@@ -585,6 +590,7 @@ public class DataBase {
                     .document(KEY_AMOUNT_TESTS);
 
             batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+            batch.update(docReference, KEY_AMOUNT_OF_QUESTIONS, FieldValue.increment(listOfQuestions.size()));
 
             Log.i(TAG, "update statistics");
 
@@ -596,6 +602,7 @@ public class DataBase {
                 LIST_OF_TESTS.add(new TestModel(
                         randomId,
                         name,
+                        listOfQuestions.size(),
                         0,
                         time
                 ));
@@ -643,7 +650,7 @@ public class DataBase {
 
             DocumentReference questionDocument = DATA_FIRESTORE
                     .collection(KEY_COLLECTION_QUESTIONS)
-                    .document(KEY_CHOSEN_CATEGORY + "_" + i);
+                    .document(CHOSEN_CATEGORY_ID + "_" + testID +"_" + i);
 
             batch.set(questionDocument, questionData);
 

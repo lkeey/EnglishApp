@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +23,7 @@ import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 
-public class TestsFragment extends Fragment {
+public class TestsFragment extends Fragment implements TestClickedListener {
 
     private static final String TAG = "TestsFragment";
     private RecyclerView testRecycler;
@@ -82,8 +83,13 @@ public class TestsFragment extends Fragment {
         DataBase.loadTestsData(new CompleteListener() {
             @Override
             public void OnSuccess() {
+
+                TestAdapter testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
+                testRecycler.setAdapter(testAdapter);
+
                 Log.i(TAG, "Successfully loaded");
                 progressBar.dismiss();
+
             }
 
             @Override
@@ -92,5 +98,13 @@ public class TestsFragment extends Fragment {
                 progressBar.dismiss();
             }
         });
+    }
+
+    @Override
+    public void onTestClicked(TestModel test) {
+        Toast.makeText(getActivity(), "clicked - " + test.getName(), Toast.LENGTH_SHORT).show();
+
+        DataBase.CHOSEN_TEST_ID = test.getId();
+
     }
 }

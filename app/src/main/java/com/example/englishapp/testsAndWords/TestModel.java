@@ -3,14 +3,16 @@ package com.example.englishapp.testsAndWords;
 public class TestModel {
     private String id;
     private String name;
+    private int amountOfQuestion;
     private int topScore;
     private int time;
 
     public TestModel () {}
 
-    public TestModel(String id, String name, int topScore, int time) {
+    public TestModel(String id, String name, int amountOfQuestion, int topScore, int time) {
         this.id = id;
         this.name = name;
+        this.amountOfQuestion = amountOfQuestion;
         this.topScore = topScore;
         this.time = time;
     }
@@ -29,6 +31,14 @@ public class TestModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getAmountOfQuestion() {
+        return amountOfQuestion;
+    }
+
+    public void setAmountOfQuestion(int amountOfQuestion) {
+        this.amountOfQuestion = amountOfQuestion;
     }
 
     public int getTopScore() {

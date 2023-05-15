@@ -50,6 +50,7 @@ public class Constants {
     public static final String KEY_TEST_ID = "TEST_ID";
     public static final String KEY_TOP_SCORE = "TOP_SCORE";
     public static final String KEY_TEST_TIME = "TEST_TIME";
+    public static final String KEY_AMOUNT_OF_QUESTIONS = "AMOUNT_OF_QUESTIONS";
     public static final String KEY_TEST_NAME = "TEST_NAME";
     public static final String KEY_USER_PERSONAL_INFORMATION = "KEY_USER_PERSONAL_INFORMATION";
     public static final String KEY_USER_SCORES = "USER_SCORES";

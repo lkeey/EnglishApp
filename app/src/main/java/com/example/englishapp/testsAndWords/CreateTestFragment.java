@@ -76,7 +76,7 @@ public class CreateTestFragment extends Fragment {
         numberPicker.setMinValue(1);
         numberPicker.setMaxValue(60);
 
-        timeDoing = 0;
+        timeDoing = 1;
     }
 
     private void setListeners() {
