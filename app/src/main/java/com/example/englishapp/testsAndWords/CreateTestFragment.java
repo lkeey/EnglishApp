@@ -53,7 +53,7 @@ public class CreateTestFragment extends Fragment {
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameCreateTest);
+        ((MainActivity) getActivity()).setTitle(R.string.nameChats);
 
         layoutList = view.findViewById(R.id.layoutList);
         btnAdd = view.findViewById(R.id.btnAddQuestion);
@@ -170,6 +170,13 @@ public class CreateTestFragment extends Fragment {
 
                 if (spinnerOption.getSelectedItemPosition() == 1) {
 
+                    if (resultOption) {
+                        // if there are more than one correct answer
+                        Toast.makeText(getActivity(), "Must be only 1 correct option", Toast.LENGTH_SHORT).show();
+
+                        return false;
+                    }
+
                     resultOption = true;
 
                     optionModel.setCorrect(true);
@@ -185,7 +192,7 @@ public class CreateTestFragment extends Fragment {
             }
 
             if (!resultOption) {
-                Toast.makeText(getActivity(), "There are must be at least 1 correct option", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "There are must be 1 correct option", Toast.LENGTH_SHORT).show();
 
                 return false;
             }

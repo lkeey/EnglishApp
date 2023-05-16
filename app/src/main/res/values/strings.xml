@@ -11,7 +11,7 @@
     <string name="nameProfileInfo">Profile Info</string>
     <string name="nameTests">Tests</string>
     <string name="nameCreateTest">Create Test</string>
-
+    <string name="nameChats">Chats</string>
 
     <string name="errorName">Please enter your name</string>
     <string name="errorEmail">Please enter your email</string>
@@ -56,5 +56,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_image">Add Image</string>
     <string name="add_score_text">If you complete the full registration, you will get score</string>
+    <string name="nameFeed">Feed\n</string>
 
 </resources>

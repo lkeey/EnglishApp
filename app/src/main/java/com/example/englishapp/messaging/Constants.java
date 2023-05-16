@@ -56,7 +56,7 @@ public class Constants {
     public static final String KEY_USER_SCORES = "USER_SCORES";
     public static final String KEY_CHOSEN_CATEGORY = "CHOSEN_CATEGORY";
     public static final String KEY_TEST_QUESTION = "QUESTION";
-    public static final String KEY_NUMBER_OF_QUESTIONS = "NUMBER_OF_QUESTIONS";
+    public static final String KEY_NUMBER_OF_OPTIONS = "NUMBER_OF_OPTIONS";
     public static final String KEY_OPTION = "OPTION";
     public static final String KEY_ANSWER = "ANSWER";
     public static final String KEY_COLLECTION_QUESTIONS = "QUESTIONS";

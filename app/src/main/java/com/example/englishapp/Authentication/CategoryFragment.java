@@ -128,7 +128,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     private void init(View view) {
 
-        ((MainActivity) getActivity()).setTitle("Feed");
+        ((MainActivity) getActivity()).setTitle(R.string.nameFeed);
 
         recyclerCategories = view.findViewById(R.id.recyclerCategories);
         imgAddCategory = view.findViewById(R.id.imgAddCategory);

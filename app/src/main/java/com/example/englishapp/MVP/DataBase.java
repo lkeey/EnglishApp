@@ -24,7 +24,7 @@ import static com.example.englishapp.messaging.Constants.KEY_GENDER;
 import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
-import static com.example.englishapp.messaging.Constants.KEY_NUMBER_OF_QUESTIONS;
+import static com.example.englishapp.messaging.Constants.KEY_NUMBER_OF_OPTIONS;
 import static com.example.englishapp.messaging.Constants.KEY_OPTION;
 import static com.example.englishapp.messaging.Constants.KEY_PROFILE_IMG;
 import static com.example.englishapp.messaging.Constants.KEY_QUESTION_ID;
@@ -47,6 +47,7 @@ import com.example.englishapp.testsAndWords.QuestionModel;
 import com.example.englishapp.testsAndWords.TestModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
@@ -633,7 +634,8 @@ public class DataBase {
 
             questionData.put(KEY_QUESTION_ID, CHOSEN_CATEGORY_ID + "_" + testID + "_" + i);
             questionData.put(KEY_TEST_QUESTION, questionModel.getQuestion());
-            questionData.put(KEY_NUMBER_OF_QUESTIONS, questionModel.getOptionsList().size());
+            questionData.put(KEY_NUMBER_OF_OPTIONS, questionModel.getOptionsList().size());
+            questionData.put(KEY_TEST_ID, testID);
 
             for (int n=0; n < questionModel.getOptionsList().size(); n++) {
                 OptionModel optionModel = questionModel.getOptionsList().get(n);
@@ -685,12 +687,64 @@ public class DataBase {
         batch.commit().addOnSuccessListener(unused -> listener.OnSuccess()).addOnFailureListener(e -> listener.OnFailure());
     }
 
-
-
     public static TestModel findTestById(String testId) {
 
         return LIST_OF_TESTS.stream().filter(test -> test.getId().equals(testId)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
+    }
+
+    public static void loadQuestions(CompleteListener listener) {
+        LIST_OF_QUESTIONS.clear();
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_QUESTIONS)
+            .whereEqualTo(KEY_TEST_ID, CHOSEN_TEST_ID)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                Log.i(TAG, "Begin loading questions");
+
+                for (DocumentSnapshot document: queryDocumentSnapshots) {
+
+                    Log.i(TAG, document.getString(KEY_TEST_QUESTION));
+
+                    // load options
+                    ArrayList<OptionModel> optionModels = new ArrayList<>();
+
+                    for(int i=0; i < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue() + 1); i++) {
+                        OptionModel optionModel = new OptionModel();
+
+                        if (i == document.getLong(KEY_ANSWER).intValue()) {
+                            optionModel.setCorrect(true);
+                        } else {
+                            optionModel.setCorrect(false);
+                        }
+
+                        optionModel.setOption(document.getString(KEY_OPTION) + "_" + i);
+
+                        optionModels.add(optionModel);
+
+                    }
+
+                    // load question
+                    QuestionModel questionModel = new QuestionModel();
+
+                    questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
+                    questionModel.setId(document.getString(KEY_QUESTION_ID));
+                    questionModel.setOptionsList(optionModels);
+
+                    LIST_OF_QUESTIONS.add(questionModel);
+
+                }
+
+                Log.i(TAG, "Questions successfully loaded");
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> {
+                Log.i(TAG, "Error was occurred while loading questions - " + e.getMessage());
+                listener.OnFailure();
+            });
     }
 
 

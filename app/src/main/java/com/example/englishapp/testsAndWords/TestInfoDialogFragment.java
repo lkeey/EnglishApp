@@ -2,6 +2,7 @@ package com.example.englishapp.testsAndWords;
 
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_TEST;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -55,11 +57,11 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
 
         textClose.setOnClickListener(v -> TestInfoDialogFragment.this.dismiss());
 
-        btnDoTest.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: send intent to start test fragment
-            }
+        btnDoTest.setOnClickListener(v -> {
+
+            Intent intent = new Intent(((MainActivity) getActivity()), ExamActivity.class);
+            startActivity(intent);
+
         });
 
     }

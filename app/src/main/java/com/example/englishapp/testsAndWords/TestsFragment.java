@@ -105,7 +105,6 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
     @Override
     public void onTestClicked(TestModel test) {
-        Toast.makeText(getActivity(), "clicked - " + test.getName(), Toast.LENGTH_SHORT).show();
 
         DataBase.CHOSEN_TEST_ID = test.getId();
 
@@ -115,7 +114,25 @@ public class TestsFragment extends Fragment implements TestClickedListener {
         bundle.putSerializable(KEY_CHOSEN_TEST, test);
         fragment.setArguments(bundle);
 
-        fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+        DataBase.loadQuestions(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+
+                Log.i(TAG, "Questions loaded");
+
+                fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+
+            }
+
+            @Override
+            public void OnFailure() {
+                Log.i(TAG, "Can not load questions");
+
+                Toast.makeText(getActivity(), "Can not load test... Try later", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
 
 
     }

@@ -309,8 +309,9 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void setTitle(String title) {
-        getSupportActionBar().setTitle(title);
+    public void setTitle(int strId) {
+
+        getSupportActionBar().setTitle(getString(strId));
     }
 
 }

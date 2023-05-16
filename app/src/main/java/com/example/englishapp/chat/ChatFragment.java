@@ -79,7 +79,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle("Chats");
+        ((MainActivity) getActivity()).setTitle(R.string.nameChats);
 
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
         fab = view.findViewById(R.id.fab);
