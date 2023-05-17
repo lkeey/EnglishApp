@@ -62,7 +62,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             questionName.setText(questionModel.getQuestion());
 
             // set adapter for options
-            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), context);
+            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context);
             layoutOptions.setAdapter(optionsAdapter);
 
             LinearLayoutManager manager = new LinearLayoutManager(context);

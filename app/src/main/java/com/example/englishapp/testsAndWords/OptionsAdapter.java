@@ -1,29 +1,37 @@
 package com.example.englishapp.testsAndWords;
 
+import static com.example.englishapp.messaging.Constants.ANSWERED;
+import static com.example.englishapp.messaging.Constants.REVIEW;
+import static com.example.englishapp.messaging.Constants.UNANSWERED;
+
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.R;
 
 import java.util.List;
 
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder>{
 
+    private static final String TAG = "AdapterOptions";
     private List<OptionModel> optionModels;
+    private int questionId;
     private Context context;
 
-    public OptionsAdapter(List<OptionModel> optionModels, Context context) {
+    public OptionsAdapter(List<OptionModel> optionModels, int questionId, Context context) {
         this.optionModels = optionModels;
+        this.questionId = questionId;
         this.context = context;
     }
-
-
 
     @NonNull
     @Override
@@ -45,7 +53,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView optionName;
+        public TextView optionName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -57,6 +65,65 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
             OptionModel optionModel = optionModels.get(position);
 
             optionName.setText(optionModel.getOption());
+
+            DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    selectOption(optionName, position);
+                }
+            });
+        }
+
+        private void setOption(TextView tv, int optionNum) {
+
+            int selectedOption = DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption();
+
+            if (selectedOption != optionNum) {
+
+                Log.i(TAG, "selected - " + optionNum + " - " + DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
+
+                // select new text view
+                tv.setBackgroundResource(R.drawable.selected_btn);
+                tv.setTextColor(ContextCompat.getColor(context, R.color.white));
+
+                if (selectedOption != -1) {
+                    // unselect old text view
+                    TextView beforeChoice = DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(selectedOption).getTv();
+
+                    beforeChoice.setBackgroundResource(R.drawable.round_view_with_stroke);
+                    beforeChoice.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
+                }
+
+                changeStatus(ANSWERED);
+
+            } else {
+
+                Log.i(TAG, "unselected - " + optionNum + " - " + DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
+
+                tv.setBackgroundResource(R.drawable.round_view_with_stroke);
+                tv.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
+
+                changeStatus(UNANSWERED);
+
+            }
+        }
+
+        private void selectOption(TextView tv, int optionNum) {
+
+            setOption(tv, optionNum);
+
+            DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(optionNum);
+
+        }
+
+        private void changeStatus(int status) {
+
+            if(DataBase.LIST_OF_QUESTIONS.get(questionId).getStatus() != REVIEW) {
+                DataBase.LIST_OF_QUESTIONS.get(questionId).setStatus(status);
+            }
+
         }
     }
 }

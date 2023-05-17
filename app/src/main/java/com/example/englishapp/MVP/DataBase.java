@@ -37,6 +37,7 @@ import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_USER_PERSONAL_INFORMATION;
 import static com.example.englishapp.messaging.Constants.KEY_USER_SCORES;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.messaging.Constants.NOT_VISITED;
 
 import android.util.ArrayMap;
 import android.util.Log;
@@ -736,7 +737,10 @@ public class DataBase {
 
                     questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
                     questionModel.setId(document.getString(KEY_QUESTION_ID));
+                    questionModel.setCorrectAnswer(document.getLong(KEY_ANSWER).intValue());
                     questionModel.setOptionsList(optionModels);
+                    questionModel.setStatus(NOT_VISITED);
+                    questionModel.setSelectedOption(-1);
 
                     LIST_OF_QUESTIONS.add(questionModel);
 

@@ -1,11 +1,18 @@
 package com.example.englishapp.testsAndWords;
 
+import static com.example.englishapp.messaging.Constants.ANSWERED;
+import static com.example.englishapp.messaging.Constants.NOT_VISITED;
+import static com.example.englishapp.messaging.Constants.REVIEW;
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.messaging.Constants.UNANSWERED;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,16 +35,18 @@ import com.example.englishapp.R;
 import java.util.concurrent.TimeUnit;
 
 public class ExamActivity extends AppCompatActivity {
+    private static final String TAG = "ActivityExam";
     private QuestionsAdapter questionsAdapter;
+    private ExamInfoFragment fragment;
     private TestModel testModel;
-    private RecyclerView recyclerQuestions;
+    private static RecyclerView recyclerQuestions;
     private TextView questionNumber, amountTime, testName;
-    private Button btnSubmit, btnContinue, btnExit;
+    private Button btnSubmit, btnContinue, btnExit, btnCancel, btnComplete;
     private ImageView questionList, bookMarkImg, previousQuestion, nextQuestion;
     private CountDownTimer timer;
     private long timeCounter;
     int numberOfQuestion;
-    private Dialog dialogExit;
+    private Dialog dialogExit, dialogComplete;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +54,7 @@ public class ExamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exam);
 
         init();
-        
+
         setListeners();
 
         setSnapHelper();
@@ -78,6 +88,58 @@ public class ExamActivity extends AppCompatActivity {
             }
         });
 
+        questionList.setOnClickListener(v -> {
+            fragment = new ExamInfoFragment();
+
+            fragment.show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
+        });
+
+        bookMarkImg.setOnClickListener(v -> addToBookmark());
+
+        btnSubmit.setOnClickListener(v -> dialogComplete.show());
+
+        btnCancel.setOnClickListener(v -> dialogComplete.dismiss());
+
+        btnComplete.setOnClickListener(v -> {
+            timer.cancel();
+            timer.onFinish();
+            dialogComplete.dismiss();
+        });
+    }
+
+    private void addToBookmark() {
+
+        QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion);
+
+        if (questionModel.isBookmarked()) {
+
+            Log.i(TAG, "Already bookmark");
+
+            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(false);
+
+            bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+
+            if (questionModel.getSelectedOption() != -1) {
+                Log.i(TAG, "New status - ANSWERED");
+
+                DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(ANSWERED);
+
+            } else {
+                Log.i(TAG, "New status - UNANSWERED");
+
+                DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
+            }
+
+        } else {
+
+            Log.i(TAG, "New bookmark");
+
+            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(true);
+
+            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(REVIEW);
+
+            bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
     }
 
     private void setSnapHelper() {
@@ -92,6 +154,19 @@ public class ExamActivity extends AppCompatActivity {
                 View view = snapHelper.findSnapView(recyclerView.getLayoutManager());
                 numberOfQuestion = recyclerView.getLayoutManager().getPosition(view);
 
+                QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion);
+
+                // if user did not answer
+                if (questionModel.getStatus() == NOT_VISITED) {
+                    DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
+                }
+
+                // if question was bookmarked
+                if (questionModel.isBookmarked()) {
+                    bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+                } else {
+                    bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+                }
 
                 questionNumber.setText((numberOfQuestion + 1) + "/" + testModel.getAmountOfQuestion());
             }
@@ -102,7 +177,6 @@ public class ExamActivity extends AppCompatActivity {
             }
         });
     }
-
 
     private void init() {
         recyclerQuestions = findViewById(R.id.recyclerQuestions);
@@ -124,6 +198,15 @@ public class ExamActivity extends AppCompatActivity {
 
         btnContinue = dialogExit.findViewById(R.id.btnContinue);
         btnExit = dialogExit.findViewById(R.id.btnExit);
+
+        dialogComplete = new Dialog(ExamActivity.this);
+        dialogComplete.setContentView(R.layout.dialog_submit_layout);
+        dialogComplete.setCancelable(false);
+        dialogComplete.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialogComplete.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        btnCancel = dialogComplete.findViewById(R.id.btnCancel);
+        btnComplete = dialogComplete.findViewById(R.id.btnComplete);
 
         numberOfQuestion = 0;
 
@@ -175,6 +258,10 @@ public class ExamActivity extends AppCompatActivity {
         };
 
         timer.start();
+    }
+
+    public static void goToQuestion(int position) {
+        recyclerQuestions.smoothScrollToPosition(position);
     }
 
     @Override

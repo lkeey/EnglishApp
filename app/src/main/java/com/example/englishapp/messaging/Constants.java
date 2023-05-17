@@ -62,5 +62,8 @@ public class Constants {
     public static final String KEY_COLLECTION_QUESTIONS = "QUESTIONS";
     public static final String KEY_QUESTION_ID = "QUESTION_ID";
     public static final String KEY_CHOSEN_TEST = "KEY_CHOSEN_TEST";
-
+    public static final int NOT_VISITED = 0;
+    public static final int UNANSWERED = 1;
+    public static final int ANSWERED = 2;
+    public static final int REVIEW = 3;
 }

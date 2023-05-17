@@ -4,19 +4,47 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
 
-import androidx.fragment.app.Fragment;
-
+import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.R;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-public class ExamInfoFragment extends Fragment {
+public class ExamInfoFragment extends BottomSheetDialogFragment implements QuestionListener {
 
-//    amonut of questions does not increment
+    private GridView gridQuestions;
+    private InfoQuestionsAdapter infoQuestionsAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_exam_info, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_exam_info, container, false);
+
+        init(view);
+
+        return view;
+    }
+
+    private void init(View view) {
+
+        gridQuestions = view.findViewById(R.id.gridQuestions);
+
+        infoQuestionsAdapter = new InfoQuestionsAdapter(DataBase.LIST_OF_QUESTIONS, ExamInfoFragment.this);
+        gridQuestions.setAdapter(infoQuestionsAdapter);
+
+    }
+
+    public int getTheme() {
+        // to set border radius
+
+        return R.style.AppBottomSheetDialogTheme;
+    }
+
+    @Override
+    public void onQuestionClicked(QuestionModel questionModel, int position) {
+        ExamActivity.goToQuestion(position);
+
+        ExamInfoFragment.this.dismiss();
     }
 }

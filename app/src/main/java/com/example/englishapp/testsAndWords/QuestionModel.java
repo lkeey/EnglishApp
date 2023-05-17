@@ -8,13 +8,21 @@ public class QuestionModel implements Serializable {
     private String id;
     private String question;
     private ArrayList<OptionModel> optionsList;
+    private int correctAnswer;
+    private int selectedOption;
+    private int status;
+    private boolean isBookmarked;
 
     public QuestionModel () {}
 
-    public QuestionModel(String id, String question, ArrayList<OptionModel> optionsList) {
+    public QuestionModel(String id, String question, ArrayList<OptionModel> optionsList, int correctAnswer, int selectedOption, int status, boolean isBookmarked) {
         this.id = id;
         this.question = question;
         this.optionsList = optionsList;
+        this.correctAnswer = correctAnswer;
+        this.selectedOption = selectedOption;
+        this.status = status;
+        this.isBookmarked = isBookmarked;
     }
 
     public String getId() {
@@ -39,5 +47,37 @@ public class QuestionModel implements Serializable {
 
     public void setOptionsList(ArrayList<OptionModel> optionsList) {
         this.optionsList = optionsList;
+    }
+
+    public int getCorrectAnswer() {
+        return correctAnswer;
+    }
+
+    public void setCorrectAnswer(int correctAnswer) {
+        this.correctAnswer = correctAnswer;
+    }
+
+    public int getSelectedOption() {
+        return selectedOption;
+    }
+
+    public void setSelectedOption(int selectedOption) {
+        this.selectedOption = selectedOption;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public boolean isBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        isBookmarked = bookmarked;
     }
 }
