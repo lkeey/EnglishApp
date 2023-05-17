@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -59,8 +61,15 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
 
         btnDoTest.setOnClickListener(v -> {
 
-            Intent intent = new Intent(((MainActivity) getActivity()), ExamActivity.class);
-            startActivity(intent);
+            if (DataBase.LIST_OF_QUESTIONS.size() >= 0) {
+                Intent intent = new Intent(((MainActivity) getActivity()), ExamActivity.class);
+                startActivity(intent);
+
+            } else {
+                Toast.makeText(getActivity(), "Can not load questions... Try later", Toast.LENGTH_SHORT).show();
+            }
+
+            TestInfoDialogFragment.this.dismiss();
 
         });
 

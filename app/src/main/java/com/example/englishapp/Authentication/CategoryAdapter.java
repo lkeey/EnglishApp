@@ -61,7 +61,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return categoryModelList.size();
     }
 
-    public void searchNotes(final String searchKeyword) {
+    public void searchCategories(final String searchKeyword) {
         timer = new Timer();
 
         timer.schedule(new TimerTask() {

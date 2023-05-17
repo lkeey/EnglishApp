@@ -119,7 +119,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
             @Override
             public void afterTextChanged(Editable key) {
                 if(DataBase.LIST_OF_CATEGORIES.size() != 0) {
-                    categoryAdapter.searchNotes(key.toString());
+                    categoryAdapter.searchCategories(key.toString());
                 }
             }
         });

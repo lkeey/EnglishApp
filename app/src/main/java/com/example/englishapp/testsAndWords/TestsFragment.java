@@ -7,6 +7,8 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,9 +32,10 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
     private static final String TAG = "TestsFragment";
     private RecyclerView testRecycler;
+    private TestAdapter testAdapter;
     private ImageView imgAddTest;
     private EditText inputSearch;
-    private ProgressBar progressCategory;
+    private ProgressBar progressTest;
     private Dialog progressBar;
     private TextView dialogText;
 
@@ -57,6 +60,25 @@ public class TestsFragment extends Fragment implements TestClickedListener {
             fragment.setArguments(bundle);
 
             ((MainActivity) getActivity()).setFragment(fragment);
+        });
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                testAdapter.cancelTimer();
+            }
+
+            @Override
+            public void afterTextChanged(Editable key) {
+                if(DataBase.LIST_OF_CATEGORIES.size() != 0) {
+                    testAdapter.searchTests(key.toString());
+                }
+            }
         });
     }
 
@@ -87,7 +109,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
             @Override
             public void OnSuccess() {
 
-                TestAdapter testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
+                testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
                 testRecycler.setAdapter(testAdapter);
 
                 Log.i(TAG, "Successfully loaded");

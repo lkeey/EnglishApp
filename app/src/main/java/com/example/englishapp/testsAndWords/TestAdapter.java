@@ -1,6 +1,7 @@
 package com.example.englishapp.testsAndWords;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,19 +14,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
 
     private static final String TAG = "AdapterTest";
     private List<TestModel> testModelList;
+    private List<TestModel> allTests;
     private TestClickedListener listener;
     private Context context;
+    private Timer timer;
 
     public TestAdapter(List<TestModel> testModelList, TestClickedListener listener, Context context) {
         this.testModelList = testModelList;
         this.listener = listener;
         this.context = context;
+        allTests = testModelList;
     }
 
     @Override
@@ -52,6 +59,40 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
     public int getItemCount() {
         return testModelList.size();
     }
+
+    public void searchTests(final String searchKeyword) {
+        timer = new Timer();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(searchKeyword.trim().isEmpty()) {
+                    testModelList = allTests;
+                } else {
+
+                    ArrayList<TestModel> testWithKey = new ArrayList<>();
+                    for(TestModel test: allTests) {
+
+                        if (test.getName().contains(searchKeyword.toLowerCase())) {
+                            testWithKey.add(test);
+                        }
+                    }
+
+                    testModelList = testWithKey;
+                }
+
+                new android.os.Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
+            }
+        }, 500);
+    }
+
+
+    public void cancelTimer() {
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
+
 
     public class TestHolder extends RecyclerView.ViewHolder {
         private TextView title, numberOfQuestions, time, percent;

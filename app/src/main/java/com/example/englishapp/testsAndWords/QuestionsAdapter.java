@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
@@ -43,18 +44,30 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView name;
+        private TextView questionName;
+        private RecyclerView layoutOptions;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            name = itemView.findViewById(R.id.name);
+            questionName = itemView.findViewById(R.id.questionName);
+            layoutOptions = itemView.findViewById(R.id.layoutOptions);
 
         }
 
         private void setData(final int position) {
 
-            name.setText(listQuestions.get(position).getQuestion());
+            QuestionModel questionModel = listQuestions.get(position);
+
+            questionName.setText(questionModel.getQuestion());
+
+            // set adapter for options
+            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), context);
+            layoutOptions.setAdapter(optionsAdapter);
+
+            LinearLayoutManager manager = new LinearLayoutManager(context);
+            manager.setOrientation(RecyclerView.VERTICAL);
+            layoutOptions.setLayoutManager(manager);
 
         }
 

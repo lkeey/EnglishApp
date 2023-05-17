@@ -591,6 +591,12 @@ public class DataBase {
                     .document(KEY_AMOUNT_TESTS);
 
             batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+
+            docReference = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_STATISTICS)
+                    .document(KEY_AMOUNT_OF_QUESTIONS);
+
+            Log.i(TAG, "Size questions - " + listOfQuestions.size());
             batch.update(docReference, KEY_AMOUNT_OF_QUESTIONS, FieldValue.increment(listOfQuestions.size()));
 
             Log.i(TAG, "update statistics");
@@ -710,7 +716,7 @@ public class DataBase {
                     // load options
                     ArrayList<OptionModel> optionModels = new ArrayList<>();
 
-                    for(int i=0; i < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue() + 1); i++) {
+                    for(int i=0; i < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue()); i++) {
                         OptionModel optionModel = new OptionModel();
 
                         if (i == document.getLong(KEY_ANSWER).intValue()) {
@@ -719,7 +725,7 @@ public class DataBase {
                             optionModel.setCorrect(false);
                         }
 
-                        optionModel.setOption(document.getString(KEY_OPTION) + "_" + i);
+                        optionModel.setOption(document.getString(KEY_OPTION + "_" + i));
 
                         optionModels.add(optionModel);
 
