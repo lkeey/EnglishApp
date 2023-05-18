@@ -128,6 +128,8 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     @Override
     public void onTestClicked(TestModel test) {
 
+        progressBar.show();
+
         DataBase.CHOSEN_TEST_ID = test.getId();
 
         TestInfoDialogFragment fragment = new TestInfoDialogFragment();
@@ -144,6 +146,8 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
                 fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
 
+                progressBar.dismiss();
+
             }
 
             @Override
@@ -151,6 +155,8 @@ public class TestsFragment extends Fragment implements TestClickedListener {
                 Log.i(TAG, "Can not load questions");
 
                 Toast.makeText(getActivity(), "Can not load test... Try later", Toast.LENGTH_SHORT).show();
+
+                progressBar.dismiss();
 
             }
         });

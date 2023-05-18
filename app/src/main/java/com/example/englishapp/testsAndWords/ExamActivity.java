@@ -1,6 +1,7 @@
 package com.example.englishapp.testsAndWords;
 
 import static com.example.englishapp.messaging.Constants.ANSWERED;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.NOT_VISITED;
 import static com.example.englishapp.messaging.Constants.REVIEW;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
@@ -250,10 +251,21 @@ public class ExamActivity extends AppCompatActivity {
 //                intent.putExtra("TIME_TAKEN", totalTime - timeCounter);
 //
 //                startActivity(intent);
+                try {
+                    Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
 
-                Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "totalTime - " + totalTime + " - timeCounter - " + timeCounter);
 
-                ExamActivity.this.finish();
+                    Intent intent = new Intent(ExamActivity.this, MainActivity.class);
+                    intent.putExtra(KEY_TEST_TIME, totalTime - timeCounter);
+
+                    startActivity(intent);
+
+                    ExamActivity.this.finish();
+
+                } catch (Exception e) {
+                    Log.i(TAG, "error to send - " + e.getMessage());
+                }
             }
         };
 

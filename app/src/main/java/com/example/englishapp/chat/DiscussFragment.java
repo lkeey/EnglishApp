@@ -65,15 +65,17 @@ public class DiscussFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_discuss, container, false);
 
         CURRENT_CONVERSATION_ID = null;
+        try {
+            receiveData();
 
-        receiveData();
+            init(view);
 
-        init(view);
+            setListeners();
 
-        setListeners();
-
-        listenMessages();
-
+            listenMessages();
+        } catch (Exception e) {
+            Log.i(TAG, "Global exception " + e.getMessage());
+        }
         return view;
     }
 
@@ -252,7 +254,7 @@ public class DiscussFragment extends Fragment {
                        );
 
                        chatMessages.add(chatMessage);
-                       Log.i(TAG, "Message added");
+                       Log.i(TAG, "Message added - " + chatMessage.getMessage());
                    }
                }
 
@@ -293,6 +295,9 @@ public class DiscussFragment extends Fragment {
 
     private void checkForConversation() {
         try {
+
+            Log.i(TAG, "User - " + USER_MODEL.getUid() + " - Receiver - " + receivedUser.getUid());
+
             if (chatMessages.size() != 0) {
                 checkForConversationRemotely(
                         USER_MODEL.getUid(),
@@ -311,11 +316,13 @@ public class DiscussFragment extends Fragment {
 
     private void checkForConversationRemotely(String senderId, String receiverId) {
         try {
+
             DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
                     .whereEqualTo(KEY_SENDER_ID, senderId)
                     .whereEqualTo(KEY_RECEIVER_ID, receiverId)
                     .get()
                     .addOnCompleteListener(conversationOnComplete);
+
         } catch (Exception e) {
             Log.i(TAG, "checkForConversationRemotely error - " + e.getMessage());
         }

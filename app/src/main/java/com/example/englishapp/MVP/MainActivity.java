@@ -4,6 +4,7 @@ import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.MVP.DataBase.findUserById;
 import static com.example.englishapp.messaging.Constants.KEY_CHECK_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
@@ -35,6 +36,8 @@ import com.example.englishapp.chat.ChatFragment;
 import com.example.englishapp.chat.DiscussFragment;
 import com.example.englishapp.location.LocationManager;
 import com.example.englishapp.location.PermissionManager;
+import com.example.englishapp.messaging.Constants;
+import com.example.englishapp.testsAndWords.ScoreFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -66,12 +69,12 @@ public class MainActivity extends BaseActivity {
 
         setListeners();
 
+        // start CategoryFragment at first
+        setFragment(new CategoryFragment());
+
         receiveData();
 
 //        showDialogLocation();
-
-        // start CategoryFragment at first
-        setFragment(new CategoryFragment());
 
     }
 
@@ -198,9 +201,11 @@ public class MainActivity extends BaseActivity {
 
             boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
             String userUID = intent.getStringExtra(KEY_USER_UID);
+            long totalTime = intent.getLongExtra(KEY_TEST_TIME, -1);
 
             Log.i(TAG, "STATUS " + status);
-            Log.i(TAG, "UserUID - " + userUID + LIST_OF_USERS.size());
+            Log.i(TAG, "UserUID - " + userUID + " - " + LIST_OF_USERS.size());
+            Log.i(TAG, "totalTime - " + totalTime);
 
             if (status) {
                 new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
@@ -215,6 +220,21 @@ public class MainActivity extends BaseActivity {
                 fragment.setArguments(bundle);
 
                 setFragment(fragment);
+
+            } else if (totalTime != -1L) {
+
+                Log.i(TAG, "show ScoreFragment");
+
+                ScoreFragment fragment = new ScoreFragment();
+
+                Bundle bundle = new Bundle();
+
+                bundle.putLong(Constants.KEY_TEST_TIME, totalTime);
+
+                fragment.setArguments(bundle);
+
+                setFragment(fragment);
+
             }
 
         } catch (Exception e) {

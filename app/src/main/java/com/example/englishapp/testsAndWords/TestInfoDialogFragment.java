@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.messaging.Constants;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class TestInfoDialogFragment extends BottomSheetDialogFragment {
@@ -72,6 +73,12 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
             TestInfoDialogFragment.this.dismiss();
 
         });
+
+        // set all answers with basic data
+        for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
+            DataBase.LIST_OF_QUESTIONS.get(i).setSelectedOption(-1);
+            DataBase.LIST_OF_QUESTIONS.get(i).setStatus(Constants.NOT_VISITED);
+        }
 
     }
 
