@@ -52,6 +52,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
@@ -73,7 +74,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel(null,null, null, null, null, null, null,null, 0, 0, 1, 1);
+    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
@@ -152,6 +153,7 @@ public class DataBase {
                         USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
                         USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
                         USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
+
                     } catch (Exception e) {
                         Log.i(TAG, e.getMessage());
                     }
@@ -165,14 +167,14 @@ public class DataBase {
     public static void loadData(CompleteListener listener) {
         Log.i(TAG, "Load Data");
 
-        getListOfUsers(new CompleteListener() {
+        getUserData(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "Users loaded");
-                getUserData(new CompleteListener() {
+                Log.i(TAG, "User data was loaded");
+                getListOfUsers(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        Log.i(TAG, "User data loaded");
+                        Log.i(TAG, "Users were successfully loaded");
                         getListOfCategories(new CompleteListener() {
                             @Override
                             public void OnSuccess() {
@@ -244,13 +246,15 @@ public class DataBase {
         Log.i(TAG, "Begin loading");
 
         DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+            .orderBy(KEY_SCORE, Query.Direction.DESCENDING)
             .limit(20)
             .get()
             .addOnSuccessListener(queryDocumentSnapshots -> {
                 Log.i(TAG, "Get data");
                 try {
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    int place = 1;
 
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         UserModel userModel = new UserModel();
 
                         userModel.setUid(documentSnapshot.getString(KEY_USER_UID));
@@ -265,26 +269,22 @@ public class DataBase {
                         userModel.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
                         userModel.setLatitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLatitude());
                         userModel.setLongitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLongitude());
-//                        LIST_OF_USERS.add(
-//                                new UserModel(
-//                                        documentSnapshot.getString(KEY_USER_UID),
-//                                        documentSnapshot.getString(KEY_NAME),
-//                                        documentSnapshot.getString(KEY_EMAIL),
-//                                        documentSnapshot.getString(KEY_GENDER),
-//                                        documentSnapshot.getString(KEY_MOBILE),
-//                                        documentSnapshot.getString(KEY_PROFILE_IMG),
-//                                        documentSnapshot.getString(KEY_DOB),
-//                                        documentSnapshot.getString(KEY_FCM_TOKEN),
-//                                        documentSnapshot.getLong(KEY_SCORE).intValue(),
-//                                        documentSnapshot.getLong(KEY_BOOKMARKS).intValue(),
-//                                        documentSnapshot.getLong(KEY_LATITUDE).doubleValue(),
-//                                        documentSnapshot.getLong(KEY_LONGITUDE).doubleValue()
-//                                ));
+                        userModel.setPlace(place);
+
                         LIST_OF_USERS.add(userModel);
+
+                        // set place for current user
+
+                        if (userModel.getUid().equals(USER_MODEL.getUid())) {
+                            USER_MODEL.setPlace(place);
+                        }
+
+                        place++;
 
                         Log.i(TAG, "Created - " + userModel.getName() + " - " + userModel.getUid());
 
                     }
+
                 } catch (Exception e) {
                     Log.i(TAG, e.getMessage());
                 }

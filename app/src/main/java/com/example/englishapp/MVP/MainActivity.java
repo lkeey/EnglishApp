@@ -37,6 +37,7 @@ import com.example.englishapp.chat.DiscussFragment;
 import com.example.englishapp.location.LocationManager;
 import com.example.englishapp.location.PermissionManager;
 import com.example.englishapp.messaging.Constants;
+import com.example.englishapp.testsAndWords.LeaderBordFragment;
 import com.example.englishapp.testsAndWords.ScoreFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -284,7 +285,7 @@ public class MainActivity extends BaseActivity {
 
                 case R.id.nav_leader_menu:
 
-                    setFragment(new ChatFragment());
+                    setFragment(new LeaderBordFragment());
 
                     return true;
 
@@ -315,6 +316,8 @@ public class MainActivity extends BaseActivity {
 
         if (item.getItemId() == android.R.id.home) {
 
+            setSupportActionBar(toolbar);
+
             Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
             if (getSupportFragmentManager().getBackStackEntryCount() > 2){
@@ -330,8 +333,11 @@ public class MainActivity extends BaseActivity {
     }
 
     public void setTitle(int strId) {
-
         getSupportActionBar().setTitle(getString(strId));
     }
 
+    @Override
+    public void setTitle(CharSequence title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

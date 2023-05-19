@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".testsAndWords.LeaderBordFragment">
+
+    <LinearLayout
+        android:id="@+id/layoutTotalUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/round_view"
+        android:padding="8dp"
+        android:layout_margin="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/totalUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Amount Of Users: Number"
+            android:textColor="@color/secondary_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="24dp"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/design_default_color_primary"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerUsers"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutTotalUsers"
+        app:layout_constraintBottom_toTopOf="@id/layoutUserTop">
+
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/layoutUserTop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:elevation="3dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/round_corner_btn"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/userImage"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:contentDescription="@string/add_image"
+            app:riv_oval="true"
+            android:adjustViewBounds="true"
+            android:fitsSystemWindows="true"
+            android:scaleType="centerInside"
+            android:src="@drawable/app_logo"
+            app:layout_collapseMode="parallax"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginLeft="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="You"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                />
+
+            <TextView
+                android:id="@+id/userScore"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="bottom|center"
+                android:text="Score: 0"
+                android:paddingBottom="4dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/userRank"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="bottom|center"
+            android:text="Place: 0"
+            android:textSize="16sp"
+            android:paddingBottom="4dp"
+            android:textColor="@color/white"
+            android:layout_marginRight="48dp"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

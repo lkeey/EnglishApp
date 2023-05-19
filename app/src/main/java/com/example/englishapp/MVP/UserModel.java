@@ -13,12 +13,13 @@ public class UserModel implements Serializable {
     private String fcmToken;
     private int score;
     private int bookmarksCount;
+    private int place;
     private double latitude;
     private double longitude;
 
     public UserModel() {}
 
-    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount, double latitude, double longitude) {
+    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount, int place, double latitude, double longitude) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -29,6 +30,7 @@ public class UserModel implements Serializable {
         this.fcmToken = fcmToken;
         this.score = score;
         this.bookmarksCount = bookmarksCount;
+        this.place = place;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -120,6 +122,14 @@ public class UserModel implements Serializable {
 
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public int getPlace() {
+        return place;
+    }
+
+    public void setPlace(int place) {
+        this.place = place;
     }
 
     public double getLongitude() {
