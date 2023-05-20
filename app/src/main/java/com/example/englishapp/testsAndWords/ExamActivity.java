@@ -217,12 +217,19 @@ public class ExamActivity extends AppCompatActivity {
         testName.setText(testModel.getName());
         amountTime.setText(testModel.getTime() + " minutes");
 
-        questionsAdapter = new QuestionsAdapter(DataBase.LIST_OF_QUESTIONS, ExamActivity.this);
+        questionsAdapter = new QuestionsAdapter(DataBase.LIST_OF_QUESTIONS, ExamActivity.this, false);
         recyclerQuestions.setAdapter(questionsAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(ExamActivity.this);
         manager.setOrientation(RecyclerView.HORIZONTAL);
         recyclerQuestions.setLayoutManager(manager);
+
+        // if question was bookmarked
+        if (DataBase.LIST_OF_QUESTIONS.get(0).isBookmarked()) {
+            bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+        } else {
+            bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
 
     }
 

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
@@ -47,8 +48,50 @@ public class ScoreFragment extends Fragment {
         setListeners();
         
         setData();
+
+        updateBookmarksAndScore();
         
         return view;
+    }
+
+    private void updateBookmarksAndScore() {
+
+        // bookmarks
+
+        Log.i(TAG, "was - " + DataBase.USER_MODEL.getBookmarksCount());
+
+        for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
+            QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(i);
+
+            if (questionModel.isBookmarked() && !DataBase.LIST_OF_BOOKMARKS.contains(questionModel)) {
+                DataBase.LIST_OF_BOOKMARKS.add(questionModel);
+
+                Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+
+            } else if (DataBase.LIST_OF_BOOKMARKS.contains(questionModel)) {
+                DataBase.LIST_OF_BOOKMARKS.remove(questionModel);
+
+                Log.i(TAG, "Deleted Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+            }
+        }
+
+        DataBase.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARKS.size());
+
+        Log.i(TAG, "become - " + DataBase.USER_MODEL.getBookmarksCount());
+
+        // score
+        DataBase.saveResult(finalScore, new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                progressBar.dismiss();
+            }
+
+            @Override
+            public void OnFailure() {
+                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                progressBar.dismiss();
+            }
+        });
     }
 
     private void receiveData() {
@@ -103,19 +146,9 @@ public class ScoreFragment extends Fragment {
     }
 
     private void setListeners() {
-        btnCheckLeader.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Check Leader", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnCheckLeader.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new LeaderBordFragment()));
 
-        btnReAttempt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                reAttempt();
-            }
-        });
+        btnReAttempt.setOnClickListener(v -> reAttempt());
 
         btnViewAnswers.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,15 +184,26 @@ public class ScoreFragment extends Fragment {
 
     private void reAttempt() {
         try {
-            if (DataBase.CHOSEN_TEST_ID != null) {
-                TestInfoDialogFragment fragment = new TestInfoDialogFragment();
+            DataBase.loadMyScores(new CompleteListener() {
+                @Override
+                public void OnSuccess() {
+                    if (DataBase.CHOSEN_TEST_ID != null) {
+                        TestInfoDialogFragment fragment = new TestInfoDialogFragment();
 
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(KEY_CHOSEN_TEST, DataBase.findTestById(DataBase.CHOSEN_TEST_ID));
-                fragment.setArguments(bundle);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(KEY_CHOSEN_TEST, DataBase.findTestById(DataBase.CHOSEN_TEST_ID));
+                        fragment.setArguments(bundle);
 
-                fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
-            }
+                        fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+                    }
+                }
+
+                @Override
+                public void OnFailure() {
+                    Log.i(TAG, "can not load scores");
+                }
+            });
+
         } catch (Exception e) {
             Log.i(TAG, "error to open TestInfoDialogFragment - " + e.getMessage());
 

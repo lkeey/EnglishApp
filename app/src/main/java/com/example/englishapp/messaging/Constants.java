@@ -29,9 +29,8 @@ public class Constants {
     public static final String KEY_AVAILABILITY = "AVAILABILITY";
     public static final String KEY_COLLECTION_STATISTICS = "STATISTICS";
     public static final String SHOW_FRAGMENT_DIALOG = "SHOW_FRAGMENT_DIALOG";
-    public static final String KEY_AMOUNT_SENT_MESSAGES = "KEY_AMOUNT_SENT_MESSAGES";
-    public static final String KEY_AMOUNT_DISCUSSIONS = "KEY_AMOUNT_DISCUSSIONS";
-
+    public static final String KEY_AMOUNT_SENT_MESSAGES = "AMOUNT_SENT_MESSAGES";
+    public static final String KEY_AMOUNT_DISCUSSIONS = "AMOUNT_DISCUSSIONS";
     public static final String KEY_ADD_SCORE = "KEY_ADD_SCORE";
     public static final String REMOTE_MSG_TITLE = "TITLE";
     public static final String REMOTE_MSG_DATA = "MESSAGE";
@@ -62,6 +61,7 @@ public class Constants {
     public static final String KEY_COLLECTION_QUESTIONS = "QUESTIONS";
     public static final String KEY_QUESTION_ID = "QUESTION_ID";
     public static final String KEY_CHOSEN_TEST = "KEY_CHOSEN_TEST";
+    public static final String KEY_COLLECTION_PERSONAL_DATA = "PERSONAL_DATA";
     public static final int NOT_VISITED = 0;
     public static final int UNANSWERED = 1;
     public static final int ANSWERED = 2;

@@ -104,19 +104,26 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
         progressBar.show();
 
-
         DataBase.loadTestsData(new CompleteListener() {
             @Override
             public void OnSuccess() {
+                DataBase.loadMyScores(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
+                        testRecycler.setAdapter(testAdapter);
 
-                testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
-                testRecycler.setAdapter(testAdapter);
+                        Log.i(TAG, "Successfully loaded");
+                        progressBar.dismiss();
+                    }
 
-                Log.i(TAG, "Successfully loaded");
-                progressBar.dismiss();
-
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not load scores");
+                        progressBar.dismiss();
+                    }
+                });
             }
-
             @Override
             public void OnFailure() {
                 Log.i(TAG, "Can not load tests");

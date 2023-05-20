@@ -154,13 +154,11 @@ public class SplashActivity extends AppCompatActivity {
         int wallpaper = ContextCompat.checkSelfPermission(this, Manifest.permission.SET_WALLPAPER);
         int internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         int notifications = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
-        int sms = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
-        int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
         int background_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         int coarse_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
-
 
         if (wallpaper != PackageManager.PERMISSION_GRANTED) {
 
@@ -182,18 +180,18 @@ public class SplashActivity extends AppCompatActivity {
 
             Log.i(TAG, "notifications");
         }
-
-        if (sms != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
-
-            Log.i(TAG, "sms");
-        }
-
-//        if (storage != PackageManager.PERMISSION_GRANTED) {
-//            listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
 //
-//            Log.i(TAG, "storage");
+//        if (sms != PackageManager.PERMISSION_GRANTED) {
+//            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
+//
+//            Log.i(TAG, "sms");
 //        }
+
+        if (storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
+
+            Log.i(TAG, "storage");
+        }
 //
 //        if (background_location != PackageManager.PERMISSION_GRANTED) {
 //            listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);

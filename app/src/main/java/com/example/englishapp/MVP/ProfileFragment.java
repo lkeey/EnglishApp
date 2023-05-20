@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.example.englishapp.Authentication.MainAuthenticationActivity;
 import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
+import com.example.englishapp.testsAndWords.BookmarksFragment;
 import com.example.englishapp.testsAndWords.LeaderBordFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -47,12 +48,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setListeners() {
-        layoutBookmark.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        layoutBookmark.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new BookmarksFragment()));
 
         layoutLeaderBord.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new LeaderBordFragment()));
 
@@ -112,5 +108,4 @@ public class ProfileFragment extends Fragment {
         Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
 
     }
-
 }

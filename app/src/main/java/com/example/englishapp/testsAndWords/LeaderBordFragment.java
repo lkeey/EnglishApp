@@ -5,18 +5,22 @@ import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.UserModel;
@@ -60,6 +64,7 @@ public class LeaderBordFragment extends Fragment implements UserListener {
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarLoadingUserData);
@@ -68,8 +73,42 @@ public class LeaderBordFragment extends Fragment implements UserListener {
         layoutManager.setOrientation(RecyclerView.VERTICAL);
         recyclerUsers.setLayoutManager(layoutManager);
 
-        adapter = new PlaceAdapter(DataBase.LIST_OF_USERS, LeaderBordFragment.this, getContext());
-        recyclerUsers.setAdapter(adapter);
+        progressBar.show();
+
+        DataBase.getUserData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+
+                DataBase.getListOfUsers(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        adapter = new PlaceAdapter(DataBase.LIST_OF_USERS, LeaderBordFragment.this, getContext());
+                        recyclerUsers.setAdapter(adapter);
+                        progressBar.dismiss();
+
+
+                    }
+
+                    @Override
+                    public void OnFailure() {
+
+                        progressBar.dismiss();
+
+                        Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+            @Override
+            public void OnFailure() {
+
+                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+
+                progressBar.dismiss();
+
+            }
+        });
+
 
         ((MainActivity) getActivity()).setTitle(R.string.nameLeaderBord);
 

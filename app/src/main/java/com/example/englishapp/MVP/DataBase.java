@@ -13,6 +13,7 @@ import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NUMBER_OF_
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_PERSONAL_DATA;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_QUESTIONS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_TESTS;
@@ -34,7 +35,6 @@ import static com.example.englishapp.messaging.Constants.KEY_TEST_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_TEST_QUESTION;
 import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
-import static com.example.englishapp.messaging.Constants.KEY_USER_PERSONAL_INFORMATION;
 import static com.example.englishapp.messaging.Constants.KEY_USER_SCORES;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
 import static com.example.englishapp.messaging.Constants.NOT_VISITED;
@@ -79,6 +79,7 @@ public class DataBase {
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
+    public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
 
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
@@ -117,7 +118,7 @@ public class DataBase {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
 
-        batch.set(userDoc, userData);
+        batch.set(userDoc, userData, SetOptions.merge());
 
         DocumentReference docReference = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_STATISTICS)
@@ -179,7 +180,34 @@ public class DataBase {
                             @Override
                             public void OnSuccess() {
                                 Log.i(TAG, "Categories were successfully loaded");
-                                listener.OnSuccess();
+
+                                loadMyScores(new CompleteListener() {
+                                    @Override
+                                    public void OnSuccess() {
+                                        Log.i(TAG, "Scores were successfully loaded");
+
+                                        loadBookmarks(new CompleteListener() {
+                                            @Override
+                                            public void OnSuccess() {
+                                                Log.i(TAG, "bookmarks were successfully loaded");
+
+                                                listener.OnSuccess();
+
+                                            }
+
+                                            @Override
+                                            public void OnFailure() {
+                                                Log.i(TAG, "can not load bookmarks");
+                                            }
+                                        });
+                                    }
+
+                                    @Override
+                                    public void OnFailure() {
+                                        Log.i(TAG, "can not load user's scores");
+                                        listener.OnFailure();
+                                    }
+                                });
                             }
                             @Override
                             public void OnFailure() {
@@ -371,7 +399,7 @@ public class DataBase {
                 .collection(KEY_COLLECTION_CATEGORIES)
                 .document(randomID);
 
-        batch.set(categoryDocument, categoryData);
+        batch.set(categoryDocument, categoryData, SetOptions.merge());
 
         // update statistics
         DocumentReference docReference = DATA_FIRESTORE
@@ -571,7 +599,7 @@ public class DataBase {
                     .collection(KEY_COLLECTION_TESTS)
                     .document(randomID);
 
-            batch.set(testDocument, testData);
+            batch.set(testDocument, testData, SetOptions.merge());
 
             Log.i(TAG, "set batch");
 
@@ -661,7 +689,7 @@ public class DataBase {
                     .collection(KEY_COLLECTION_QUESTIONS)
                     .document(CHOSEN_CATEGORY_ID + "_" + testID +"_" + i);
 
-            batch.set(questionDocument, questionData);
+            batch.set(questionDocument, questionData, SetOptions.merge());
 
         }
 
@@ -673,25 +701,6 @@ public class DataBase {
             listener.OnFailure();
         });
 
-    }
-
-    public static void setBestScore(int score, CompleteListener listener) {
-        // add info about the best score of chosen test
-
-        WriteBatch batch = DATA_FIRESTORE.batch();
-
-        DocumentReference userDoc = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_USERS)
-                .document(USER_MODEL.getUid())
-                .collection(KEY_USER_PERSONAL_INFORMATION)
-                .document(KEY_USER_SCORES);
-
-        Map<String, Object> userData = new ArrayMap<>();
-
-        userData.put(CHOSEN_CATEGORY_ID, score);
-        batch.set(userDoc, userData, SetOptions.merge());
-
-        batch.commit().addOnSuccessListener(unused -> listener.OnSuccess()).addOnFailureListener(e -> listener.OnFailure());
     }
 
     public static TestModel findTestById(String testId) {
@@ -757,5 +766,175 @@ public class DataBase {
             });
     }
 
+    public static void saveResult(int finalScore, CompleteListener listener) {
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference userDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid());
+
+        Map<String, Object> bookmarksData = new ArrayMap<>();
+
+        for (int i=0; i < LIST_OF_BOOKMARKS.size(); i++) {
+            bookmarksData.put("BOOKMARK" + i + "_ID", LIST_OF_BOOKMARKS.get(i).getId());
+            Log.i(TAG, "bookMark - " + LIST_OF_BOOKMARKS.get(i).getId() + " - " + LIST_OF_BOOKMARKS.get(i).getQuestion());
+        }
+
+        DocumentReference bookmarkDocument = DATA_FIRESTORE.collection("USERS").document(USER_MODEL.getUid())
+                .collection(KEY_COLLECTION_PERSONAL_DATA)
+                .document(KEY_BOOKMARKS);
+
+        batch.set(bookmarkDocument, bookmarksData);
+
+        userDocument.get()
+            .addOnSuccessListener(documentSnapshot -> {
+                Map<String, Object> userData = new ArrayMap<>();
+
+                TestModel testModel = findTestById(CHOSEN_TEST_ID);
+
+                if (finalScore > testModel.getTopScore()) {
+
+                    int userExperience = documentSnapshot.getLong(KEY_SCORE).intValue();
+                    int allScore = userExperience + finalScore - testModel.getTopScore();
+
+                    Log.i(TAG, "user - " + userExperience + " - all score - " + allScore + " - top - " + testModel.getTopScore());
+
+                    userData.put(KEY_SCORE, allScore);
+
+                    DocumentReference scoreDocument = userDocument.collection(KEY_COLLECTION_PERSONAL_DATA).document(KEY_USER_SCORES);
+
+                    Map<String, Object> testData = new ArrayMap<>();
+
+                    testData.put(testModel.getId(), finalScore);
+                    batch.set(scoreDocument, testData, SetOptions.merge());
+
+                    USER_MODEL.setScore(allScore);
+
+                }
+
+                userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARKS.size());
+
+                batch.update(userDocument, userData);
+
+                batch.commit()
+                    .addOnSuccessListener(unused -> {
+
+                        listener.OnSuccess();
+                    })
+                    .addOnFailureListener(e -> listener.OnFailure());
+            })
+            .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public static void loadMyScores(CompleteListener listener) {
+        Log.i(TAG, "load scores");
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+            .document(USER_MODEL.getUid())
+            .collection(KEY_COLLECTION_PERSONAL_DATA)
+            .document(KEY_USER_SCORES)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                Log.i(TAG, "amount tests - " + LIST_OF_TESTS.size());
+
+                for (int i=0; i < LIST_OF_TESTS.size(); i++) {
+                    int top = 0;
+
+                    Log.i(TAG, "test id - " + LIST_OF_TESTS.get(i).getId() + " - " + LIST_OF_TESTS.get(i).getName());
+
+                    if (documentSnapshot.getLong(LIST_OF_TESTS.get(i).getId()) != null) {
+                        top = documentSnapshot.getLong(LIST_OF_TESTS.get(i).getId()).intValue();
+
+                        Log.i(TAG, LIST_OF_TESTS.get(i).getName() + " - " + top);
+
+                    }
+
+                    Log.i(TAG, "top - " + top);
+
+                    LIST_OF_TESTS.get(i).setTopScore(top);
+                }
+                listener.OnSuccess();
+            })
+            .addOnFailureListener(e -> {
+                Log.i(TAG, "error while loading scores - " + e.getMessage());
+
+                listener.OnFailure();
+            });
+    }
+
+    public static void loadBookmarks(CompleteListener listener) {
+        Log.i(TAG, "begin load bookmarks");
+
+        LIST_OF_BOOKMARKS.clear();
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+            .document(USER_MODEL.getUid())
+            .collection(KEY_COLLECTION_PERSONAL_DATA)
+            .document(KEY_BOOKMARKS)
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                int count = USER_MODEL.getBookmarksCount();
+
+                Log.i(TAG, "amount bookmarks - " + count);
+
+                for(int i=0; i < count; i++) {
+                    String questionId = documentSnapshot.getString("BOOKMARK" + (i+1) + "_ID");
+
+                    try {
+                        addQuestionToBookmarks(questionId);
+                    } catch (Exception e) {
+                        Log.i(TAG, "error while adding bookmark - " + e.getMessage());
+                    }
+
+                }
+
+                listener.OnSuccess();
+            })
+            .addOnFailureListener(e -> {
+                listener.OnFailure();
+                Log.i(TAG, "error while loading bookmarks - " + e.getMessage());
+            });
+    }
+
+    public static void addQuestionToBookmarks(String questionId) {
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_QUESTIONS)
+            .document(questionId)
+            .get()
+            .addOnSuccessListener(document -> {
+                ArrayList<OptionModel> optionModels = new ArrayList<>();
+
+                for(int i=0; i < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue()); i++) {
+                    OptionModel optionModel = new OptionModel();
+
+                    if (i == document.getLong(KEY_ANSWER).intValue()) {
+                        optionModel.setCorrect(true);
+                    } else {
+                        optionModel.setCorrect(false);
+                    }
+
+                    optionModel.setOption(document.getString(KEY_OPTION + "_" + i));
+
+                    optionModels.add(optionModel);
+
+                }
+
+                QuestionModel questionModel = new QuestionModel();
+
+                questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
+                questionModel.setId(document.getString(KEY_QUESTION_ID));
+                questionModel.setCorrectAnswer(document.getLong(KEY_ANSWER).intValue());
+                questionModel.setOptionsList(optionModels);
+                questionModel.setStatus(NOT_VISITED);
+                questionModel.setSelectedOption(-1);
+
+                Log.i(TAG, "found - " + questionModel.getQuestion());
+
+                LIST_OF_BOOKMARKS.add(questionModel);
+
+            })
+            .addOnFailureListener(e -> {
+                throw new RuntimeException("not found");
+            });
+
+    }
 
 }

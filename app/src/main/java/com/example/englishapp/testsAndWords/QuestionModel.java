@@ -80,4 +80,8 @@ public class QuestionModel implements Serializable {
     public void setBookmarked(boolean bookmarked) {
         isBookmarked = bookmarked;
     }
+
+    public boolean equals(QuestionModel obj) {
+        return this.id.equals(obj.getId());
+    }
 }

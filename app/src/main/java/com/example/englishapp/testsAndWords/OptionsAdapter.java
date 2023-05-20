@@ -26,11 +26,13 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
     private List<OptionModel> optionModels;
     private int questionId;
     private Context context;
+    private boolean isShowing;
 
-    public OptionsAdapter(List<OptionModel> optionModels, int questionId, Context context) {
+    public OptionsAdapter(List<OptionModel> optionModels, int questionId, Context context, boolean isShowing) {
         this.optionModels = optionModels;
         this.questionId = questionId;
         this.context = context;
+        this.isShowing = isShowing;
     }
 
     @NonNull
@@ -68,12 +70,16 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
             DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    selectOption(optionName, position);
-                }
-            });
+            if (!isShowing) {
+
+                itemView.setOnClickListener(v -> setOption(optionName, position));
+
+            } else if (isShowing && optionModel.isCorrect()) {
+
+                optionModel.getTv().setBackgroundResource(R.drawable.selected_btn);
+                optionModel.getTv().setTextColor(ContextCompat.getColor(context, R.color.white));
+
+            }
         }
 
         private void setOption(TextView tv, int optionNum) {
@@ -98,6 +104,8 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 changeStatus(ANSWERED);
 
+                DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(optionNum);
+
             } else {
 
                 Log.i(TAG, "unselected - " + optionNum + " - " + DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
@@ -107,15 +115,9 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 changeStatus(UNANSWERED);
 
+                DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(-1);
+
             }
-        }
-
-        private void selectOption(TextView tv, int optionNum) {
-
-            setOption(tv, optionNum);
-
-            DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(optionNum);
-
         }
 
         private void changeStatus(int status) {

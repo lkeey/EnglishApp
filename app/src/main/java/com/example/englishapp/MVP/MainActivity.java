@@ -305,6 +305,9 @@ public class MainActivity extends BaseActivity {
 
     public void setFragment(Fragment fragment) {
 
+        setSupportActionBar(toolbar);
+        getSupportActionBar().show();
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(mainFrame.getId(), fragment)

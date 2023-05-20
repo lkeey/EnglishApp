@@ -262,7 +262,6 @@ public class ProfileInfoFragment extends Fragment {
         DataBase.updateProfileData(userData, new CompleteListener() {
             @Override
             public void OnSuccess() {
-
                 DataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {

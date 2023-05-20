@@ -27,10 +27,11 @@
 
             <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/userImage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="320dp"
+                android:layout_height="320dp"
                 android:contentDescription="@string/add_image"
                 app:riv_oval="true"
+                android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerInside"

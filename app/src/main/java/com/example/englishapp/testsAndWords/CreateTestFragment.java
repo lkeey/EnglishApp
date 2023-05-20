@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
@@ -53,7 +54,7 @@ public class CreateTestFragment extends Fragment {
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameChats);
+        ((MainActivity) getActivity()).setTitle(R.string.nameCreateTest);
 
         layoutList = view.findViewById(R.id.layoutList);
         btnAdd = view.findViewById(R.id.btnAddQuestion);
@@ -92,6 +93,8 @@ public class CreateTestFragment extends Fragment {
                         Log.i(TAG, "Successfully created");
 
                         Toast.makeText(getActivity(), "Test successfully created", Toast.LENGTH_SHORT).show();
+
+                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
 
                         progressBar.dismiss();
                     }

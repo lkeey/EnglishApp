@@ -18,10 +18,12 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
     private List<QuestionModel> listQuestions;
     private Context context;
+    private boolean isShowing;
 
-    public QuestionsAdapter(List<QuestionModel> listQuestions, Context context) {
+    public QuestionsAdapter(List<QuestionModel> listQuestions, Context context, boolean isShowing) {
         this.listQuestions = listQuestions;
         this.context = context;
+        this.isShowing = isShowing;
     }
 
     @NonNull
@@ -62,7 +64,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
             questionName.setText(questionModel.getQuestion());
 
             // set adapter for options
-            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context);
+            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context, isShowing);
             layoutOptions.setAdapter(optionsAdapter);
 
             LinearLayoutManager manager = new LinearLayoutManager(context);
