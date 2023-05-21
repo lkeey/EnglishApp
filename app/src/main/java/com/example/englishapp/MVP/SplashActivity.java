@@ -157,6 +157,7 @@ public class SplashActivity extends AppCompatActivity {
         int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
         int background_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
         int coarse_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int fine_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
 
@@ -191,6 +192,24 @@ public class SplashActivity extends AppCompatActivity {
             listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
 
             Log.i(TAG, "storage");
+        }
+
+        if (background_location != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
+
+            Log.i(TAG, "background");
+        }
+
+        if (coarse_location != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            Log.i(TAG, "coarse");
+        }
+
+        if (fine_location != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+
+            Log.i(TAG, "fine");
         }
 //
 //        if (background_location != PackageManager.PERMISSION_GRANTED) {

@@ -109,8 +109,10 @@ public class LocationWork extends Worker {
         return notification;
     }
 
-    private void updateNotification(String latitude, String longitude) {
+    private void updateNotification(String latitude, String longitude) throws InterruptedException {
         Log.i(TAG, "updateNotification");
+
+//        Thread.sleep(30_000); // every 30 seconds
 
         // update user position in firebase
         DataBase.updateUserGeoPosition(latitude, longitude, new CompleteListener() {
@@ -142,7 +144,11 @@ public class LocationWork extends Worker {
             String latitude = intent.getStringExtra(KEY_LATITUDE);
             String longitude = intent.getStringExtra(KEY_LONGITUDE);
 
-            updateNotification(latitude, longitude);
+            try {
+                updateNotification(latitude, longitude);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     };
 

@@ -102,9 +102,10 @@ public class LocationManager {
     public void createLocationRequest() {
         Log.i(TAG, "createLocationRequest");
 
+        // every 30 seconds
         locationRequest = LocationRequest.create();
-        locationRequest.setInterval(1000);
-        locationRequest.setFastestInterval(5000);
+        locationRequest.setInterval(30_000);
+        locationRequest.setFastestInterval(30_000);
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -134,7 +135,7 @@ public class LocationManager {
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "null - permission");
-            return;
+
         } else {
             Log.i(TAG, "okey");
 
@@ -144,8 +145,6 @@ public class LocationManager {
                     Looper.getMainLooper()
             );
         }
-
-
     }
 
     public boolean isLocationEnabled() {

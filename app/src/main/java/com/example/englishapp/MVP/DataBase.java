@@ -491,14 +491,33 @@ public class DataBase {
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
 
+    // every 30 seconds
     public static void updateUserGeoPosition(String latitude, String longitude, CompleteListener listener) {
 
-        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-                .document(USER_MODEL.getUid());
+        Log.i(TAG, "latitude - " + Double.parseDouble(latitude) + " - " + USER_MODEL.getLatitude());
 
-        reference.update(KEY_LOCATION, new GeoPoint(Double.parseDouble(latitude), Double.parseDouble(longitude)))
-                .addOnSuccessListener(unused -> listener.OnSuccess())
-                .addOnFailureListener(e -> listener.OnFailure());
+        Log.i(TAG, "longitude - " + Double.parseDouble(longitude) + " - " + USER_MODEL.getLongitude());
+
+        if (Double.parseDouble(latitude) != USER_MODEL.getLatitude() && Double.parseDouble(longitude) != USER_MODEL.getLongitude()) {
+
+            Log.i(TAG, "new geo");
+
+            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                    .document(USER_MODEL.getUid());
+
+            reference.update(KEY_LOCATION, new GeoPoint(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+                    .addOnSuccessListener(unused -> {
+                        USER_MODEL.setLongitude(Double.parseDouble(longitude));
+                        USER_MODEL.setLatitude(Double.parseDouble(latitude));
+
+                        listener.OnSuccess();
+                    }).addOnFailureListener(e -> listener.OnFailure());
+        } else {
+
+            Log.i(TAG, "the same geo");
+
+            listener.OnSuccess();
+        }
     }
 
     public static CategoryModel findCategoryById(String categoryId) {

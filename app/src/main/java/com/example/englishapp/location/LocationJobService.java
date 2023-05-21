@@ -8,9 +8,9 @@ import android.content.ComponentName;
 import android.os.Build;
 import android.util.Log;
 
-public class LocationService extends JobService {
+public class LocationJobService extends JobService {
 
-    private static final String TAG = "LocationService";
+    private static final String TAG = "LocationJobService";
 
     @Override
     public boolean onStartJob(JobParameters params) {
@@ -40,7 +40,7 @@ public class LocationService extends JobService {
         JobInfo.Builder mJobBuilder =
                 new JobInfo.Builder(666,
                         new ComponentName(getPackageName(),
-                                LocationService.class.getName()));
+                                LocationJobService.class.getName()));
 
         /* For Android N and Upper Versions */
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
