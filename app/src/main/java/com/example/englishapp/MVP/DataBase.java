@@ -7,9 +7,12 @@ import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_SENT_MESSAGE
 import static com.example.englishapp.messaging.Constants.KEY_AMOUNT_TESTS;
 import static com.example.englishapp.messaging.Constants.KEY_ANSWER;
 import static com.example.englishapp.messaging.Constants.KEY_BOOKMARKS;
+import static com.example.englishapp.messaging.Constants.KEY_CARD_ID;
+import static com.example.englishapp.messaging.Constants.KEY_CARD_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_CATEGORY_NUMBER_OF_TESTS;
+import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CARDS;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_CONVERSATION;
@@ -81,6 +84,7 @@ public class DataBase {
     public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
     public static List<String> LIST_OF_BOOKMARK_IDS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
+    public static List<CardModel> LIST_OF_CARDS = new ArrayList<>();
 
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
@@ -1008,4 +1012,45 @@ public class DataBase {
         })
         .addOnFailureListener(e -> listener.OnFailure());
     }
+
+    public static void loadWordCardsData(CompleteListener listener) {
+        LIST_OF_CARDS.clear();
+
+        Log.i(TAG, "Begin loading cards");
+
+        CategoryModel chosenCategory = findCategoryById(CHOSEN_CATEGORY_ID);
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_CARDS)
+            .limit(20)
+            .whereEqualTo(KEY_CATEGORY_ID, chosenCategory.getId())
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+                Log.i(TAG, "Get cards");
+
+                try {
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+
+                        CardModel cardModel = new CardModel();
+
+                        cardModel.setId(documentSnapshot.getString(KEY_CARD_ID));
+                        cardModel.setName(documentSnapshot.getString(KEY_CARD_NAME));
+
+                        LIST_OF_CARDS.add(cardModel);
+
+                        Log.i(TAG, "Find card- " + cardModel.getId());
+
+                    }
+                } catch (Exception e) {
+                    Log.i(TAG, "Test error - " + e.getMessage());
+                }
+
+                Log.i(TAG, "All good");
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> listener.OnFailure());
+
+    }
+
 }

@@ -14,6 +14,7 @@
     <string name="nameChats">Chats</string>
     <string name="nameResult">Result</string>
     <string name="nameLeaderBord">LeaderBord</string>
+    <string name="nameCardWords">Words</string>
 
     <string name="errorName">Please enter your name</string>
     <string name="errorEmail">Please enter your email</string>

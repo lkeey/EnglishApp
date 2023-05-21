@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,7 +34,6 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     private TestAdapter testAdapter;
     private ImageView imgAddTest;
     private EditText inputSearch;
-    private ProgressBar progressTest;
     private Dialog progressBar;
     private TextView dialogText;
 
