@@ -1,6 +1,7 @@
 package com.example.englishapp.testsAndWords;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.List;
 
 public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.ViewHolder> {
 
+    private static final String TAG = "AdapterQuestions";
     private List<QuestionModel> listQuestions;
     private Context context;
     private boolean isShowing;
@@ -58,19 +60,22 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
         }
 
         private void setData(final int position) {
+            try {
+                QuestionModel questionModel = listQuestions.get(position);
 
-            QuestionModel questionModel = listQuestions.get(position);
+                questionName.setText(questionModel.getQuestion());
 
-            questionName.setText(questionModel.getQuestion());
+                // set adapter for options
+                OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context, isShowing);
+                layoutOptions.setAdapter(optionsAdapter);
 
-            // set adapter for options
-            OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context, isShowing);
-            layoutOptions.setAdapter(optionsAdapter);
+                LinearLayoutManager manager = new LinearLayoutManager(context);
+                manager.setOrientation(RecyclerView.VERTICAL);
+                layoutOptions.setLayoutManager(manager);
 
-            LinearLayoutManager manager = new LinearLayoutManager(context);
-            manager.setOrientation(RecyclerView.VERTICAL);
-            layoutOptions.setLayoutManager(manager);
-
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
+            }
         }
 
     }

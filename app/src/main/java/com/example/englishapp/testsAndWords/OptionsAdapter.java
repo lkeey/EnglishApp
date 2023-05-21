@@ -64,22 +64,29 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
         }
 
         private void setData(int position) {
+
             OptionModel optionModel = optionModels.get(position);
+
+            Log.i(TAG, "option - " + optionModel.getOption() + " - " + optionModel.isCorrect());
+
+            Log.i(TAG, "isShowing - " + isShowing);
 
             optionName.setText(optionModel.getOption());
 
-            DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
 
             if (!isShowing) {
 
                 itemView.setOnClickListener(v -> setOption(optionName, position));
 
+                DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
+
             } else if (isShowing && optionModel.isCorrect()) {
 
-                optionModel.getTv().setBackgroundResource(R.drawable.selected_btn);
-                optionModel.getTv().setTextColor(ContextCompat.getColor(context, R.color.white));
-
+                optionName.setBackgroundResource(R.drawable.selected_btn);
+                optionName.setTextColor(ContextCompat.getColor(context, R.color.white));
             }
+
+
         }
 
         private void setOption(TextView tv, int optionNum) {

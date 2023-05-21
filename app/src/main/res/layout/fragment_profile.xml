@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 app:layout_collapseMode="parallax"
                 app:navigationIcon="@drawable/ic_btn_back"
-                app:title="Username"/>
+                app:title="Username" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

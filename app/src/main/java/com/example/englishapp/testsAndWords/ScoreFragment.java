@@ -57,25 +57,27 @@ public class ScoreFragment extends Fragment {
     private void updateBookmarksAndScore() {
 
         // bookmarks
-
-        Log.i(TAG, "was - " + DataBase.USER_MODEL.getBookmarksCount());
+        Log.i(TAG, "was - " + DataBase.USER_MODEL.getBookmarksCount() + " - " + DataBase.LIST_OF_BOOKMARKS.size());
 
         for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
             QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(i);
 
-            if (questionModel.isBookmarked() && !DataBase.LIST_OF_BOOKMARKS.contains(questionModel)) {
-                DataBase.LIST_OF_BOOKMARKS.add(questionModel);
+            Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
+
+            if (questionModel.isBookmarked() && !DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                DataBase.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
 
                 Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+            }
 
-            } else if (DataBase.LIST_OF_BOOKMARKS.contains(questionModel)) {
-                DataBase.LIST_OF_BOOKMARKS.remove(questionModel);
+            if (!questionModel.isBookmarked() && DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                DataBase.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
 
-                Log.i(TAG, "Deleted Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+                Log.i(TAG, "Removed - " + questionModel.getQuestion());
             }
         }
 
-        DataBase.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARKS.size());
+        DataBase.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARK_IDS.size());
 
         Log.i(TAG, "become - " + DataBase.USER_MODEL.getBookmarksCount());
 

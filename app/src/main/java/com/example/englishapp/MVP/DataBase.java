@@ -79,6 +79,7 @@ public class DataBase {
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
+    public static List<String> LIST_OF_BOOKMARK_IDS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
 
 
@@ -181,30 +182,16 @@ public class DataBase {
                             public void OnSuccess() {
                                 Log.i(TAG, "Categories were successfully loaded");
 
-                                loadMyScores(new CompleteListener() {
+                                loadBookmarkIds(new CompleteListener() {
                                     @Override
                                     public void OnSuccess() {
-                                        Log.i(TAG, "Scores were successfully loaded");
-
-                                        loadBookmarks(new CompleteListener() {
-                                            @Override
-                                            public void OnSuccess() {
-                                                Log.i(TAG, "bookmarks were successfully loaded");
-
-                                                listener.OnSuccess();
-
-                                            }
-
-                                            @Override
-                                            public void OnFailure() {
-                                                Log.i(TAG, "can not load bookmarks");
-                                            }
-                                        });
+                                        Log.i(TAG, "bookmarked successfully loaded");
+                                        listener.OnSuccess();
                                     }
 
                                     @Override
                                     public void OnFailure() {
-                                        Log.i(TAG, "can not load user's scores");
+                                        Log.i(TAG, "can not load bookmark ids");
                                         listener.OnFailure();
                                     }
                                 });
@@ -751,6 +738,13 @@ public class DataBase {
                     questionModel.setStatus(NOT_VISITED);
                     questionModel.setSelectedOption(-1);
 
+                    // if bookmarked
+                    if (LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                        questionModel.setBookmarked(true);
+
+                        Log.i(TAG, "bookmarked - " + questionModel.getQuestion());
+                    }
+
                     LIST_OF_QUESTIONS.add(questionModel);
 
                 }
@@ -773,12 +767,12 @@ public class DataBase {
 
         Map<String, Object> bookmarksData = new ArrayMap<>();
 
-        for (int i=0; i < LIST_OF_BOOKMARKS.size(); i++) {
-            bookmarksData.put("BOOKMARK" + i + "_ID", LIST_OF_BOOKMARKS.get(i).getId());
-            Log.i(TAG, "bookMark - " + LIST_OF_BOOKMARKS.get(i).getId() + " - " + LIST_OF_BOOKMARKS.get(i).getQuestion());
+        for (int i=0; i < LIST_OF_BOOKMARK_IDS.size(); i++) {
+            bookmarksData.put("BOOKMARK" + i + "_ID", LIST_OF_BOOKMARK_IDS.get(i));
+            Log.i(TAG, "bookMark - " + LIST_OF_BOOKMARK_IDS.get(i));
         }
 
-        DocumentReference bookmarkDocument = DATA_FIRESTORE.collection("USERS").document(USER_MODEL.getUid())
+        DocumentReference bookmarkDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid())
                 .collection(KEY_COLLECTION_PERSONAL_DATA)
                 .document(KEY_BOOKMARKS);
 
@@ -810,7 +804,7 @@ public class DataBase {
 
                 }
 
-                userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARKS.size());
+                userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARK_IDS.size());
 
                 batch.update(userDocument, userData);
 
@@ -860,10 +854,10 @@ public class DataBase {
             });
     }
 
-    public static void loadBookmarks(CompleteListener listener) {
-        Log.i(TAG, "begin load bookmarks");
+    public static void loadBookmarkIds(CompleteListener listener) {
+        Log.i(TAG, "begin load bookmarks ids");
 
-        LIST_OF_BOOKMARKS.clear();
+        LIST_OF_BOOKMARK_IDS.clear();
 
         DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
             .document(USER_MODEL.getUid())
@@ -873,20 +867,20 @@ public class DataBase {
             .addOnSuccessListener(documentSnapshot -> {
                 int count = USER_MODEL.getBookmarksCount();
 
-                Log.i(TAG, "amount bookmarks - " + count);
+                    Log.i(TAG, "amount bookmarks - " + count);
 
-                for(int i=0; i < count; i++) {
-                    String questionId = documentSnapshot.getString("BOOKMARK" + (i+1) + "_ID");
+                    for(int i=0; i < count; i++) {
 
-                    try {
-                        addQuestionToBookmarks(questionId);
-                    } catch (Exception e) {
-                        Log.i(TAG, "error while adding bookmark - " + e.getMessage());
+                        String questionId = documentSnapshot.getString("BOOKMARK" + i + "_ID");
+
+                        LIST_OF_BOOKMARK_IDS.add(questionId);
+
                     }
 
-                }
+                    Log.i(TAG, "found bookmarks - " + LIST_OF_BOOKMARKS.size());
 
-                listener.OnSuccess();
+                    listener.OnSuccess();
+
             })
             .addOnFailureListener(e -> {
                 listener.OnFailure();
@@ -894,47 +888,105 @@ public class DataBase {
             });
     }
 
-    public static void addQuestionToBookmarks(String questionId) {
+    public static void loadBookmarks(CompleteListener listener) {
+        Log.i(TAG, "begin load bookmarks");
 
-        DATA_FIRESTORE.collection(KEY_COLLECTION_QUESTIONS)
-            .document(questionId)
-            .get()
-            .addOnSuccessListener(document -> {
-                ArrayList<OptionModel> optionModels = new ArrayList<>();
+        LIST_OF_BOOKMARKS.clear();
 
-                for(int i=0; i < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue()); i++) {
-                    OptionModel optionModel = new OptionModel();
+        for (int i=0; i < LIST_OF_BOOKMARK_IDS.size(); i++) {
 
-                    if (i == document.getLong(KEY_ANSWER).intValue()) {
-                        optionModel.setCorrect(true);
-                    } else {
-                        optionModel.setCorrect(false);
+            String questionId = LIST_OF_BOOKMARK_IDS.get(i);
+
+            //load bookmarks from questions list
+            int number = i;
+            DATA_FIRESTORE.collection(KEY_COLLECTION_QUESTIONS)
+                .document(questionId)
+                .get()
+                .addOnSuccessListener(document -> {
+
+                    ArrayList<OptionModel> optionModels = new ArrayList<>();
+
+                    // find options for question
+                    for (int n = 0; n < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue()); n++) {
+                        OptionModel optionModel = new OptionModel();
+
+                        if (n == document.getLong(KEY_ANSWER).intValue()) {
+                            optionModel.setCorrect(true);
+                        } else {
+                            optionModel.setCorrect(false);
+                        }
+
+                        optionModel.setOption(document.getString(KEY_OPTION + "_" + n));
+
+                        optionModels.add(optionModel);
+
                     }
 
-                    optionModel.setOption(document.getString(KEY_OPTION + "_" + i));
+                    QuestionModel questionModel = new QuestionModel();
 
-                    optionModels.add(optionModel);
+                    questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
+                    questionModel.setId(document.getString(KEY_QUESTION_ID));
+                    questionModel.setCorrectAnswer(document.getLong(KEY_ANSWER).intValue());
+                    questionModel.setOptionsList(optionModels);
+                    questionModel.setBookmarked(true);
+                    questionModel.setStatus(NOT_VISITED);
+                    questionModel.setSelectedOption(-1);
 
-                }
+                    Log.i(TAG, "found - " + questionModel.getQuestion());
 
-                QuestionModel questionModel = new QuestionModel();
+                    LIST_OF_BOOKMARKS.add(questionModel);
 
-                questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
-                questionModel.setId(document.getString(KEY_QUESTION_ID));
-                questionModel.setCorrectAnswer(document.getLong(KEY_ANSWER).intValue());
-                questionModel.setOptionsList(optionModels);
-                questionModel.setStatus(NOT_VISITED);
-                questionModel.setSelectedOption(-1);
+                    Log.i(TAG, "added - " + questionModel.getQuestion() + " - all - " + LIST_OF_BOOKMARKS.size());
 
-                Log.i(TAG, "found - " + questionModel.getQuestion());
+                    if (number == LIST_OF_BOOKMARK_IDS.size() - 1) {
+                        Log.i(TAG, "amount bookmarks - " + LIST_OF_BOOKMARKS.size());
+                        listener.OnSuccess();
+                    }
 
-                LIST_OF_BOOKMARKS.add(questionModel);
-
-            })
-            .addOnFailureListener(e -> {
-                throw new RuntimeException("not found");
-            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.i(TAG, "can not find bookmark - " + e.getMessage());
+                    listener.OnFailure();
+                });
+        }
 
     }
 
+    public static void saveBookmarks(CompleteListener listener) {
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference userDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        Log.i(TAG, "amount saved bookmarks - " + LIST_OF_BOOKMARKS.size());
+
+        Map<String, Object> bookmarksData = new ArrayMap<>();
+
+        for (int i=0; i < LIST_OF_BOOKMARKS.size(); i++) {
+            bookmarksData.put("BOOKMARK" + i + "_ID", LIST_OF_BOOKMARKS.get(i).getId());
+
+            Log.i(TAG, "bookMark - " + LIST_OF_BOOKMARKS.get(i).getId() + " - " + LIST_OF_BOOKMARKS.get(i).getQuestion());
+        }
+
+        DocumentReference bookmarkDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+            .document(USER_MODEL.getUid())
+            .collection(KEY_COLLECTION_PERSONAL_DATA)
+            .document(KEY_BOOKMARKS);
+
+        batch.set(bookmarkDocument, bookmarksData);
+
+        userDocument.get().addOnSuccessListener(documentSnapshot -> {
+            Map<String, Object> userData = new ArrayMap<>();
+
+            userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARKS.size());
+
+            batch.update(userDocument, userData);
+
+            batch.commit()
+                .addOnSuccessListener(unused -> listener.OnSuccess())
+                .addOnFailureListener(e -> listener.OnFailure());
+        })
+        .addOnFailureListener(e -> listener.OnFailure());
+    }
 }

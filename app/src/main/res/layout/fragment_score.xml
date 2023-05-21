@@ -353,7 +353,8 @@
             android:textColor="@color/design_default_color_primary"
             android:textSize="16sp"
             android:elevation="5dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

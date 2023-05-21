@@ -189,7 +189,6 @@ public class ExamActivity extends AppCompatActivity {
         bookMarkImg = findViewById(R.id.bookMarkImg);
         previousQuestion = findViewById(R.id.previousQuestion);
         nextQuestion = findViewById(R.id.nextQuestion);
-        nextQuestion = findViewById(R.id.nextQuestion);
 
         dialogExit = new Dialog(ExamActivity.this);
         dialogExit.setContentView(R.layout.dialog_exit);

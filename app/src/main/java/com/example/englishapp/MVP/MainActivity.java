@@ -17,13 +17,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
@@ -88,6 +87,8 @@ public class MainActivity extends BaseActivity {
             startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             progressLocation.dismiss();
         });
+
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
     }
 
     private void showDialogLocation() {
@@ -256,8 +257,6 @@ public class MainActivity extends BaseActivity {
 
         toolbar = findViewById(R.id.toolbar);
 
-        Log.i(TAG, "Toolbar found");
-
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -306,6 +305,7 @@ public class MainActivity extends BaseActivity {
     public void setFragment(Fragment fragment) {
 
         setSupportActionBar(toolbar);
+
         getSupportActionBar().show();
 
         getSupportFragmentManager()
@@ -315,25 +315,23 @@ public class MainActivity extends BaseActivity {
                 .commit();
     }
 
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if (item.getItemId() == android.R.id.home) {
-
-            setSupportActionBar(toolbar);
-
-            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
-
-            if (getSupportFragmentManager().getBackStackEntryCount() > 2){
-                getSupportFragmentManager().popBackStackImmediate();
-
-            } else {
-                super.onBackPressed();
-            }
-
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//
+//        if (item.getItemId() == android.R.id.home) {
+//
+//            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
+//
+//            if (getSupportFragmentManager().getBackStackEntryCount() > 2){
+//                getSupportFragmentManager().popBackStackImmediate();
+//
+//            } else {
+//                super.onBackPressed();
+//            }
+//
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     public void setTitle(int strId) {
         getSupportActionBar().setTitle(getString(strId));
@@ -342,5 +340,17 @@ public class MainActivity extends BaseActivity {
     @Override
     public void setTitle(CharSequence title) {
         getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        setSupportActionBar(toolbar);
+
+        getSupportActionBar().show();
+
+        Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+
+        super.onBackPressed();
     }
 }

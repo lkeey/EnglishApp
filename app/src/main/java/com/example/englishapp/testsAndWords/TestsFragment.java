@@ -144,31 +144,38 @@ public class TestsFragment extends Fragment implements TestClickedListener {
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_CHOSEN_TEST, test);
         fragment.setArguments(bundle);
-
-        DataBase.loadQuestions(new CompleteListener() {
+        DataBase.loadBookmarkIds(new CompleteListener() {
             @Override
             public void OnSuccess() {
+                DataBase.loadQuestions(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
 
-                Log.i(TAG, "Questions loaded");
+                        Log.i(TAG, "Questions loaded");
 
-                fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+                        fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
 
-                progressBar.dismiss();
+                        progressBar.dismiss();
+
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not load questions");
+
+                        Toast.makeText(getActivity(), "Can not load test... Try later", Toast.LENGTH_SHORT).show();
+
+                        progressBar.dismiss();
+
+                    }
+                });
 
             }
 
             @Override
             public void OnFailure() {
-                Log.i(TAG, "Can not load questions");
-
-                Toast.makeText(getActivity(), "Can not load test... Try later", Toast.LENGTH_SHORT).show();
-
-                progressBar.dismiss();
-
+                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
     }
 }

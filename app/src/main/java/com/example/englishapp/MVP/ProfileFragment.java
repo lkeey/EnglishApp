@@ -48,7 +48,48 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setListeners() {
-        layoutBookmark.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new BookmarksFragment()));
+
+        layoutBookmark.setOnClickListener(v -> {
+            if (USER_MODEL.getBookmarksCount() > 0) {
+                DataBase.loadBookmarkIds(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+
+                        Log.i(TAG, "loaded bookmark ids - " + DataBase.LIST_OF_BOOKMARK_IDS.size());
+
+                        DataBase.loadBookmarks(new CompleteListener() {
+                            @Override
+                            public void OnSuccess() {
+
+                                Log.i(TAG, "bookmarks loaded - " + DataBase.LIST_OF_BOOKMARKS.size());
+
+                                ((MainActivity) getActivity()).setFragment(new BookmarksFragment());
+
+                                Log.i(TAG, "set fragment");
+                            }
+
+                            @Override
+                            public void OnFailure() {
+                                Log.i(TAG, "error occurred");
+
+                                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void OnFailure() {
+
+                        Log.i(TAG, "error occurred");
+
+                        Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(getActivity(), "You haven't bookmarks", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         layoutLeaderBord.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new LeaderBordFragment()));
 
@@ -83,6 +124,13 @@ public class ProfileFragment extends Fragment {
                 }
             });
         });
+
+        toolbar.setNavigationOnClickListener(v -> {
+
+            getActivity().onBackPressed();
+
+        });
+
     }
 
     private void init(View view) {
@@ -108,4 +156,5 @@ public class ProfileFragment extends Fragment {
         Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
 
     }
+
 }
