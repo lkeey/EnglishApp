@@ -1,10 +1,12 @@
 package com.example.englishapp.testsAndWords;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,10 +30,12 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
     private Timer timer;
 
     public CardWordAdapter(List<CardModel> cardModelList, CardClickedListener listener, Context context) {
+
         this.cardModelList = cardModelList;
         this.listener = listener;
         this.context = context;
         allCards = cardModelList;
+
     }
 
     @NonNull
@@ -60,22 +64,22 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(searchKeyword.trim().isEmpty()) {
-                    cardModelList = allCards;
-                } else {
+            if(searchKeyword.trim().isEmpty()) {
+                cardModelList = allCards;
+            } else {
 
-                    ArrayList<CardModel> cardWithKey = new ArrayList<>();
-                    for(CardModel card: allCards) {
+                ArrayList<CardModel> cardWithKey = new ArrayList<>();
+                for(CardModel card: allCards) {
 
-                        if (card.getName().contains(searchKeyword.toLowerCase())) {
-                            cardWithKey.add(card);
-                        }
+                    if (card.getName().contains(searchKeyword.toLowerCase())) {
+                        cardWithKey.add(card);
                     }
-
-                    cardModelList = cardWithKey;
                 }
 
-                new android.os.Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
+                cardModelList = cardWithKey;
+            }
+
+            new android.os.Handler(Looper.getMainLooper()).post(() -> notifyDataSetChanged());
             }
         }, 500);
     }
@@ -89,6 +93,7 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title, numberOfCards, level;
+        private ProgressBar progressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,6 +101,7 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             title = itemView.findViewById(R.id.title);
             numberOfCards = itemView.findViewById(R.id.numberOfCards);
             level = itemView.findViewById(R.id.level);
+            progressBar = itemView.findViewById(R.id.progressBar);
 
         }
 
@@ -108,6 +114,40 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             numberOfCards.setText("" + cardModel.getAmountOfWords());
 
             level.setText(cardModel.getLevel());
+
+            switch (cardModel.getLevel()) {
+
+                case "A2": {
+                    progressBar.setProgress(40);
+
+                }
+
+                case "B1": {
+                    progressBar.setProgress(60);
+
+                }
+
+                case "B2": {
+                    progressBar.setProgress(70);
+
+                }
+
+                case "C1": {
+                    progressBar.setProgress(90);
+
+                }
+
+                case "C2": {
+                    progressBar.setProgress(100);
+
+                }
+
+                default: {
+                    progressBar.setProgress(20);
+                    progressBar.getIndeterminateDrawable().setColorFilter(Color.GREEN, android.graphics.PorterDuff.Mode.MULTIPLY);
+                }
+            }
+
 
             itemView.setOnClickListener(v -> listener.onCardClicked(cardModel));
         }

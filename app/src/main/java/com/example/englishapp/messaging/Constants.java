@@ -63,8 +63,19 @@ public class Constants {
     public static final String KEY_CHOSEN_TEST = "KEY_CHOSEN_TEST";
     public static final String KEY_COLLECTION_PERSONAL_DATA = "PERSONAL_DATA";
     public static final String KEY_COLLECTION_CARDS = "CARDS";
-    public static final String KEY_CARD_NAME = "NAME";
-    public static final String KEY_CARD_ID = "ID";
+    public static final String KEY_CARD_NAME = "CARD_NAME";
+    public static final String KEY_CARD_ID = "CARD_ID";
+    public static final String KEY_CARD_LEVEL = "CARD_LEVEL";
+    public static final String KEY_CARD_DESCRIPTION = "CARD_DESCRIPTION";
+    public static final String KEY_AMOUNT_CARDS = "AMOUNT_CARDS";
+    public static final String KEY_AMOUNT_WORDS = "AMOUNT_WORDS";
+    public static final String KEY_WORD_ID = "WORD_ID";
+    public static final String KEY_WORD_TEXT_EN = "TEXT_EN";
+    public static final String KEY_WORD_LEVEL = "WORD_LEVEL";
+    public static final String KEY_WORD_IMG = "WORD_IMG";
+    public static final String KEY_WORD_DESCRIPTION = "WORD_DESCRIPTION";
+    public static final String KEY_COLLECTION_WORDS = "WORDS";
+
     public static final int NOT_VISITED = 0;
     public static final int UNANSWERED = 1;
     public static final int ANSWERED = 2;

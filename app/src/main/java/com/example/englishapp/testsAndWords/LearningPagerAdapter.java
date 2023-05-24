@@ -7,8 +7,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.englishapp.chat.ChatFragment;
-
 public class LearningPagerAdapter extends FragmentStateAdapter {
 
     private static final String TAG = "ChatViewPagerAdapter";
@@ -22,9 +20,9 @@ public class LearningPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 1:
-                Log.i(TAG, "TestsFragment");
+                Log.i(TAG, "WordsFragment");
 
-                return new TestsFragment();
+                return new WordsFragment();
 
             default:
                 Log.i(TAG, "WordsFragment");

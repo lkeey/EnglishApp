@@ -1,24 +1,23 @@
 package com.example.englishapp.MVP;
 
 import java.io.Serializable;
-import java.util.List;
 
 public class CardModel implements Serializable {
 
     private String id;
     private String name;
     private String level;
+    private String description;
     private int amountOfWords;
-    private List<WordModel> words;
 
     public CardModel () {}
 
-    public CardModel(String id, String name, String level, int amountOfWords, List<WordModel> words) {
+    public CardModel(String id, String name, String level, String description, int amountOfWords) {
         this.id = id;
         this.name = name;
         this.level = level;
+        this.description = description;
         this.amountOfWords = amountOfWords;
-        this.words = words;
     }
 
     public String getId() {
@@ -53,11 +52,11 @@ public class CardModel implements Serializable {
         this.amountOfWords = amountOfWords;
     }
 
-    public List<WordModel> getWords() {
-        return words;
+    public String getDescription() {
+        return description;
     }
 
-    public void setWords(List<WordModel> words) {
-        this.words = words;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

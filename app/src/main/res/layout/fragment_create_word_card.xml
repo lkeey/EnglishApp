@@ -1,14 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".testsAndWords.CreateWordCardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Your Word Card"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textSize="24sp"
+            android:layout_margin="15dp"
+            android:textColor="@color/secondary_color" />
+
+        <EditText
+            android:id="@+id/cardName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Write name of card"
+            android:textColor="@color/secondary_color"
+            android:textColorHint="@color/secondary_color"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:layout_marginBottom="12dp"
+            />
+
+        <EditText
+            android:id="@+id/cardDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:hint="Write what topic the words relate to"
+            android:textColor="@color/secondary_color"
+            android:textColorHint="@color/secondary_color"
+            android:textSize="20sp"
+            android:paddingLeft="10dp"
+            android:layout_marginBottom="12dp"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:hint="Choose level of words"
+                android:textColorHint="@color/design_default_color_primary"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinnerLevels"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:padding="16dp"
+                android:layout_weight="1"
+                android:background="@drawable/round_view_with_stroke"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layoutListWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp">
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAddWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Word"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            android:padding="8dp"
+            android:textSize="16sp"
+            android:drawableLeft="@drawable/ic_add"
+            android:drawablePadding="8dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/round_primary"/>
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Submit"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="@drawable/round_primary_card"/>
+
+    </LinearLayout>
+
+
+</ScrollView>

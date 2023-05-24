@@ -94,12 +94,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void setListeners() {
-        imgAddCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        imgAddCard.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new CreateWordCardFragment()));
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override

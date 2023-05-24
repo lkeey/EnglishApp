@@ -41,19 +41,6 @@
             android:textAlignment="center"
             android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/level"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_gravity="center"
-            android:text="level"
-            android:drawablePadding="4dp"
-            android:drawableTint="@color/design_default_color_primary"
-            android:textColor="@color/design_default_color_primary"
-            android:textAlignment="center"
-            android:textSize="20sp"/>
-
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
@@ -65,14 +52,17 @@
             android:layout_marginRight="80dp" />
 
         <TextView
-            android:id="@+id/percent"
-            android:layout_width="match_parent"
+            android:id="@+id/level"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="level"
+            android:drawablePadding="4dp"
+            android:drawableTint="@color/design_default_color_primary"
             android:textColor="@color/design_default_color_primary"
             android:textAlignment="center"
-            android:text="Status (Working)"
-            android:textSize="16sp"
-            />
+            android:textSize="20sp"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

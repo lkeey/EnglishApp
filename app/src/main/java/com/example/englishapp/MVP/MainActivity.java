@@ -300,6 +300,8 @@ public class MainActivity extends BaseActivity {
 
         setSupportActionBar(toolbar);
 
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
+
         getSupportActionBar().show();
 
         getSupportFragmentManager()
