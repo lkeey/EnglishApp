@@ -144,6 +144,35 @@
 
         </RadioGroup>
 
+        <LinearLayout
+            android:id="@+id/layoutLanguage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/groupGender"
+            android:layout_marginHorizontal="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Choose language you know"
+                android:textSize="20sp"
+                android:textColor="@color/secondary_color"/>
+            
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/spinnerLanguage"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:background="@drawable/round_view"/>
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnSignUp"
             android:layout_width="0dp"
@@ -158,7 +187,7 @@
             android:textColor="@color/design_default_color_primary"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/groupGender" />
+            app:layout_constraintTop_toBottomOf="@id/layoutLanguage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

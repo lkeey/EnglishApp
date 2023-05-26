@@ -22,6 +22,7 @@ import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.testsAndWords.BookmarksFragment;
 import com.example.englishapp.testsAndWords.LeaderBordFragment;
+import com.example.englishapp.testsAndWords.SpeechFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -146,6 +147,10 @@ public class ProfileFragment extends Fragment {
 
         ((MainActivity) getActivity()).getSupportActionBar().hide();
         ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         // set user's data
         ((MainActivity) getActivity()).setTitle(USER_MODEL.getName());
@@ -154,6 +159,11 @@ public class ProfileFragment extends Fragment {
         userScore.setText("" + USER_MODEL.getScore());
 
         Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayout, new SpeechFragment())
+                .commit();
 
     }
 

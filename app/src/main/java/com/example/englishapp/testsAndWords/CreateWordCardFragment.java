@@ -33,6 +33,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
@@ -99,6 +100,8 @@ public class CreateWordCardFragment extends Fragment {
 
                         Toast.makeText(getActivity(), "Card Successfully Created", Toast.LENGTH_SHORT).show();
 
+                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
+
                         progressBar.dismiss();
                     }
 
@@ -107,6 +110,8 @@ public class CreateWordCardFragment extends Fragment {
                         Log.i(TAG, "Can not create card");
 
                         Toast.makeText(getActivity(), "Error occurred... Try later", Toast.LENGTH_SHORT).show();
+
+                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
 
                         progressBar.dismiss();
                     }

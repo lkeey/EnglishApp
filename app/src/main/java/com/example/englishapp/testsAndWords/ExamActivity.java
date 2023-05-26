@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
@@ -32,10 +31,11 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.chat.BaseActivity;
 
 import java.util.concurrent.TimeUnit;
 
-public class ExamActivity extends AppCompatActivity {
+public class ExamActivity extends BaseActivity {
     private static final String TAG = "ActivityExam";
     private QuestionsAdapter questionsAdapter;
     private ExamInfoFragment fragment;
@@ -50,7 +50,7 @@ public class ExamActivity extends AppCompatActivity {
     private Dialog dialogExit, dialogComplete;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam);
 

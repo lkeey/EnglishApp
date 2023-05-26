@@ -30,6 +30,7 @@ import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
+import static com.example.englishapp.messaging.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
 import static com.example.englishapp.messaging.Constants.KEY_MOBILE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
@@ -86,7 +87,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, 1, 1);
+    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, 0, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
@@ -94,6 +95,7 @@ public class DataBase {
     public static List<String> LIST_OF_BOOKMARK_IDS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
     public static List<CardModel> LIST_OF_CARDS = new ArrayList<>();
+    public static List<String> LIST_OF_WORDS = new ArrayList<>();
 
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
@@ -116,6 +118,8 @@ public class DataBase {
         userData.put(KEY_PROFILE_IMG, pathToImage);
         userData.put(KEY_SCORE, 0);
         userData.put(KEY_BOOKMARKS, 0);
+        // russia default
+        userData.put(KEY_LANGUAGE_CODE, 44);
 
         DATA_FIREBASE_MESSAGING.getInstance().getToken()
                 .addOnSuccessListener(s -> userData.put(KEY_FCM_TOKEN, s))
@@ -158,6 +162,7 @@ public class DataBase {
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     try {
+
                         USER_MODEL.setUid(documentSnapshot.getString(KEY_USER_UID));
                         USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
                         USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
@@ -168,6 +173,7 @@ public class DataBase {
                         USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
                         USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
                         USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
+                        USER_MODEL.setLanguageCode(documentSnapshot.getLong(KEY_LANGUAGE_CODE).intValue());
 
                     } catch (Exception e) {
                         Log.i(TAG, e.getMessage());
@@ -1199,6 +1205,33 @@ public class DataBase {
 
         return LIST_OF_CARDS.stream().filter(card -> card.getId().equals(cardId)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
+    }
+
+    public static void loadWords(CompleteListener listener) {
+        DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
+                    String str = documentSnapshot.getString(KEY_WORD_TEXT_EN);
+
+                    Log.i(TAG, "found str - " + str);
+
+                    LIST_OF_WORDS.add(str);
+                }
+
+                Log.i(TAG, "size - " + LIST_OF_WORDS.size());
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> {
+
+                Log.i(TAG, "error words - " + e.getMessage());
+
+                listener.OnFailure();
+
+            });
     }
 
 }

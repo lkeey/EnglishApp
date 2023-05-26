@@ -155,20 +155,20 @@ public class LoginFragment extends Fragment {
     private void googleSignIn() {
 
         oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener(getActivity(), result -> {
-                    try {
+            .addOnSuccessListener(getActivity(), result -> {
+                try {
 
-                        IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(
-                                result.getPendingIntent().getIntentSender()
-                        ).build();
+                    IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(
+                            result.getPendingIntent().getIntentSender()
+                    ).build();
 
-                        activityResultLauncher.launch(intentSenderRequest);
+                    activityResultLauncher.launch(intentSenderRequest);
 
-                    } catch (Exception e) {
-                        Toast.makeText(getActivity(), "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(getActivity(), e -> Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show());
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            })
+            .addOnFailureListener(getActivity(), e -> Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void firebaseAuthWithGoogle(String idToken) {

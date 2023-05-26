@@ -6,6 +6,7 @@ import static com.example.englishapp.messaging.Constants.KEY_ADD_SCORE;
 import static com.example.englishapp.messaging.Constants.KEY_DOB;
 import static com.example.englishapp.messaging.Constants.KEY_EMAIL;
 import static com.example.englishapp.messaging.Constants.KEY_GENDER;
+import static com.example.englishapp.messaging.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.messaging.Constants.KEY_NAME;
 import static com.example.englishapp.messaging.Constants.KEY_SCORE;
 import static com.example.englishapp.messaging.Constants.NAME_USER_PROFILE_IMG;
@@ -32,11 +33,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +56,7 @@ import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -75,8 +80,16 @@ public class ProfileInfoFragment extends Fragment {
     private DatePickerDialog datePicker;
     private StorageReference storageReference;
     private FirebaseAuth authProfile;
+    private Spinner spinnerLanguage;
     private FirebaseUser firebaseUser;
+
+    private String[] languages = {
+            "Belarusian", "Danish", "German",
+            "Greek", "English", "Spanish", "Russian"
+    };
+
     private Uri imgUri;
+    private int languageCode = 0;
     private boolean isAddingScore;
 
 
@@ -118,6 +131,7 @@ public class ProfileInfoFragment extends Fragment {
         btnUpdate = view.findViewById(R.id.btnSignUp);
         radioGroupGender = view.findViewById(R.id.groupGender);
         profileImg = view.findViewById(R.id.imageUser);
+        spinnerLanguage = view.findViewById(R.id.spinnerLanguage);
 
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
@@ -157,6 +171,9 @@ public class ProfileInfoFragment extends Fragment {
                 }
         );
 
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, languages);
+
+        spinnerLanguage.setAdapter(arrayAdapter);
     }
 
     private void setPreviousData(View view) {
@@ -173,6 +190,16 @@ public class ProfileInfoFragment extends Fragment {
             if (USER_MODEL.getDateOfBirth() != null) {
                 userDOB = USER_MODEL.getDateOfBirth();
                 textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
+            }
+
+            if (USER_MODEL.getLanguageCode() != 0) {
+
+                languageCode = USER_MODEL.getLanguageCode();
+
+                Log.i(TAG, "language code - " + languageCode);
+
+                setLanguage(languageCode);
+
             }
 
             if (USER_MODEL.getGender() != null) {
@@ -230,7 +257,8 @@ public class ProfileInfoFragment extends Fragment {
                             userEmail.getText().toString(),
                             userName.getText().toString(),
                             userDOB,
-                            radioBtnGender.getText().toString()
+                            radioBtnGender.getText().toString(),
+                            languageCode
                     );
 
 
@@ -242,9 +270,92 @@ public class ProfileInfoFragment extends Fragment {
 
             }
         });
+
+        spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                languageCode = getLanguageCode(languages[position]);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
-    private void updateUser(String textEmail, String textName, String textDOB, String textGender)  {
+    private int getLanguageCode(String language) {
+        int langCode = 0;
+
+        switch (language) {
+            case "Belarusian":
+                langCode = FirebaseTranslateLanguage.BE;
+                break;
+
+            case "Danish":
+                langCode = FirebaseTranslateLanguage.DA;
+                break;
+
+            case "German":
+                langCode = FirebaseTranslateLanguage.DE;
+                break;
+
+            case "Greek":
+                langCode = FirebaseTranslateLanguage.EL;
+                break;
+
+            case "English":
+                langCode = FirebaseTranslateLanguage.EN;
+                break;
+
+            case "Spanish":
+                langCode = FirebaseTranslateLanguage.ES;
+                break;
+
+            default:
+                langCode = FirebaseTranslateLanguage.RU;
+                break;
+        }
+
+        return langCode;
+    }
+
+    private void setLanguage(int langCode) {
+
+        switch (langCode) {
+            case FirebaseTranslateLanguage.BE:
+                spinnerLanguage.setSelection(0);
+                break;
+
+            case FirebaseTranslateLanguage.DA:
+                spinnerLanguage.setSelection(1);
+                break;
+
+            case FirebaseTranslateLanguage.DE:
+                spinnerLanguage.setSelection(2);
+
+                break;
+
+            case FirebaseTranslateLanguage.EL:
+                spinnerLanguage.setSelection(3);
+                break;
+
+            case FirebaseTranslateLanguage.EN:
+                spinnerLanguage.setSelection(4);
+                break;
+
+            case FirebaseTranslateLanguage.ES:
+                spinnerLanguage.setSelection(5);
+                break;
+
+            default:
+                spinnerLanguage.setSelection(6);
+                break;
+        }
+    }
+
+    private void updateUser(String textEmail, String textName, String textDOB, String textGender, int langCode)  {
 
         progressBar.show();
 
@@ -254,6 +365,7 @@ public class ProfileInfoFragment extends Fragment {
         userData.put(KEY_NAME, textName);
         userData.put(KEY_DOB, textDOB);
         userData.put(KEY_GENDER, textGender);
+        userData.put(KEY_LANGUAGE_CODE, langCode);
 
         if(isAddingScore) {
             userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
@@ -334,6 +446,9 @@ public class ProfileInfoFragment extends Fragment {
             // Radio Button does not have this method:
             // radioBtnGender.setError(getResources().getString(R.string.requiredGender));
             // radioBtnGender.requestFocus();
+
+        } else if (languageCode == 0) {
+            Toast.makeText(getActivity(), "Please choose language", Toast.LENGTH_SHORT).show();
 
         } else {
             status = true;

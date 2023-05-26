@@ -75,6 +75,7 @@ public class Constants {
     public static final String KEY_WORD_IMG = "WORD_IMG";
     public static final String KEY_WORD_DESCRIPTION = "WORD_DESCRIPTION";
     public static final String KEY_COLLECTION_WORDS = "WORDS";
+    public static final String KEY_LANGUAGE_CODE = "LANGUAGE_CODE";
 
     public static final int NOT_VISITED = 0;
     public static final int UNANSWERED = 1;

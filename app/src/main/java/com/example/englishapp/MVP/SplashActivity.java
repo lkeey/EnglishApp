@@ -151,15 +151,51 @@ public class SplashActivity extends AppCompatActivity {
 
     private void checkPermissions() {
 
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
         int wallpaper = ContextCompat.checkSelfPermission(this, Manifest.permission.SET_WALLPAPER);
         int internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
         int notifications = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
-        int storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
-        int background_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+        int storage = 0;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+
+            storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
+
+            if (storage != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
+
+                Log.i(TAG, "storage");
+            }
+
+        } else {
+
+            storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            if (storage != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                Log.i(TAG, "storage");
+            }
+
+        }
+
+        int background_location = 0;
+
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//
+//            background_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+//
+//            if (background_location != PackageManager.PERMISSION_GRANTED) {
+//                listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+//
+//                Log.i(TAG, "background");
+//            }
+//
+//        }
+
         int coarse_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         int fine_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
 
         if (wallpaper != PackageManager.PERMISSION_GRANTED) {
 
@@ -180,24 +216,6 @@ public class SplashActivity extends AppCompatActivity {
             listPermissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS);
 
             Log.i(TAG, "notifications");
-        }
-//
-//        if (sms != PackageManager.PERMISSION_GRANTED) {
-//            listPermissionsNeeded.add(Manifest.permission.RECEIVE_SMS);
-//
-//            Log.i(TAG, "sms");
-//        }
-
-        if (storage != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
-
-            Log.i(TAG, "storage");
-        }
-
-        if (background_location != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
-
-            Log.i(TAG, "background");
         }
 
         if (coarse_location != PackageManager.PERMISSION_GRANTED) {
@@ -257,7 +275,7 @@ public class SplashActivity extends AppCompatActivity {
                 } else {
                     Log.i(TAG, Arrays.toString(permissions));
 
-                    Toast.makeText(this, "Permission Denied!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Permissions Denied!", Toast.LENGTH_SHORT).show();
 
                     SplashActivity.this.finish();
                 }

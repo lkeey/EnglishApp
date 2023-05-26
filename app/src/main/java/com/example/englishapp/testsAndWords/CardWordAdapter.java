@@ -3,6 +3,7 @@ package com.example.englishapp.testsAndWords;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,6 +144,9 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
                 }
 
                 default: {
+
+                    Log.i(TAG, "level - " + cardModel.getLevel());
+
                     progressBar.setProgress(20);
                     progressBar.getIndeterminateDrawable().setColorFilter(Color.GREEN, android.graphics.PorterDuff.Mode.MULTIPLY);
                 }
