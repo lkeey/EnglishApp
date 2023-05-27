@@ -58,6 +58,7 @@ public class CreateWordCardFragment extends Fragment {
     private static final String TAG = "CreateWordCardFragment";
     private Retrofit retrofit;
     private WikiService service;
+    private GoogleService googleService;
     private LinearLayout layoutList;
     private Button btnAdd, btnSubmit;
     private Spinner spinnerLevels;
@@ -273,6 +274,8 @@ public class CreateWordCardFragment extends Fragment {
 
                     }
                 });
+
+
             }
 
         });
@@ -329,6 +332,13 @@ public class CreateWordCardFragment extends Fragment {
                 .build();
 
         service = retrofit.create(WikiService.class);
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.googleapis.com/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        googleService = retrofit.create(GoogleService.class);
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 

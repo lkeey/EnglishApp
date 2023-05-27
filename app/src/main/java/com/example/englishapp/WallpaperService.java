@@ -30,8 +30,6 @@ import java.util.concurrent.ExecutionException;
 //
 // h
 
-
-
 public class WallpaperService extends Service {
 
     private static final String TAG = "WallPaperService";
@@ -44,32 +42,31 @@ public class WallpaperService extends Service {
     @Override
     public void onCreate() {
         // сообщение о создании службы
-
-        Toast.makeText(this, "Service created", Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "started");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // сообщение о запуске службы
 
-        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT).show();
-
         WallManager wallpaper = new WallManager();
         Bitmap bitmapWallpaper = null;
 
+        String str = intent.getStringExtra("picture");
+
         try {
-            bitmapWallpaper = wallpaper.execute("rainbow").get();
+
+            bitmapWallpaper = wallpaper.execute(str).get();
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-        Toast.makeText(this, "WALL" + bitmapWallpaper.toString(), Toast.LENGTH_SHORT).show();
-        
+
         try {
 //            String str = "Hello Android1\nHello Java2\nHello Java3\nHello Java4\nHello Java5\nHello Java6\nHello Java7\nHello Java8\nHello Java9\nHello Java10";
-            String str = "Hello everyone!";
+            String str1 = "Hello everyone!";
             String str2 = "HEY1";
             String str3 = "HEY2";
 
@@ -77,18 +74,16 @@ public class WallpaperService extends Service {
                     str2, str3, "HEY3", "HEY4", "HEY5", "hEY6", str, str, str, "HEY10"
             };
 
-            Bitmap bmpWithText = drawTextToBitmap(getApplicationContext(), bitmapWallpaper, str, strText);
+//            Bitmap bmpWithText = drawTextToBitmap(getApplicationContext(), bitmapWallpaper, str, strText);
 
-            Toast.makeText(this, "WALL" + bmpWithText.toString(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "WALL" + bmpWithText.toString(), Toast.LENGTH_SHORT).show();
 
-            WallpaperManager.getInstance(this).setBitmap(bmpWithText);
+            WallpaperManager.getInstance(this).setBitmap(bitmapWallpaper);
 
         } catch (IOException e) {
             Toast.makeText(getApplicationContext(), "EXCEPTION", Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-
-
 
         stopSelf();
 
@@ -98,7 +93,7 @@ public class WallpaperService extends Service {
     @Override
     public void onDestroy() {
         //сообщение об остановке службы
-        Toast.makeText(this, "Service stopped", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Wallpaper Updated", Toast.LENGTH_SHORT).show();
     }
 
     public Bitmap drawTextToBitmap(Context mContext, Bitmap bitmap, String mText, String[] strText) {

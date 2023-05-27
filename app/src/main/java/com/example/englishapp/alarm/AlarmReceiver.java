@@ -29,6 +29,7 @@ import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.MainActivity;
 import com.example.englishapp.MVP.WordModel;
 import com.example.englishapp.R;
+import com.example.englishapp.WallpaperService;
 import com.example.englishapp.testsAndWords.RoomDataBase;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
@@ -139,6 +140,11 @@ public class AlarmReceiver extends BroadcastReceiver {
                 }
 
                 notificationManagerCompat.notify(NOTIFICATION_ID, notification);
+
+
+                Intent intent = new Intent(context, WallpaperService.class);
+                intent.putExtra("picture", translatedText);
+                context.startService(intent);
             }
 
             @Override
@@ -162,10 +168,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 notificationManagerCompat.notify(NOTIFICATION_ID, notification);
             }
         });
-
-
-
-
     }
 
     private Bitmap stringToBitMap(Context context, String encodedString){
