@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/gradient_background_card"
+        android:background="@drawable/gradient_background_card_easy"
         android:layout_marginBottom="12dp"
         android:layout_margin="8dp"
         android:padding="4dp">

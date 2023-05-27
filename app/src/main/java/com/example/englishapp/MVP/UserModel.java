@@ -11,16 +11,17 @@ public class UserModel implements Serializable {
     private String pathToImage;
     private String dateOfBirth;
     private String fcmToken;
+    private String languageCode;
+
     private int score;
     private int bookmarksCount;
     private int place;
-    private int languageCode;
     private double latitude;
     private double longitude;
 
     public UserModel() {}
 
-    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount, int place, int languageCode, double latitude, double longitude) {
+    public UserModel(String uid, String name, String email, String gender, String mobile, String pathToImage, String dateOfBirth, String fcmToken, int score, int bookmarksCount, int place, String languageCode, double latitude, double longitude) {
         this.uid = uid;
         this.name = name;
         this.email = email;
@@ -37,11 +38,11 @@ public class UserModel implements Serializable {
         this.longitude = longitude;
     }
 
-    public int getLanguageCode() {
+    public String getLanguageCode() {
         return languageCode;
     }
 
-    public void setLanguageCode(int languageCode) {
+    public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
 

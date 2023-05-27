@@ -46,6 +46,7 @@ import static com.example.englishapp.messaging.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.messaging.Constants.KEY_TOTAL_USERS;
 import static com.example.englishapp.messaging.Constants.KEY_USER_SCORES;
 import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.messaging.Constants.KEY_WORD_CARD_ID;
 import static com.example.englishapp.messaging.Constants.KEY_WORD_DESCRIPTION;
 import static com.example.englishapp.messaging.Constants.KEY_WORD_ID;
 import static com.example.englishapp.messaging.Constants.KEY_WORD_IMG;
@@ -53,7 +54,9 @@ import static com.example.englishapp.messaging.Constants.KEY_WORD_LEVEL;
 import static com.example.englishapp.messaging.Constants.KEY_WORD_TEXT_EN;
 import static com.example.englishapp.messaging.Constants.NOT_VISITED;
 
+import android.graphics.Bitmap;
 import android.util.ArrayMap;
+import android.util.Base64;
 import android.util.Log;
 
 import com.example.englishapp.Authentication.CategoryModel;
@@ -74,6 +77,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -87,7 +91,7 @@ public class DataBase {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static FirebaseAuth DATA_AUTH;
     public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, 0, 1, 1);
+    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, null, 1, 1);
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
@@ -96,6 +100,7 @@ public class DataBase {
     public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
     public static List<CardModel> LIST_OF_CARDS = new ArrayList<>();
     public static List<String> LIST_OF_WORDS = new ArrayList<>();
+    public static List<WordModel> LIST_OF_LEARNING_WORDS = new ArrayList<>();
 
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
@@ -173,7 +178,7 @@ public class DataBase {
                         USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
                         USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
                         USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
-                        USER_MODEL.setLanguageCode(documentSnapshot.getLong(KEY_LANGUAGE_CODE).intValue());
+                        USER_MODEL.setLanguageCode(documentSnapshot.getString(KEY_LANGUAGE_CODE));
 
                     } catch (Exception e) {
                         Log.i(TAG, e.getMessage());
@@ -1071,7 +1076,7 @@ public class DataBase {
 
     }
 
-    public static void createCardData(ArrayList<WordModel> listOfWords, String name, String description, String level, CompleteListener listener) {
+    public static void createCardData(ArrayList<Word> listOfWords, String name, String description, String level, CompleteListener listener) {
         try {
             Map<String, Object> cardData = new ArrayMap<>();
 
@@ -1159,7 +1164,7 @@ public class DataBase {
         }
     }
 
-    private static void createWordsData(ArrayList<WordModel> listOfWords, String level, String cardId, CompleteListener listener) {
+    private static void createWordsData(ArrayList<Word> listOfWords, String level, String cardId, CompleteListener listener) {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
 
@@ -1167,15 +1172,16 @@ public class DataBase {
 
             Map<String, Object> wordData = new ArrayMap<>();
 
-            WordModel wordModel = listOfWords.get(i);
+            Word wordModel = listOfWords.get(i);
 
             Log.i(TAG, "wordModel - " + wordModel.getTextEn() + " - " + wordModel.getImage().toString());
 
             wordData.put(KEY_WORD_ID, CHOSEN_CATEGORY_ID + "_" + cardId + "_" + i);
+            wordData.put(KEY_WORD_CARD_ID, cardId);
             wordData.put(KEY_WORD_TEXT_EN, wordModel.getTextEn());
             wordData.put(KEY_WORD_DESCRIPTION, wordModel.getDescription());
             wordData.put(KEY_WORD_LEVEL, level);
-            wordData.put(KEY_WORD_IMG, wordModel.getImage().toString());
+            wordData.put(KEY_WORD_IMG, bitMapToString(wordModel.getImage()));
 
             DocumentReference wordDocument = DATA_FIRESTORE
                     .collection(KEY_COLLECTION_WORDS)
@@ -1234,4 +1240,55 @@ public class DataBase {
             });
     }
 
+    public static void loadWordsByCard(String cardId, CompleteListener listener) {
+
+        Log.i(TAG, "card - " + cardId);
+
+        DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS)
+            .limit(20)
+//            .whereEqualTo(KEY_WORD_CARD_ID, cardId)
+            .get()
+            .addOnSuccessListener(queryDocumentSnapshots -> {
+
+                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
+
+                    WordModel wordModel = new WordModel();
+                    wordModel.setLevel(documentSnapshot.getString(KEY_WORD_LEVEL));
+                    wordModel.setDescription(documentSnapshot.getString(KEY_WORD_DESCRIPTION));
+                    wordModel.setTextEn(documentSnapshot.getString(KEY_WORD_TEXT_EN));
+
+                    // TODO load bitmap
+
+                    wordModel.setImage(documentSnapshot.getString(KEY_WORD_TEXT_EN));
+
+                    Log.i(TAG, "found word - " + wordModel.getTextEn());
+
+                    LIST_OF_LEARNING_WORDS.add(wordModel);
+                }
+
+                Log.i(TAG, "size - " + LIST_OF_LEARNING_WORDS.size());
+
+                listener.OnSuccess();
+
+            })
+            .addOnFailureListener(e -> {
+
+                Log.i(TAG, "error words learning - " + e.getMessage());
+
+                listener.OnFailure();
+
+            });
+}
+    public static String bitMapToString(Bitmap bitmap){
+
+        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+
+        byte [] b = baos.toByteArray();
+
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return temp;
+    }
 }

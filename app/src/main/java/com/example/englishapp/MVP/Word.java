@@ -2,30 +2,22 @@ package com.example.englishapp.MVP;
 
 import android.graphics.Bitmap;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
 import java.io.Serializable;
-@Entity(tableName = "words")
-public class WordModel implements Serializable {
-    @PrimaryKey(autoGenerate = true)
+
+public class Word implements Serializable {
+
     private int id;
-    @ColumnInfo(name = "description")
     private String description;
 
-    @ColumnInfo(name = "level")
     private String level;
 
-    @ColumnInfo(name = "textEn")
     private String textEn;
 
-    @ColumnInfo(name = "image")
-    private String image;
+    private Bitmap image;
 
-    public WordModel () {}
+    public Word () {}
 
-    public WordModel(int id, String description, String level, String textEn, Bitmap bitmap) {
+    public Word(int id, String description, String level, String textEn, Bitmap bitmap) {
         this.id = id;
         this.description = description;
         this.level = level;
@@ -64,11 +56,12 @@ public class WordModel implements Serializable {
         return textEn;
     }
 
-    public String getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 }
+

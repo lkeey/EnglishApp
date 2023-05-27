@@ -44,6 +44,8 @@ public class Constants {
     public static final String KEY_CATEGORY_NUMBER_OF_TESTS = "CATEGORY_NUMBER_OF_TESTS";
     public static final String KEY_AMOUNT_CATEGORIES = "AMOUNT_CATEGORIES";
     public static final String KEY_CHECK_LOCATION = "KEY_CHECK_LOCATION";
+    public static final String KEY_SHOW_NOTIFICATION_WORD = "KEY_SHOW_NOTIFICATION_WORD";
+
     public static final String KEY_COLLECTION_TESTS = "TESTS";
     public static final String KEY_AMOUNT_TESTS = "AMOUNT_TESTS";
     public static final String KEY_TEST_ID = "TEST_ID";
@@ -76,7 +78,12 @@ public class Constants {
     public static final String KEY_WORD_DESCRIPTION = "WORD_DESCRIPTION";
     public static final String KEY_COLLECTION_WORDS = "WORDS";
     public static final String KEY_LANGUAGE_CODE = "LANGUAGE_CODE";
-
+    public static final String KEY_CHOSEN_CARD = "KEY_CHOSEN_CARD";
+    public static final String ALREADY_LEARNING = "ALREADY_LEARNING";
+    public static final String TARGET_LANGUAGE = "ALREADY_LEARNING";
+    public static final String WORD_COUNTER = "WORD_COUNTER";
+    public static final String MY_SHARED_PREFERENCES = "MY_SHARED_PREFERENCES";
+    public static final String KEY_WORD_CARD_ID = "CARD_ID";
     public static final int NOT_VISITED = 0;
     public static final int UNANSWERED = 1;
     public static final int ANSWERED = 2;

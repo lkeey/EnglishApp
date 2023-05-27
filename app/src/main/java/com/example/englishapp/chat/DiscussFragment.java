@@ -189,7 +189,6 @@ public class DiscussFragment extends Fragment {
                         Log.i(TAG, "Exception - " + e.getMessage());
                     }
 
-
                     inputMessage.setText(null);
                 }
 

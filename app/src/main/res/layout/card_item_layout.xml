@@ -7,7 +7,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     android:paddingBottom="16dp"
-    android:background="@drawable/gradient_background_card">
+    android:background="@drawable/gradient_background_card_easy">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -41,21 +41,12 @@
             android:textAlignment="center"
             android:textSize="20sp"/>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:progressTint="@color/design_default_color_primary"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="80dp"
-            android:layout_marginRight="80dp" />
-
         <TextView
             android:id="@+id/level"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginTop="12dp"
             android:text="level"
             android:drawablePadding="4dp"
             android:drawableTint="@color/design_default_color_primary"

@@ -58,16 +58,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage:20.2.0'
 
     // translation
-    implementation 'com.google.firebase:firebase-ml-natural-language:22.0.1'
-    implementation 'com.google.firebase:firebase-iid:21.1.0'
-    implementation 'com.google.firebase:firebase-ml-natural-language-language-id-model:20.0.8'
-    implementation 'com.google.firebase:firebase-ml-natural-language-translate-model:20.0.9'
+    implementation 'com.google.mlkit:translate:17.0.1'
 
 //  Firebase Authentication can verify the device as legitimate
     implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
 
 //  firebase messaging
-    implementation 'com.google.firebase:firebase-messaging:23.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
 
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
@@ -105,6 +102,10 @@ dependencies {
 //    for instabug
     implementation 'com.instabug.library:instabug:11.11.0'
 
+//    RoomDatabase
+    implementation 'androidx.room:room-runtime:2.5.1'
+    annotationProcessor 'androidx.room:room-compiler:2.5.1'
+    
     implementation 'com.squareup.picasso:picasso:2.8'
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
@@ -114,5 +115,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation 'androidx.browser:browser:1.5.0'
     implementation 'com.android.support:multidex:1.0.3'
+
+
 
 }

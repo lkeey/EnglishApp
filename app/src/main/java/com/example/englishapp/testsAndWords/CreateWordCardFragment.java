@@ -37,7 +37,7 @@ import com.example.englishapp.Authentication.CategoryFragment;
 import com.example.englishapp.MVP.CompleteListener;
 import com.example.englishapp.MVP.DataBase;
 import com.example.englishapp.MVP.MainActivity;
-import com.example.englishapp.MVP.WordModel;
+import com.example.englishapp.MVP.Word;
 import com.example.englishapp.R;
 
 import java.io.FileNotFoundException;
@@ -64,7 +64,7 @@ public class CreateWordCardFragment extends Fragment {
     private EditText cardName, cardDescription;
     private Dialog progressBar;
     private TextView dialogText;
-    private final ArrayList<WordModel> listOfWords = new ArrayList<>();
+    private final ArrayList<Word> listOfWords = new ArrayList<>();
     private List<String> stringListLevels = new ArrayList<>();
     private ActivityResultLauncher<Intent> pickImage;
     private ImageView chosenImg;
@@ -143,7 +143,7 @@ public class CreateWordCardFragment extends Fragment {
             ImageView imgWord = viewChild.findViewById(R.id.imageWord);
             EditText descriptionWord = viewChild.findViewById(R.id.wordDescription);
 
-            WordModel wordModel = new WordModel();
+            Word wordModel = new Word();
 
             if (textWord.getText().toString().isEmpty()) {
                 Toast.makeText(getActivity(), "Name of word must be not empty", Toast.LENGTH_SHORT).show();
@@ -188,6 +188,7 @@ public class CreateWordCardFragment extends Fragment {
             }
 
             listOfWords.add(wordModel);
+
         }
 
         return true;

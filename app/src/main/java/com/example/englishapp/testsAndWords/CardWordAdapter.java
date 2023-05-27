@@ -1,16 +1,14 @@
 package com.example.englishapp.testsAndWords;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.MVP.CardModel;
@@ -94,7 +92,6 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView title, numberOfCards, level;
-        private ProgressBar progressBar;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -102,7 +99,6 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             title = itemView.findViewById(R.id.title);
             numberOfCards = itemView.findViewById(R.id.numberOfCards);
             level = itemView.findViewById(R.id.level);
-            progressBar = itemView.findViewById(R.id.progressBar);
 
         }
 
@@ -116,42 +112,19 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
 
             level.setText(cardModel.getLevel());
 
-            switch (cardModel.getLevel()) {
+            if (cardModel.getLevel().equals("A1") || cardModel.equals("A2") || cardModel.getLevel().equals("А1") || cardModel.getLevel().equals("А2")) {
 
-                case "A2": {
-                    progressBar.setProgress(40);
+                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_easy));
 
-                }
+            } else if (cardModel.getLevel().equals("B1") || cardModel.getLevel().equals("B2")){
 
-                case "B1": {
-                    progressBar.setProgress(60);
+                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_medium));
 
-                }
+            } else {
 
-                case "B2": {
-                    progressBar.setProgress(70);
+                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_hard));
 
-                }
-
-                case "C1": {
-                    progressBar.setProgress(90);
-
-                }
-
-                case "C2": {
-                    progressBar.setProgress(100);
-
-                }
-
-                default: {
-
-                    Log.i(TAG, "level - " + cardModel.getLevel());
-
-                    progressBar.setProgress(20);
-                    progressBar.getIndeterminateDrawable().setColorFilter(Color.GREEN, android.graphics.PorterDuff.Mode.MULTIPLY);
-                }
             }
-
 
             itemView.setOnClickListener(v -> listener.onCardClicked(cardModel));
         }

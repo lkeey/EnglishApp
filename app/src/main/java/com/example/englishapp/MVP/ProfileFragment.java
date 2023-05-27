@@ -22,11 +22,20 @@ import com.example.englishapp.Authentication.ProfileInfoFragment;
 import com.example.englishapp.R;
 import com.example.englishapp.testsAndWords.BookmarksFragment;
 import com.example.englishapp.testsAndWords.LeaderBordFragment;
+import com.example.englishapp.testsAndWords.RoomDataBase;
 import com.example.englishapp.testsAndWords.SpeechFragment;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.mlkit.common.model.DownloadConditions;
+import com.google.mlkit.nl.translate.TranslateLanguage;
+import com.google.mlkit.nl.translate.Translation;
+import com.google.mlkit.nl.translate.Translator;
+import com.google.mlkit.nl.translate.TranslatorOptions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProfileFragment extends Fragment {
@@ -35,11 +44,14 @@ public class ProfileFragment extends Fragment {
     private ImageView imgUser;
     private TextView userPlace, userScore;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
+    private List<WordModel> words = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        getWords();
 
         init(view);
 
@@ -165,6 +177,62 @@ public class ProfileFragment extends Fragment {
                 .replace(R.id.frameLayout, new SpeechFragment())
                 .commit();
 
+        TextView view1 = view.findViewById(R.id.learning);
+
+        int count = RoomDataBase.
+                getDatabase(getContext())
+                .roomDao()
+                .getRowCount();
+
+        view1.setText(" - " + count);
+
+        Log.i(TAG, "beginning");
+
+        loadEn();
+
+    }
+
+    private void loadEn() {
+
+        Log.i(TAG, "begin");
+
+        // Create an English-German translator:
+        TranslatorOptions options =
+                new TranslatorOptions.Builder()
+                        .setSourceLanguage(TranslateLanguage.ENGLISH)
+                        .setTargetLanguage(TranslateLanguage.GERMAN)
+                        .build();
+
+        Log.i(TAG, "begin 2");
+
+        final Translator englishGermanTranslator =
+                Translation.getClient(options);
+
+        Log.i(TAG, "begin 3");
+
+        DownloadConditions conditions = new DownloadConditions.Builder()
+                .requireWifi()
+                .build();
+
+        Log.i(TAG, "begin 4");
+
+        englishGermanTranslator.downloadModelIfNeeded(conditions)
+            .addOnSuccessListener(unused -> {
+                Log.i(TAG, "begin 5");
+
+                englishGermanTranslator.translate("hello").addOnSuccessListener(s -> Log.i(TAG, "translated - " + s))
+                .addOnFailureListener(e -> Log.i(TAG, "can not translate - " + e.getMessage()));
+
+            })
+            .addOnFailureListener(e -> Log.i(TAG, "can not install - " + e.getMessage()));
+    }
+
+    private void getWords() {
+
+        words = RoomDataBase.
+                getDatabase(getContext())
+                .roomDao()
+                .getAllWords();
     }
 
 }

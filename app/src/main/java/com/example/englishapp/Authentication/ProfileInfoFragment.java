@@ -56,9 +56,9 @@ import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.ml.naturallanguage.translate.FirebaseTranslateLanguage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.mlkit.nl.translate.TranslateLanguage;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -84,12 +84,12 @@ public class ProfileInfoFragment extends Fragment {
     private FirebaseUser firebaseUser;
 
     private String[] languages = {
-            "Belarusian", "Danish", "German",
-            "Greek", "English", "Spanish", "Russian"
+            TranslateLanguage.BELARUSIAN, TranslateLanguage.DANISH, TranslateLanguage.GERMAN,
+            TranslateLanguage.ENGLISH, TranslateLanguage.SPANISH, TranslateLanguage.RUSSIAN
     };
 
     private Uri imgUri;
-    private int languageCode = 0;
+    private String languageCode;
     private boolean isAddingScore;
 
 
@@ -174,6 +174,7 @@ public class ProfileInfoFragment extends Fragment {
         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, languages);
 
         spinnerLanguage.setAdapter(arrayAdapter);
+
     }
 
     private void setPreviousData(View view) {
@@ -192,14 +193,21 @@ public class ProfileInfoFragment extends Fragment {
                 textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
             }
 
-            if (USER_MODEL.getLanguageCode() != 0) {
+            if (USER_MODEL.getLanguageCode() != null) {
 
                 languageCode = USER_MODEL.getLanguageCode();
 
                 Log.i(TAG, "language code - " + languageCode);
 
-                setLanguage(languageCode);
+                for (int i=0; i < languages.length; i++) {
 
+                    Log.i(TAG, "lang - " + languages[0] + " - " + languageCode);
+
+                    if (languageCode.equals(languages[0])) {
+                        spinnerLanguage.setSelection(i);
+                    }
+
+                }
             }
 
             if (USER_MODEL.getGender() != null) {
@@ -213,6 +221,7 @@ public class ProfileInfoFragment extends Fragment {
             Log.i(TAG, e.getMessage());
         }
     }
+
 
     private void setListeners(View view) {
 
@@ -274,7 +283,7 @@ public class ProfileInfoFragment extends Fragment {
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                languageCode = getLanguageCode(languages[position]);
+                languageCode = languages[position];
             }
 
             @Override
@@ -285,77 +294,80 @@ public class ProfileInfoFragment extends Fragment {
 
     }
 
-    private int getLanguageCode(String language) {
-        int langCode = 0;
+//    private String getLanguageCode(String language) {
+//        String langCode;
+//
+//        switch (language) {
+//
+//            case "Belarusian":
+//                langCode = TranslateLanguage.BELARUSIAN;
+//                break;
+//
+//            case "Danish":
+//                langCode = TranslateLanguage.DANISH;
+//                break;
+//
+//            case "German":
+//                langCode = TranslateLanguage.GERMAN;
+//                break;
+//
+//            case "Greek":
+//                langCode = TranslateLanguage.EL;
+//                break;
+//
+//            case "English":
+//                langCode = TranslateLanguage.EN;
+//                break;
+//
+//            case "Spanish":
+//                langCode = TranslateLanguage.ES;
+//                break;
+//
+//            default:
+//                langCode = TranslateLanguage.RU;
+//                break;
+//        }
+//
+//        return langCode;
+//    }
+//
+//    private void setLanguage(int langCode) {
+//
+//        switch (langCode) {
+//            case FirebaseTranslateLanguage.BE:
+//                spinnerLanguage.setSelection(0);
+//                break;
+//
+//            case FirebaseTranslateLanguage.DA:
+//                spinnerLanguage.setSelection(1);
+//                break;
+//
+//            case FirebaseTranslateLanguage.DE:
+//                spinnerLanguage.setSelection(2);
+//
+//                break;
+//
+//            case FirebaseTranslateLanguage.EL:
+//                spinnerLanguage.setSelection(3);
+//                break;
+//
+//            case FirebaseTranslateLanguage.EN:
+//                spinnerLanguage.setSelection(4);
+//                break;
+//
+//            case FirebaseTranslateLanguage.ES:
+//                spinnerLanguage.setSelection(5);
+//                break;
+//
+//            default:
+//                spinnerLanguage.setSelection(6);
+//                break;
+//        }
+//    }
 
-        switch (language) {
-            case "Belarusian":
-                langCode = FirebaseTranslateLanguage.BE;
-                break;
 
-            case "Danish":
-                langCode = FirebaseTranslateLanguage.DA;
-                break;
 
-            case "German":
-                langCode = FirebaseTranslateLanguage.DE;
-                break;
-
-            case "Greek":
-                langCode = FirebaseTranslateLanguage.EL;
-                break;
-
-            case "English":
-                langCode = FirebaseTranslateLanguage.EN;
-                break;
-
-            case "Spanish":
-                langCode = FirebaseTranslateLanguage.ES;
-                break;
-
-            default:
-                langCode = FirebaseTranslateLanguage.RU;
-                break;
-        }
-
-        return langCode;
-    }
-
-    private void setLanguage(int langCode) {
-
-        switch (langCode) {
-            case FirebaseTranslateLanguage.BE:
-                spinnerLanguage.setSelection(0);
-                break;
-
-            case FirebaseTranslateLanguage.DA:
-                spinnerLanguage.setSelection(1);
-                break;
-
-            case FirebaseTranslateLanguage.DE:
-                spinnerLanguage.setSelection(2);
-
-                break;
-
-            case FirebaseTranslateLanguage.EL:
-                spinnerLanguage.setSelection(3);
-                break;
-
-            case FirebaseTranslateLanguage.EN:
-                spinnerLanguage.setSelection(4);
-                break;
-
-            case FirebaseTranslateLanguage.ES:
-                spinnerLanguage.setSelection(5);
-                break;
-
-            default:
-                spinnerLanguage.setSelection(6);
-                break;
-        }
-    }
-
-    private void updateUser(String textEmail, String textName, String textDOB, String textGender, int langCode)  {
+    private void updateUser(String textEmail, String textName, String textDOB, String textGender, String langCode)  {
 
         progressBar.show();
 
@@ -447,7 +459,7 @@ public class ProfileInfoFragment extends Fragment {
             // radioBtnGender.setError(getResources().getString(R.string.requiredGender));
             // radioBtnGender.requestFocus();
 
-        } else if (languageCode == 0) {
+        } else if (languageCode == null) {
             Toast.makeText(getActivity(), "Please choose language", Toast.LENGTH_SHORT).show();
 
         } else {

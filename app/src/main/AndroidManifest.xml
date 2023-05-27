@@ -27,50 +27,6 @@
         tools:targetApi="28">
 
         <activity
-            android:name=".testsAndWords.ExamActivity"
-            android:exported="false" />
-
-        <!-- TODO change -->
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
-
-        <activity
-            android:name=".MVP.MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_feed" />
-        <activity
-            android:name=".Authentication.MainAuthenticationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MVP.SignUpActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MVP.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".CreateTestActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".TestsFeed"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".DeleteProfileActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".MVP.SplashActivity"
             android:exported="true">
             <intent-filter>
@@ -83,131 +39,30 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".LoggingActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
         <activity
-            android:name=".CheckingActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name=".testsAndWords.ExamActivity"
+            android:exported="false" />
 
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+        <!-- TODO change -->
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
+
         <activity
-            android:name=".GreetingActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:name=".MVP.MainActivity"
+            android:exported="false"/>
 
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
         <activity
-            android:name=".RegisterActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".MVP.ForgotPasswordActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".UploadProfilePictureActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".UpdateProfileActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".UpdateEmailActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".ChangePasswordActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+            android:name=".Authentication.MainAuthenticationActivity"
+            android:exported="false" />
 
         <service
             android:name=".WallpaperService"
             android:enabled="true"
             android:exported="false" />
+
         <service
             android:name=".messaging.MessageService"
             android:exported="false">
@@ -216,12 +71,14 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service
             android:name=".chat.LocationService"
             android:enabled="true"
             android:exported="false"></service>
 
         <receiver android:name=".alarm.AlarmReceiver" />
+
     </application>
 
 </manifest>

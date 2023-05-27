@@ -1,5 +1,7 @@
 package com.example.englishapp.MVP;
 
+import androidx.annotation.Nullable;
+
 import java.io.Serializable;
 
 public class CardModel implements Serializable {
@@ -58,5 +60,9 @@ public class CardModel implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public boolean equals(@Nullable String str) {
+        return this.level.equals(str);
     }
 }

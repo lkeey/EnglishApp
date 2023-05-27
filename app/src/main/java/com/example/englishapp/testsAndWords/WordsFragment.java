@@ -1,5 +1,8 @@
 package com.example.englishapp.testsAndWords;
 
+import static com.example.englishapp.messaging.Constants.KEY_CHOSEN_CARD;
+import static com.example.englishapp.messaging.Constants.SHOW_FRAGMENT_DIALOG;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -77,7 +80,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
                 cardRecycler.setAdapter(cardAdapter);
 
-                Log.i(TAG, "cards were successfully loaded");
+                Log.i(TAG, "Cards were successfully loaded");
 
                 progressBar.dismiss();
             }
@@ -119,7 +122,19 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
     @Override
     public void onCardClicked(CardModel cardModel) {
-        Toast.makeText(getActivity(), "Clicked - " + cardModel.getName(), Toast.LENGTH_SHORT).show();
+
+//        Toast.makeText(getActivity(), "Clicked - " + cardModel.getName(), Toast.LENGTH_SHORT).show();
+
+        Log.i(TAG, "clicked - " + cardModel.getName());
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(KEY_CHOSEN_CARD, cardModel);
+
+        WordCardInfoFragment fragment = new WordCardInfoFragment();
+        fragment.setArguments(bundle);
+
+        fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
+
     }
 
 }

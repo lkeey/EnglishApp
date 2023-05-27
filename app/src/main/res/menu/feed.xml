@@ -14,7 +14,7 @@
     <item
         android:id="@+id/nav_leader_menu"
         android:icon="@drawable/ic_leader"
-        android:title="Leader Bord"/>
+        android:title="Leader Board"/>
 
     <item
         android:id="@+id/nav_account_menu"
