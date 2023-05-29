@@ -1,5 +1,7 @@
 package com.example.englishapp.messaging;
 
+import com.example.englishapp.models.NotificationData;
+
 public class PushNotification {
     private NotificationData data;
     private String to;

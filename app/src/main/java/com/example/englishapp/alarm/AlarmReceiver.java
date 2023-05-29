@@ -1,9 +1,9 @@
 package com.example.englishapp.alarm;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.englishapp.messaging.Constants.KEY_SHOW_NOTIFICATION_WORD;
-import static com.example.englishapp.messaging.Constants.MY_SHARED_PREFERENCES;
-import static com.example.englishapp.messaging.Constants.WORD_COUNTER;
+import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
+import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
+import static com.example.englishapp.database.Constants.WORD_COUNTER;
 
 import android.Manifest;
 import android.app.Notification;
@@ -25,12 +25,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.englishapp.MVP.CompleteListener;
-import com.example.englishapp.MVP.MainActivity;
-import com.example.englishapp.MVP.WordModel;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.models.WordModel;
 import com.example.englishapp.R;
-import com.example.englishapp.WallpaperService;
-import com.example.englishapp.testsAndWords.RoomDataBase;
+import com.example.englishapp.services.WallpaperService;
+import com.example.englishapp.database.RoomDataBase;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 import com.google.mlkit.nl.translate.Translation;
 import com.google.mlkit.nl.translate.Translator;

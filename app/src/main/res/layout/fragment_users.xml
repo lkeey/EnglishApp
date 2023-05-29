@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:animateLayoutChanges="true"
-    tools:context=".chat.UsersFragment"
+    tools:context=".fragments.UsersFragment"
     android:paddingTop="24dp">
 
 

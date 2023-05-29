@@ -1,9 +1,9 @@
 package com.example.englishapp.messaging;
 
-import static com.example.englishapp.messaging.Constants.BASE_URL;
-import static com.example.englishapp.messaging.Constants.REMOTE_MSG_DATA;
-import static com.example.englishapp.messaging.Constants.REMOTE_MSG_TITLE;
-import static com.example.englishapp.messaging.Constants.REMOTE_MSG_USER_SENDER;
+import static com.example.englishapp.database.Constants.BASE_URL;
+import static com.example.englishapp.database.Constants.REMOTE_MSG_DATA;
+import static com.example.englishapp.database.Constants.REMOTE_MSG_TITLE;
+import static com.example.englishapp.database.Constants.REMOTE_MSG_USER_SENDER;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,6 +12,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.englishapp.database.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;

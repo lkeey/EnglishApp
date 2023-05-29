@@ -1,13 +1,13 @@
 package com.example.englishapp.chat;
 
-import static com.example.englishapp.MVP.DataBase.DATA_FIRESTORE;
-import static com.example.englishapp.MVP.DataBase.LIST_OF_USERS;
-import static com.example.englishapp.MVP.DataBase.findUserById;
-import static com.example.englishapp.MVP.DataBase.getListOfUsers;
-import static com.example.englishapp.messaging.Constants.KEY_COLLECTION_USERS;
-import static com.example.englishapp.messaging.Constants.KEY_LOCATION;
-import static com.example.englishapp.messaging.Constants.KEY_NAME;
-import static com.example.englishapp.messaging.Constants.KEY_USER_UID;
+import static com.example.englishapp.database.DataBase.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBase.LIST_OF_USERS;
+import static com.example.englishapp.database.DataBase.findUserById;
+import static com.example.englishapp.database.DataBase.getListOfUsers;
+import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
+import static com.example.englishapp.database.Constants.KEY_NAME;
+import static com.example.englishapp.database.Constants.KEY_USER_UID;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,8 +15,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.englishapp.MVP.CompleteListener;
-import com.example.englishapp.MVP.UserModel;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.UserListener;
+import com.example.englishapp.models.UserModel;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;

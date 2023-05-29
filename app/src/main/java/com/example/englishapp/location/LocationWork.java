@@ -1,8 +1,8 @@
 package com.example.englishapp.location;
 
-import static com.example.englishapp.messaging.Constants.KEY_LATITUDE;
-import static com.example.englishapp.messaging.Constants.KEY_LONGITUDE;
-import static com.example.englishapp.messaging.Constants.LOCAL_BROADCAST_ACTION;
+import static com.example.englishapp.database.Constants.KEY_LATITUDE;
+import static com.example.englishapp.database.Constants.KEY_LONGITUDE;
+import static com.example.englishapp.database.Constants.LOCAL_BROADCAST_ACTION;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -21,9 +21,10 @@ import androidx.work.ForegroundInfo;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.example.englishapp.MVP.CompleteListener;
-import com.example.englishapp.MVP.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
+import com.example.englishapp.managers.LocationManager;
 
 public class LocationWork extends Worker {
 
@@ -78,14 +79,15 @@ public class LocationWork extends Worker {
     private ForegroundInfo showNotification(String latitude, String longitude) {
         Log.i(TAG, "showNotification");
 
-        return new ForegroundInfo(NOTIFICATION_ID, createNotification(latitude, longitude));
+        String title = "Foreground Work - Loading";
+
+        return new ForegroundInfo(NOTIFICATION_ID, createNotification(latitude, longitude, title));
     }
 
-    private Notification createNotification(String latitude, String longitude) {
+    private Notification createNotification(String latitude, String longitude, String title) {
         Log.i(TAG, "createNotification");
 
         String CHANNEL_ID = "foreground_notifications";
-        String title = "Foreground Work";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(new NotificationChannel(
@@ -118,9 +120,12 @@ public class LocationWork extends Worker {
         DataBase.updateUserGeoPosition(latitude, longitude, new CompleteListener() {
             @Override
             public void OnSuccess() {
+
                 // show notification
 
-                Notification notification = createNotification(latitude, longitude);
+                String title = "Foreground Work - Updated";
+
+                Notification notification = createNotification(latitude, longitude, title);
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 notificationManager.notify(NOTIFICATION_ID, notification);
 
@@ -129,12 +134,19 @@ public class LocationWork extends Worker {
 
             @Override
             public void OnFailure() {
+
+                // show notification
+
+                String title = "Foreground Work - Not Updated";
+
+                Notification notification = createNotification(latitude, longitude, title);
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                notificationManager.notify(NOTIFICATION_ID, notification);
+
                 Log.i(TAG, "Can not update user geo position");
             }
         });
-
     }
-
 
     BroadcastReceiver localBroadCastReceiver = new BroadcastReceiver() {
         @Override

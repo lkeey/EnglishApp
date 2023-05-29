@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MVP.LoginActivity"
+    tools:context=".activities.LoginActivity"
     android:background="@drawable/main_background_authorization">
 
     <androidx.appcompat.widget.Toolbar

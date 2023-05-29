@@ -27,7 +27,7 @@
         tools:targetApi="28">
 
         <activity
-            android:name=".MVP.SplashActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +41,7 @@
         </activity>
 
         <activity
-            android:name=".testsAndWords.ExamActivity"
+            android:name=".activities.ExamActivity"
             android:exported="false" />
 
         <!-- TODO change -->
@@ -51,20 +51,20 @@
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
 
         <activity
-            android:name=".MVP.MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="false"/>
 
         <activity
-            android:name=".Authentication.MainAuthenticationActivity"
+            android:name=".activities.MainAuthenticationActivity"
             android:exported="false" />
 
         <service
-            android:name=".WallpaperService"
+            android:name=".services.WallpaperService"
             android:enabled="true"
             android:exported="false" />
 
         <service
-            android:name=".messaging.MessageService"
+            android:name=".services.MessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -73,7 +73,7 @@
         </service>
 
         <service
-            android:name=".chat.LocationService"
+            android:name=".services.LocationService"
             android:enabled="true"
             android:exported="false"></service>
 
