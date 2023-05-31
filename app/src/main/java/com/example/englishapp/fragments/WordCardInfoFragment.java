@@ -2,11 +2,11 @@ package com.example.englishapp.fragments;
 
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
-import static com.example.englishapp.database.DataBase.LIST_OF_LEARNING_WORDS;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_CARD;
 import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
 import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.WORD_COUNTER;
+import static com.example.englishapp.database.DataBase.LIST_OF_LEARNING_WORDS;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -24,17 +24,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.example.englishapp.models.CardModel;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.WordModel;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.alarm.AlarmReceiver;
+import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.RoomDataBase;
-import com.google.android.gms.tasks.OnFailureListener;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.RoomDao;
+import com.example.englishapp.models.CardModel;
+import com.example.englishapp.models.WordModel;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.mlkit.common.model.DownloadConditions;
@@ -54,7 +52,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
     private Button btnLearn;
     private CardModel receivedCard;
     private Dialog progressBar;
-
+    private RoomDao roomDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,8 +62,58 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
         init(view);
 
         receiveData();
+
+        setListeners();
         
         return view;
+    }
+
+    private void setListeners() {
+
+        btnLearn.setOnClickListener(v -> {
+
+            progressBar.show();
+
+            TranslatorOptions options =
+                    new TranslatorOptions.Builder()
+                            .setSourceLanguage(TranslateLanguage.ENGLISH)
+                            // TODO change to target
+                            .setTargetLanguage(TranslateLanguage.RUSSIAN)
+                            .build();
+
+            final Translator translator =
+                    Translation.getClient(options);
+
+            DownloadConditions conditions = new DownloadConditions.Builder()
+                    .build();
+
+            translator.downloadModelIfNeeded(conditions).addOnSuccessListener(unused -> {
+
+                Log.i(TAG, "loaded");
+
+                learnWords();
+
+            }).addOnFailureListener(e -> {
+                progressBar.dismiss();
+
+                Log.i(TAG, "can not load");
+
+            });
+
+            RemoteModelManager modelManager = RemoteModelManager.getInstance();
+
+            modelManager.getDownloadedModels(TranslateRemoteModel.class).addOnSuccessListener(new OnSuccessListener<Set<TranslateRemoteModel>>() {
+                @Override
+                public void onSuccess(Set<TranslateRemoteModel> translateRemoteModels) {
+                    Log.i(TAG, "models - " + translateRemoteModels);
+                }
+
+            }).addOnFailureListener(e -> {
+                Log.i(TAG, "warning");
+
+            });
+        });
+
     }
 
     private void receiveData() {
@@ -101,82 +149,25 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarOpening);
 
-        btnLearn.setOnClickListener(v -> {
-
-            // learn words
-            try {
-
-                progressBar.show();
-
-                TranslatorOptions options =
-                        new TranslatorOptions.Builder()
-                            .setSourceLanguage(TranslateLanguage.ENGLISH)
-                            // TODO change to target
-                            .setTargetLanguage(TranslateLanguage.RUSSIAN)
-                            .build();
-
-                final Translator translator =
-                        Translation.getClient(options);
-
-                DownloadConditions conditions = new DownloadConditions.Builder()
-                        .build();
-
-                translator.downloadModelIfNeeded(conditions).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-
-                        Log.i(TAG, "loaded");
-
-                        learnWords();
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        progressBar.dismiss();
-
-                        Log.i(TAG, "can not load");
-
-                    }
-                });
-
-                RemoteModelManager modelManager = RemoteModelManager.getInstance();
-
-                modelManager.getDownloadedModels(TranslateRemoteModel.class).addOnSuccessListener(new OnSuccessListener<Set<TranslateRemoteModel>>() {
-                    @Override
-                    public void onSuccess(Set<TranslateRemoteModel> translateRemoteModels) {
-                        Log.i(TAG, "models - " + translateRemoteModels);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.i(TAG, "warning");
-
-                    }
-                });
-
-            } catch (Exception e) {
-                Log.i(TAG, e.getMessage());
-            }
-
-        });
-
+        roomDao = RoomDataBase.getDatabase(getContext())
+                .roomDao();
     }
 
     private void learnWords() {
 
         Log.i(TAG, "learnWords - " + receivedCard.getAmountOfWords() + " - " + receivedCard.getId());
 
-        DataBase.loadWordsByCard(receivedCard.getId(), new CompleteListener() {
+        // TODO get right card
+        DataBase.loadWordsByCard(getContext(), receivedCard.getId(), new CompleteListener() {
             @Override
             public void OnSuccess() {
                 try {
 
                     Log.i(TAG, "amount loaded words - " + LIST_OF_LEARNING_WORDS);
 
-                    RoomDataBase.getDatabase(getContext())
-                            .roomDao()
-                            .deleteAll();
+
+
+                    roomDao.deleteAll();
 
                     for (WordModel wordModel: LIST_OF_LEARNING_WORDS) {
 

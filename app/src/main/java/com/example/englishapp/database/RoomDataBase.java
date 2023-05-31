@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 import com.example.englishapp.interfaces.RoomDao;
 import com.example.englishapp.models.WordModel;
 
-@Database(entities = WordModel.class, version = 2, exportSchema = false)
+@Database(entities = {WordModel.class}, version = 4, exportSchema = false)
 public abstract class RoomDataBase extends RoomDatabase {
 
     private static RoomDataBase roomDataBase;
@@ -40,7 +40,7 @@ public abstract class RoomDataBase extends RoomDatabase {
             roomDataBase = Room.databaseBuilder(
                     context,
                     RoomDataBase.class,
-                    "words_db"
+                    "room_db"
             ).allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build();

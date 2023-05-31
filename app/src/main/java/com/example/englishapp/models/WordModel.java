@@ -71,4 +71,5 @@ public class WordModel implements Serializable {
     public void setImage(String image) {
         this.image = image;
     }
+
 }

@@ -18,11 +18,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.activities.MainAuthenticationActivity;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.RoomDataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.WordModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -178,13 +179,13 @@ public class ProfileFragment extends Fragment {
                 .commit();
 
         TextView view1 = view.findViewById(R.id.learning);
-//
-//        int count = RoomDataBase.
-//                getDatabase(getContext())
-//                .roomDao()
-//                .getRowCount();
 
-        view1.setText(" - " + DataBase.LIST_OF_LEARNING_WORDS.size());
+        int count = RoomDataBase.
+                getDatabase(getContext())
+                .roomDao()
+                .getRowCount();
+
+        view1.setText(" - " + count + " - " + DataBase.LIST_OF_LEARNING_WORDS.size());
 
         Log.i(TAG, "beginning");
 

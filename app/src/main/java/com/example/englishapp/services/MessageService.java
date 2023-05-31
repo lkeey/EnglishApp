@@ -88,6 +88,8 @@ public class MessageService extends FirebaseMessagingService {
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MessageService.this, CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_send)
+                    // to close after click
+                    .setAutoCancel(true)
                     .setContentTitle(remoteMessage.getData().get(REMOTE_MSG_TITLE))
                     .setContentText(remoteMessage.getData().get(REMOTE_MSG_DATA))
                     .setContentIntent(contentIntent);

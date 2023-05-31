@@ -65,10 +65,9 @@ import com.example.englishapp.models.CardModel;
 import com.example.englishapp.models.CategoryModel;
 import com.example.englishapp.models.OptionModel;
 import com.example.englishapp.models.QuestionModel;
-import com.example.englishapp.models.UserModel;
-import com.example.englishapp.models.Word;
-import com.example.englishapp.models.WordModel;
 import com.example.englishapp.models.TestModel;
+import com.example.englishapp.models.UserModel;
+import com.example.englishapp.models.WordModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -107,7 +106,6 @@ public class DataBase {
     public static List<CardModel> LIST_OF_CARDS = new ArrayList<>();
     public static List<String> LIST_OF_WORDS = new ArrayList<>();
     public static List<WordModel> LIST_OF_LEARNING_WORDS = new ArrayList<>();
-
 
     public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
         DATA_AUTH = FirebaseAuth.getInstance();
@@ -521,7 +519,7 @@ public class DataBase {
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
 
-    // every 30 seconds
+    // every 15 minute
     public static void updateUserGeoPosition(String latitude, String longitude, CompleteListener listener) {
 
         Log.i(TAG, "latitude - " + Double.parseDouble(latitude) + " - " + USER_MODEL.getLatitude());
@@ -1084,7 +1082,7 @@ public class DataBase {
 
     }
 
-    public static void createCardData(ArrayList<Word> listOfWords, String name, String description, String level, CompleteListener listener) {
+    public static void createCardData(ArrayList<WordModel> listOfWords, String name, String description, String level, CompleteListener listener) {
         try {
             Map<String, Object> cardData = new ArrayMap<>();
 
@@ -1172,7 +1170,7 @@ public class DataBase {
         }
     }
 
-    private static void createWordsData(ArrayList<Word> listOfWords, String level, String cardId, CompleteListener listener) {
+    private static void createWordsData(ArrayList<WordModel> listOfWords, String level, String cardId, CompleteListener listener) {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
 
@@ -1180,7 +1178,7 @@ public class DataBase {
 
             Map<String, Object> wordData = new ArrayMap<>();
 
-            Word wordModel = listOfWords.get(i);
+            WordModel wordModel = listOfWords.get(i);
 
             Log.i(TAG, "wordModel - " + wordModel.getTextEn() + " - " + wordModel.getImage().toString());
 
@@ -1189,7 +1187,7 @@ public class DataBase {
             wordData.put(KEY_WORD_TEXT_EN, wordModel.getTextEn());
             wordData.put(KEY_WORD_DESCRIPTION, wordModel.getDescription());
             wordData.put(KEY_WORD_LEVEL, level);
-            wordData.put(KEY_WORD_IMG, bitMapToString(wordModel.getImage()));
+            wordData.put(KEY_WORD_IMG, wordModel.getImage());
 
             DocumentReference wordDocument = DATA_FIRESTORE
                     .collection(KEY_COLLECTION_WORDS)
@@ -1248,7 +1246,7 @@ public class DataBase {
             });
     }
 
-    public static void loadWordsByCard(String cardId, CompleteListener listener) {
+    public static void loadWordsByCard(Context context, String cardId, CompleteListener listener) {
 
         Log.i(TAG, "card - " + cardId);
 
@@ -1271,7 +1269,7 @@ public class DataBase {
 
                     Log.i(TAG, "found word - " + wordModel.getTextEn());
 
-//                    LIST_OF_LEARNING_WORDS.add(wordModel);
+                    LIST_OF_LEARNING_WORDS.add(wordModel);
                 }
 
                 Log.i(TAG, "size - " + LIST_OF_LEARNING_WORDS.size());
@@ -1289,11 +1287,11 @@ public class DataBase {
 }
     public static String bitMapToString(Bitmap bitmap){
 
-        ByteArrayOutputStream baos = new  ByteArrayOutputStream();
+        ByteArrayOutputStream bmp = new  ByteArrayOutputStream();
 
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, bmp);
 
-        byte [] b = baos.toByteArray();
+        byte [] b = bmp.toByteArray();
 
         String temp = Base64.encodeToString(b, Base64.DEFAULT);
 
@@ -1302,12 +1300,12 @@ public class DataBase {
 
     public static void loadLearningWords(Context context, CompleteListener listener) {
 
+        Log.i(TAG, "load words");
+
+        LIST_OF_LEARNING_WORDS.clear();
+
         new Thread(() -> {
             try {
-
-                LIST_OF_LEARNING_WORDS.clear();
-
-                Log.i(TAG, "load words");
 
                 LIST_OF_LEARNING_WORDS =
                         RoomDataBase.getDatabase(context)
@@ -1318,6 +1316,8 @@ public class DataBase {
 
             } catch (Exception e) {
                 Log.i(TAG, "can not load learning words - " + e.getMessage());
+
+                listener.OnFailure();
             }
         });
     }

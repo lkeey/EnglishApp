@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,15 +34,17 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.SearchRes;
-import com.example.englishapp.models.Word;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.GoogleService;
 import com.example.englishapp.interfaces.WikiService;
+import com.example.englishapp.models.GoogleResults;
+import com.example.englishapp.models.SearchRes;
+import com.example.englishapp.models.WordModel;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -59,18 +62,19 @@ public class CreateWordCardFragment extends Fragment {
 
     private static final String TAG = "CreateWordCardFragment";
     private Retrofit retrofit;
-    private WikiService service;
-    private GoogleService googleService;
+    private WikiService serviceWiki;
+    private GoogleService serviceGoogle;
     private LinearLayout layoutList;
     private Button btnAdd, btnSubmit;
     private Spinner spinnerLevels;
     private EditText cardName, cardDescription;
     private Dialog progressBar;
     private TextView dialogText;
-    private final ArrayList<Word> listOfWords = new ArrayList<>();
+    private final ArrayList<WordModel> listOfWords = new ArrayList<>();
     private List<String> stringListLevels = new ArrayList<>();
     private ActivityResultLauncher<Intent> pickImage;
     private ImageView chosenImg;
+    private GoogleService googleService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -146,12 +150,13 @@ public class CreateWordCardFragment extends Fragment {
             ImageView imgWord = viewChild.findViewById(R.id.imageWord);
             EditText descriptionWord = viewChild.findViewById(R.id.wordDescription);
 
-            Word wordModel = new Word();
+            WordModel wordModel = new WordModel();
 
             if (textWord.getText().toString().isEmpty()) {
                 Toast.makeText(getActivity(), "Name of word must be not empty", Toast.LENGTH_SHORT).show();
 
                 return false;
+
             } else {
                 wordModel.setTextEn(textWord.getText().toString());
             }
@@ -160,6 +165,7 @@ public class CreateWordCardFragment extends Fragment {
                 Toast.makeText(getActivity(), "Description of word must be not empty", Toast.LENGTH_SHORT).show();
 
                 return false;
+
             } else {
                 wordModel.setDescription(descriptionWord.getText().toString());
             }
@@ -179,7 +185,7 @@ public class CreateWordCardFragment extends Fragment {
                 } else {
 
                     Log.i(TAG, "set img - " + bmp);
-                    wordModel.setImage(bmp);
+                    wordModel.setImage(bitMapToString(bmp));
                 }
 
             } catch (Exception e) {
@@ -197,6 +203,101 @@ public class CreateWordCardFragment extends Fragment {
         return true;
     }
 
+    private void sendWikipediaRequest(EditText wordText, EditText wordDescription, ImageView imgWord, Button btnSearch, ProgressBar progress){
+
+        Call<SearchRes> call = serviceWiki.find(wordText.getText().toString(), 1);
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<SearchRes> call, @NonNull Response<SearchRes> response) {
+                SearchRes res = response.body();
+                if (response.isSuccessful() && res.getPages() != null && res.getPages().length > 0) {
+
+                    // set image and description to layout
+
+                    wordDescription.setText(Html.fromHtml(res.getPages()[0].getExcerpt(), Html.FROM_HTML_MODE_COMPACT));
+
+                    if (res.getPages()[0].getThumbnail() != null) {
+
+                        getActivity().runOnUiThread(() -> {
+
+                            try {
+                                Log.i(TAG, "find img - " + "https:" + res.getPages()[0].getThumbnail().getUrl());
+
+                                URL url = new URL("https:" + res.getPages()[0].getThumbnail().getUrl());
+
+                                Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+
+                                Log.i(TAG, "image - " + image.getWidth() + " - " + image.getHeight());
+
+                                // rise the height and width
+                                Bitmap scaledBmp = Bitmap.createScaledBitmap(image, 200, 200, true);
+
+                                Log.i(TAG, "scaledBmp - " + scaledBmp.getWidth() + " - " + scaledBmp.getHeight());
+
+                                imgWord.setImageBitmap(scaledBmp);
+
+                                Log.i(TAG, "bitmap successfully set");
+
+                            } catch (MalformedURLException e) {
+                                Log.i(TAG, "er - " + e.getMessage());
+
+                            } catch (Exception e) {
+                                Log.i(TAG, "e - " + e.getClass());
+                            }
+                        });
+
+                        Log.i(TAG, "ok");
+
+                    } else {
+                        Log.i(TAG, "not found image");
+                    }
+
+                    // user can again search another word
+//                              wordText.setFocusableInTouchMode(true);
+
+                    progress.setVisibility(View.GONE);
+                    btnSearch.setEnabled(true);
+
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SearchRes> call, @NonNull Throwable t) {
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+
+                progress.setVisibility(View.GONE);
+                btnSearch.setEnabled(true);
+
+            }
+        });
+    }
+
+    private void sendGoogleRequest(EditText wordText, ImageView imgWord, Button btnSearch, ProgressBar progress) {
+
+
+        Call<GoogleResults> call = serviceGoogle.find(
+        "AIzaSyDdBPCVzYyCmtFtZSSihqOSUsPZglM5x3E",
+                "42a504d9a5afa4755",
+                wordText.getText().toString(),
+                "json",
+                "image"
+
+        );
+
+        call.enqueue(new Callback<GoogleResults>() {
+            @Override
+            public void onResponse(Call<GoogleResults> call, Response<GoogleResults> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<GoogleResults> call, Throwable t) {
+
+            }
+        });
+
+    }
+
     private void addView() {
         View view = getLayoutInflater().inflate(R.layout.word_add, null, false);
 
@@ -212,74 +313,20 @@ public class CreateWordCardFragment extends Fragment {
         btnSearch.setOnClickListener(v -> {
 
             if (wordText.getText().toString().isEmpty()) {
+
                 Toast.makeText(getActivity(), "Write text", Toast.LENGTH_SHORT).show();
+
             } else {
+
                 progress.setVisibility(View.VISIBLE);
                 btnSearch.setEnabled(false);
 
                 // search image and description in wikipedia
-                Call<SearchRes> call = service.find(wordText.getText().toString(), 1);
-                call.enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(@NonNull Call<SearchRes> call, @NonNull Response<SearchRes> response) {
-                        SearchRes res = response.body();
-                        if (response.isSuccessful() && res.pages != null && res.pages.length > 0) {
+                sendWikipediaRequest(wordText, wordDescription, imgWord, btnSearch, progress);
 
-                            // set image and description to layout
-
-                            wordDescription.setText(Html.fromHtml(res.pages[0].excerpt, Html.FROM_HTML_MODE_COMPACT));
-
-                            if (res.pages[0].thumbnail != null) {
-
-                                getActivity().runOnUiThread(() -> {
-                                    try {
-                                        Log.i(TAG, "find img - " + "https:" + res.pages[0].thumbnail.url);
-
-                                        URL url = new URL("https:" + res.pages[0].thumbnail.url);
-
-                                        Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-
-                                        Log.i(TAG, "image - " + image.getWidth() + " - " + image.getHeight());
-
-                                        imgWord.setImageBitmap(image);
-
-                                        Log.i(TAG, "bitmap successfully set");
-
-                                    } catch (MalformedURLException e) {
-                                        Log.i(TAG, "er - " + e.getMessage());
-
-                                    } catch (Exception e) {
-                                        Log.i(TAG, "e - " + e.getClass());
-                                    }                                    });
-
-                                Log.i(TAG, "ok");
-
-                            } else {
-                                Log.i(TAG, "not found image");
-                            }
-
-                            // user can again search another word
-//                              wordText.setFocusableInTouchMode(true);
-
-                            progress.setVisibility(View.GONE);
-                            btnSearch.setEnabled(true);
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(@NonNull Call<SearchRes> call, @NonNull Throwable t) {
-                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
-
-                        progress.setVisibility(View.GONE);
-                        btnSearch.setEnabled(true);
-
-                    }
-                });
-
-
+                // search image in google
+//                sendGoogleRequest(wordText, imgWord, btnSearch, progress);
             }
-
         });
 
         imgWord.setOnClickListener(v -> {
@@ -333,7 +380,7 @@ public class CreateWordCardFragment extends Fragment {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        service = retrofit.create(WikiService.class);
+        serviceWiki = retrofit.create(WikiService.class);
 
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://www.googleapis.com/")
@@ -368,5 +415,18 @@ public class CreateWordCardFragment extends Fragment {
             }
         );
 
+    }
+
+    private static String bitMapToString(Bitmap bitmap){
+
+        ByteArrayOutputStream bmp = new ByteArrayOutputStream();
+
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, bmp);
+
+        byte[] b = bmp.toByteArray();
+
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+
+        return temp;
     }
 }

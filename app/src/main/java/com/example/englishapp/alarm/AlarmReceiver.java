@@ -180,6 +180,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         } catch(Exception e) {
 
             e.getMessage();
+
             return BitmapFactory.decodeResource(context.getResources(),
                     R.drawable.app_logo_large);
 
