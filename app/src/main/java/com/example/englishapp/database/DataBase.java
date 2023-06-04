@@ -79,6 +79,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.mlkit.nl.translate.TranslateLanguage;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -127,8 +128,9 @@ public class DataBase {
         userData.put(KEY_PROFILE_IMG, pathToImage);
         userData.put(KEY_SCORE, 0);
         userData.put(KEY_BOOKMARKS, 0);
+
         // russia default
-        userData.put(KEY_LANGUAGE_CODE, 44);
+        userData.put(KEY_LANGUAGE_CODE, TranslateLanguage.RUSSIAN);
 
         DATA_FIREBASE_MESSAGING.getInstance().getToken()
                 .addOnSuccessListener(s -> userData.put(KEY_FCM_TOKEN, s))
@@ -519,34 +521,38 @@ public class DataBase {
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
 
-    // every 15 minute
-    public static void updateUserGeoPosition(String latitude, String longitude, CompleteListener listener) {
+    public static void updateUserGeoPosition(double latitude, double longitude, CompleteListener listener) {
 
-        Log.i(TAG, "latitude - " + Double.parseDouble(latitude) + " - " + USER_MODEL.getLatitude());
+        if (latitude != USER_MODEL.getLatitude() && longitude != USER_MODEL.getLongitude()) {
 
-        Log.i(TAG, "longitude - " + Double.parseDouble(longitude) + " - " + USER_MODEL.getLongitude());
-
-        if (Double.parseDouble(latitude) != USER_MODEL.getLatitude() && Double.parseDouble(longitude) != USER_MODEL.getLongitude()) {
-
-            Log.i(TAG, "new geo");
+            Log.i(TAG, "new geo - " + USER_MODEL.getUid());
 
             DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
                     .document(USER_MODEL.getUid());
 
-            USER_MODEL.setLongitude(Double.parseDouble(longitude));
-            USER_MODEL.setLatitude(Double.parseDouble(latitude));
+            USER_MODEL.setLongitude(longitude);
+            USER_MODEL.setLatitude(latitude);
 
-            reference.update(KEY_LOCATION, new GeoPoint(Double.parseDouble(latitude), Double.parseDouble(longitude)))
+            reference.update(KEY_LOCATION, new GeoPoint(latitude, longitude))
                 .addOnSuccessListener(unused -> {
+
+                    Log.i(TAG, "updated");
 
                     listener.OnSuccess();
 
-                }).addOnFailureListener(e -> listener.OnFailure());
+                }).addOnFailureListener(e -> {
+
+                    Log.i(TAG, "can not update user geo position - " + e.getMessage());
+
+                    listener.OnFailure();
+
+                    });
+
         } else {
 
             Log.i(TAG, "the same geo");
 
-            listener.OnSuccess();
+            listener.OnFailure();
         }
     }
 

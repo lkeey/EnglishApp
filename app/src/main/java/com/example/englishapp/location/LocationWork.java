@@ -1,6 +1,7 @@
 package com.example.englishapp.location;
 
 import static com.example.englishapp.database.Constants.KEY_LATITUDE;
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_LONGITUDE;
 import static com.example.englishapp.database.Constants.LOCAL_BROADCAST_ACTION;
 
@@ -21,8 +22,6 @@ import androidx.work.ForegroundInfo;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
 import com.example.englishapp.managers.LocationManager;
 
@@ -55,12 +54,13 @@ public class LocationWork extends Worker {
 
         setForegroundAsync(showNotification("loading", "loading"));
 
+        locationManager.startLocationUpdates();
+
         while (true) {
 
-            locationManager.startLocationUpdates();
-
             // it needs to never go out to return Result.success();
-            if (1 > 2) {
+            Log.i(TAG, "go");
+            if (false) {
                 break;
             }
 
@@ -111,41 +111,14 @@ public class LocationWork extends Worker {
         return notification;
     }
 
-    private void updateNotification(String latitude, String longitude) throws InterruptedException {
+    private void updateNotification(String latitude, String longitude, String titleText) throws InterruptedException {
+
         Log.i(TAG, "updateNotification");
 
-//        Thread.sleep(30_000); // every 30 seconds
+        Notification notification = createNotification(latitude, longitude, titleText);
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, notification);
 
-        // update user position in firebase
-        DataBase.updateUserGeoPosition(latitude, longitude, new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-
-                // show notification
-
-                String title = "Foreground Work - Updated";
-
-                Notification notification = createNotification(latitude, longitude, title);
-                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(NOTIFICATION_ID, notification);
-
-                Log.i(TAG, "Location was updated and notification was showed");
-            }
-
-            @Override
-            public void OnFailure() {
-
-                // show notification
-
-                String title = "Foreground Work - Not Updated";
-
-                Notification notification = createNotification(latitude, longitude, title);
-                NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-                notificationManager.notify(NOTIFICATION_ID, notification);
-
-                Log.i(TAG, "Can not update user geo position");
-            }
-        });
     }
 
     BroadcastReceiver localBroadCastReceiver = new BroadcastReceiver() {
@@ -155,11 +128,16 @@ public class LocationWork extends Worker {
 
             String latitude = intent.getStringExtra(KEY_LATITUDE);
             String longitude = intent.getStringExtra(KEY_LONGITUDE);
+            String titleText = intent.getStringExtra(KEY_LOCATION);
 
             try {
-                updateNotification(latitude, longitude);
+
+                updateNotification(latitude, longitude, titleText);
+
             } catch (InterruptedException e) {
+
                 throw new RuntimeException(e);
+
             }
         }
     };

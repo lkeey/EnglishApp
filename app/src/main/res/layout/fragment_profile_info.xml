@@ -129,6 +129,7 @@
                 android:layout_height="wrap_content"
                 android:padding="16dp"
                 android:text="Female"
+                android:buttonTint="@color/design_default_color_primary"
                 android:textColor="@color/secondary_color"
                 android:textSize="16sp" />
 
@@ -138,6 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:padding="16dp"
+                android:buttonTint="@color/design_default_color_primary"
                 android:textColor="@color/secondary_color"
                 android:text="Male"
                 android:textSize="16sp" />
@@ -158,6 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="Choose language you know"
                 android:textSize="20sp"
                 android:textColor="@color/secondary_color"/>

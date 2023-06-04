@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.alarm.AlarmReceiver;
+import com.example.englishapp.receivers.AlarmReceiver;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.RoomDataBase;
 import com.example.englishapp.interfaces.CompleteListener;

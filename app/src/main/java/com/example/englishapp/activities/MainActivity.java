@@ -1,12 +1,12 @@
 package com.example.englishapp.activities;
 
-import static com.example.englishapp.database.DataBase.LIST_OF_USERS;
-import static com.example.englishapp.database.DataBase.findUserById;
 import static com.example.englishapp.database.Constants.KEY_CHECK_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.database.DataBase.LIST_OF_USERS;
+import static com.example.englishapp.database.DataBase.findUserById;
 
 import android.Manifest;
 import android.app.AlarmManager;
@@ -32,21 +32,21 @@ import androidx.work.BackoffPolicy;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
 
-import com.example.englishapp.models.UserModel;
-import com.example.englishapp.fragments.CategoryFragment;
-import com.example.englishapp.fragments.ProfileFragment;
-import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.R;
-import com.example.englishapp.alarm.AlarmReceiver;
+import com.example.englishapp.database.Constants;
+import com.example.englishapp.fragments.CategoryFragment;
 import com.example.englishapp.fragments.ChatFragment;
 import com.example.englishapp.fragments.DiscussFragment;
-import com.example.englishapp.services.LocationService;
-import com.example.englishapp.managers.LocationManager;
-import com.example.englishapp.location.LocationWork;
-import com.example.englishapp.managers.PermissionManager;
-import com.example.englishapp.database.Constants;
 import com.example.englishapp.fragments.LeaderBordFragment;
+import com.example.englishapp.fragments.ProfileFragment;
+import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.fragments.ScoreFragment;
+import com.example.englishapp.location.LocationWork;
+import com.example.englishapp.managers.LocationManager;
+import com.example.englishapp.managers.PermissionManager;
+import com.example.englishapp.models.UserModel;
+import com.example.englishapp.receivers.AlarmReceiver;
+import com.example.englishapp.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -85,8 +85,13 @@ public class MainActivity extends BaseActivity {
 
         receiveData();
 
-        startCheckingPosition();
+//        startCheckingPosition();
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intent = new Intent(MainActivity.this, ForegroundLocationService.class);
+
+            startForegroundService(intent);
+        }
     }
 
     private void setListeners() {
@@ -137,7 +142,7 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG, "Enable - " + LocationManager.getInstance(this).isLocationEnabled());
 
         JobScheduler jobScheduler = getSystemService(JobScheduler.class);
-        ComponentName componentName = new ComponentName(this, LocationService.class);
+        ComponentName componentName = new ComponentName(this, ForegroundLocationService.class);
         JobInfo.Builder info = new JobInfo.Builder(1111, componentName);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

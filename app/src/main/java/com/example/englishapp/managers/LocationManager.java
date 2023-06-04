@@ -1,6 +1,7 @@
 package com.example.englishapp.managers;
 
 import static com.example.englishapp.database.Constants.KEY_LATITUDE;
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_LONGITUDE;
 import static com.example.englishapp.database.Constants.LOCAL_BROADCAST_ACTION;
 
@@ -18,6 +19,8 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -98,8 +101,32 @@ public class LocationManager {
                 intent.putExtra(KEY_LATITUDE, String.valueOf(locationResult.getLastLocation().getLatitude()));
                 intent.putExtra(KEY_LONGITUDE, String.valueOf(locationResult.getLastLocation().getLongitude()));
 
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                Log.i(TAG, "send intent to broadcast - " + locationResult.getLastLocation().getLatitude() + " - " + locationResult.getLastLocation().getLongitude());
 
+                // update user position in firebase
+                DataBase.updateUserGeoPosition(locationResult.getLastLocation().getLatitude(), locationResult.getLastLocation().getLongitude(), new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        // send intent to show notification
+
+                        intent.putExtra(KEY_LOCATION, "Location Work - Successfully Updated");
+
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                        Log.i(TAG, "Location was updated");
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        // can not update user's location in firebase
+
+                        intent.putExtra(KEY_LOCATION, "Location Work - Not Updated");
+
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                        Log.i(TAG, "Can not update user geo position");
+                    }
+                });
                 }
             };
 
@@ -118,8 +145,9 @@ public class LocationManager {
 //        locationRequest.setFastestInterval(30_000);
 //        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 15*60*1000)
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_BALANCED_POWER_ACCURACY, 60*1000)
                 .setWaitForAccurateLocation(true)
+                .setMinUpdateIntervalMillis(1000)
                 .build();
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -133,19 +161,22 @@ public class LocationManager {
 
         task.addOnFailureListener(e -> {
             if (e instanceof ResolvableApiException) {
+
                 try {
+
                     ResolvableApiException resolvableApiException = (ResolvableApiException) e;
                     resolvableApiException.startResolutionForResult((Activity) context, REQUEST_CHECK);
+
                 } catch (Exception ex) {
                     Log.i(TAG, "error - " + ex.getMessage());
                 }
+
             }
         });
     }
 
     public void startLocationUpdates() {
         Log.i(TAG, "startLocationUpdates");
-
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.i(TAG, "null - permission");
@@ -180,7 +211,9 @@ public class LocationManager {
             }
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
         } else {
+
             locationProviders = Settings.Secure.getString(
                     context.getContentResolver(),
                     Settings.Secure.LOCATION_PROVIDERS_ALLOWED

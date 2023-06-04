@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
-import com.example.englishapp.chat.MapService;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.interfaces.UserListener;
+import com.example.englishapp.models.UserModel;
+import com.example.englishapp.services.MapService;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

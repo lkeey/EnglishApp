@@ -102,7 +102,9 @@ public class LoginFragment extends Fragment {
 
         activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartIntentSenderForResult(), result -> {
             if (result.getResultCode() == RESULT_OK) {
+
                 try {
+
                     SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(result.getData());
                     String idToken = credential.getGoogleIdToken();
 
@@ -115,17 +117,19 @@ public class LoginFragment extends Fragment {
 
                 } catch (ApiException e) {
                     progressBar.dismiss();
+                    Log.i(TAG, "api - " + e.getMessage());
 
 //                    Toast.makeText(getActivity(), "API: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     progressBar.dismiss();
-                    Log.i(TAG, e.getMessage());
+                    Log.i(TAG, "exception - " + e.getMessage());
 
                     Toast.makeText(getActivity(), "Something went wrong with getting data", Toast.LENGTH_SHORT).show();
                 }
 
             } else {
                 Toast.makeText(getActivity(), "Something went wrong. Try later", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "fail - result not ok");
             }
         });
 
@@ -159,6 +163,8 @@ public class LoginFragment extends Fragment {
             .addOnSuccessListener(getActivity(), result -> {
                 try {
 
+                    Log.i(TAG, "begin sign in google");
+
                     IntentSenderRequest intentSenderRequest = new IntentSenderRequest.Builder(
                             result.getPendingIntent().getIntentSender()
                     ).build();
@@ -166,11 +172,16 @@ public class LoginFragment extends Fragment {
                     activityResultLauncher.launch(intentSenderRequest);
 
                 } catch (Exception e) {
+
                     Toast.makeText(getActivity(), "Can not sign up", Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(getActivity(), "Exception " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.i(TAG, "exception - " + e.getMessage());
+
                 }
             })
-            .addOnFailureListener(getActivity(), e -> Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show());
+            .addOnFailureListener(getActivity(), e -> {
+                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "fail - " + e.getMessage());
+            });
     }
 
     private void firebaseAuthWithGoogle(String idToken) {

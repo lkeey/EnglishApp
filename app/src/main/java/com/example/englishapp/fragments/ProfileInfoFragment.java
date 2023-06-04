@@ -1,7 +1,6 @@
 package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.Constants.KEY_ADD_SCORE;
 import static com.example.englishapp.database.Constants.KEY_DOB;
 import static com.example.englishapp.database.Constants.KEY_EMAIL;
@@ -11,6 +10,7 @@ import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_SCORE;
 import static com.example.englishapp.database.Constants.NAME_USER_PROFILE_IMG;
 import static com.example.englishapp.database.Constants.PATH_PROFILE_IMG;
+import static com.example.englishapp.database.DataBase.USER_MODEL;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -49,10 +49,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -82,12 +82,6 @@ public class ProfileInfoFragment extends Fragment {
     private FirebaseAuth authProfile;
     private Spinner spinnerLanguage;
     private FirebaseUser firebaseUser;
-
-    private String[] languages = {
-            TranslateLanguage.BELARUSIAN, TranslateLanguage.DANISH, TranslateLanguage.GERMAN,
-            TranslateLanguage.ENGLISH, TranslateLanguage.SPANISH, TranslateLanguage.RUSSIAN
-    };
-
     private Uri imgUri;
     private String languageCode;
     private boolean isAddingScore;
@@ -171,7 +165,7 @@ public class ProfileInfoFragment extends Fragment {
                 }
         );
 
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, languages);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, TranslateLanguage.getAllLanguages());
 
         spinnerLanguage.setAdapter(arrayAdapter);
 
@@ -199,11 +193,11 @@ public class ProfileInfoFragment extends Fragment {
 
                 Log.i(TAG, "language code - " + languageCode);
 
-                for (int i=0; i < languages.length; i++) {
+                for (int i=0; i < TranslateLanguage.getAllLanguages().size(); i++) {
 
-                    Log.i(TAG, "lang - " + languages[0] + " - " + languageCode);
+                    Log.i(TAG, "lang - " + TranslateLanguage.getAllLanguages() + " - " + languageCode);
 
-                    if (languageCode.equals(languages[0])) {
+                    if (languageCode.equals(TranslateLanguage.getAllLanguages().get(i))) {
                         spinnerLanguage.setSelection(i);
                     }
 
@@ -217,6 +211,7 @@ public class ProfileInfoFragment extends Fragment {
                     ((RadioButton) view.findViewById(R.id.radioFemale)).setChecked(true);
                 }
             }
+
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
@@ -283,7 +278,7 @@ public class ProfileInfoFragment extends Fragment {
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                languageCode = languages[position];
+                languageCode = TranslateLanguage.getAllLanguages().get(position);
             }
 
             @Override
