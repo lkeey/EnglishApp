@@ -1,29 +1,32 @@
 package com.example.englishapp.messaging;
 
-import com.example.englishapp.models.NotificationData;
+import com.google.gson.annotations.SerializedName;
 
 public class PushNotification {
-    private NotificationData data;
-    private String to;
+    @SerializedName("to") //  "to" changed to token
+    private String token;
 
-    public PushNotification(NotificationData data, String to) {
+    @SerializedName("data")
+    private DataModel data;
+
+    public PushNotification(String token, DataModel data) {
+        this.token = token;
         this.data = data;
-        this.to = to;
     }
 
-    public NotificationData getData() {
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public DataModel getData() {
         return data;
     }
 
-    public void setData(NotificationData data) {
+    public void setData(DataModel data) {
         this.data = data;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
     }
 }

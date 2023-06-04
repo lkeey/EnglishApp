@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +22,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.adapters.CategoryAdapter;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.example.englishapp.models.CategoryModel;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.adapters.CategoryAdapter;
+import com.example.englishapp.database.DataBase;
 import com.example.englishapp.interfaces.CategoryClickedListener;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.models.CategoryModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CategoryFragment extends Fragment implements CategoryClickedListener {
 
@@ -38,9 +38,9 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
     private RecyclerView recyclerCategories;
     private Dialog progressBar;
     private TextView dialogText, textClose;
-    private ImageView imgAddCategory;
     private Button btnCreateCategory;
     private ProgressBar progressCategory;
+    private FloatingActionButton fab;
     private EditText inputSearch, inputNameCategory;
 
     @Override
@@ -63,7 +63,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     private void setListeners() {
 
-        imgAddCategory.setOnClickListener(v -> {
+        fab.setOnClickListener(v -> {
 
             // show dialog
             inputNameCategory.setText(null);
@@ -132,7 +132,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         ((MainActivity) getActivity()).setTitle(R.string.nameFeed);
 
         recyclerCategories = view.findViewById(R.id.recyclerCategories);
-        imgAddCategory = view.findViewById(R.id.imgAddCategory);
+        fab = view.findViewById(R.id.fab);
         inputSearch = view.findViewById(R.id.inputSearch);
 
         categoryAdapter = new CategoryAdapter(DataBase.LIST_OF_CATEGORIES, this, getActivity());

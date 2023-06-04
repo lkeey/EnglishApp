@@ -1,9 +1,12 @@
 package com.example.englishapp.services;
 
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
+
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +23,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.example.englishapp.R;
+import com.example.englishapp.activities.SplashActivity;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -71,12 +75,12 @@ public class ForegroundLocationService extends Service {
             }
         }).start();
 
-        startForeground(NOTIFICATION_ID, createNotification("Foreground Service Location - Loading", "Latitude - Loading", "Longitude - Loading"));
+        startForeground(NOTIFICATION_ID, createNotification(getApplication(), "Foreground Service Location - Loading", "Latitude - Loading", "Longitude - Loading"));
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private Notification createNotification(String title, String latitude, String longitude) {
+    private Notification createNotification(Context context, String title, String latitude, String longitude) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getSystemService(NotificationManager.class)
@@ -90,12 +94,22 @@ public class ForegroundLocationService extends Service {
 
         String contentText = "Latitude: " + latitude + " Longitude: " + longitude;
 
+        // what to open after click on notification
+        Intent notificationIntent = new Intent(context, SplashActivity.class);
+
+        notificationIntent.putExtra(KEY_LOCATION, true);
+
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(title)
                 .setTicker(title)
                 .setContentText(contentText)
                 .setSmallIcon(R.drawable.ic_location)
                 .setOngoing(true)
+                .setContentIntent(contentIntent)
                 .setOnlyAlertOnce(true)
                 .build();
 
@@ -234,7 +248,7 @@ public class ForegroundLocationService extends Service {
 
         Log.i(TAG, "updateNotification");
 
-        Notification notification = createNotification(latitude, longitude, titleText);
+        Notification notification = createNotification(getApplication(), latitude, longitude, titleText);
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notification);
 

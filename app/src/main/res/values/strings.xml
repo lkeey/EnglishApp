@@ -61,5 +61,16 @@
     <string name="add_image">Add Image</string>
     <string name="add_score_text">If you complete the full registration, you will get score</string>
     <string name="nameFeed">Feed\n</string>
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="author">Author</string>
+    <string name="title">Title</string>
+    <string name="numberofquestions">numberOfQuestions</string>
+    <string name="time">time</string>
+    <string name="percent">Percent</string>
+    <string name="write_word_in_english">Write Word In English</string>
+    <string name="write_description">Write Description</string>
+    <string name="search_in_wikipedia">Search In Wikipedia</string>
 
 </resources>

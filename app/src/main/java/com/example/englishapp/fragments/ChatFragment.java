@@ -78,11 +78,11 @@ public class ChatFragment extends Fragment implements ConversationListener {
     }
 
     private void setListeners() {
-        fab.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new MapUsersFragment()));
+        fab.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new MapUsersFragment()));
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameChats);
+        ((MainActivity) requireActivity()).setTitle(R.string.nameChats);
 
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
         fab = view.findViewById(R.id.fab);
@@ -203,7 +203,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment);
 
         } else {
             Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();

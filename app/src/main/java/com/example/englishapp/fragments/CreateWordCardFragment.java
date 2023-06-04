@@ -238,6 +238,8 @@ public class CreateWordCardFragment extends Fragment {
 
                                 Log.i(TAG, "bitmap successfully set");
 
+                                imgWord.setBackground(null);
+
                             } catch (MalformedURLException e) {
                                 Log.i(TAG, "er - " + e.getMessage());
 

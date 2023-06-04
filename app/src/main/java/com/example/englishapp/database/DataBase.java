@@ -8,6 +8,7 @@ import static com.example.englishapp.database.Constants.KEY_AMOUNT_SENT_MESSAGES
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_TESTS;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_WORDS;
 import static com.example.englishapp.database.Constants.KEY_ANSWER;
+import static com.example.englishapp.database.Constants.KEY_AUTHOR;
 import static com.example.englishapp.database.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.database.Constants.KEY_CARD_DESCRIPTION;
 import static com.example.englishapp.database.Constants.KEY_CARD_ID;
@@ -586,6 +587,7 @@ public class DataBase {
                         testModel.setAmountOfQuestion(documentSnapshot.getLong(KEY_AMOUNT_OF_QUESTIONS).intValue());
                         testModel.setTopScore(0);
                         testModel.setTime(documentSnapshot.getLong(KEY_TEST_TIME).intValue());
+                        testModel.setAuthor(documentSnapshot.getString(KEY_AUTHOR));
 
                         LIST_OF_TESTS.add(testModel);
 
@@ -631,6 +633,7 @@ public class DataBase {
             testData.put(KEY_TEST_NAME, name);
             testData.put(KEY_TEST_TIME, time);
             testData.put(KEY_AMOUNT_OF_QUESTIONS, listOfQuestions.size());
+            testData.put(KEY_AUTHOR, USER_MODEL.getName());
             testData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
 
             Log.i(TAG, "set test data");
@@ -680,6 +683,7 @@ public class DataBase {
                 LIST_OF_TESTS.add(new TestModel(
                         randomId,
                         name,
+                        USER_MODEL.getName(),
                         listOfQuestions.size(),
                         0,
                         time
@@ -1069,6 +1073,7 @@ public class DataBase {
                         cardModel.setLevel(documentSnapshot.getString(KEY_CARD_LEVEL));
                         cardModel.setDescription(documentSnapshot.getString(KEY_CARD_DESCRIPTION));
                         cardModel.setAmountOfWords(documentSnapshot.getLong(KEY_AMOUNT_WORDS).intValue());
+                        cardModel.setAuthor(documentSnapshot.getString(KEY_AUTHOR));
 
                         LIST_OF_CARDS.add(cardModel);
 
@@ -1115,6 +1120,7 @@ public class DataBase {
             cardData.put(KEY_CARD_LEVEL, level);
             cardData.put(KEY_AMOUNT_WORDS, listOfWords.size());
             cardData.put(KEY_CARD_DESCRIPTION, description);
+            cardData.put(KEY_AUTHOR, USER_MODEL.getName());
             cardData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
 
             Log.i(TAG, "set card data");
@@ -1156,6 +1162,7 @@ public class DataBase {
                         name,
                         level,
                         description,
+                        USER_MODEL.getName(),
                         listOfWords.size()
                 ));
 

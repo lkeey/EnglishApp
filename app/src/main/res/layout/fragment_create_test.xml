@@ -38,9 +38,8 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
             android:layout_weight="1"
             android:hint="Choose Time Of Doing Your Test (minutes)"
             android:textColorHint="@color/design_default_color_primary"
@@ -50,6 +49,7 @@
 
         <NumberPicker
             android:id="@+id/numberPicker"
+            android:layout_marginHorizontal="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

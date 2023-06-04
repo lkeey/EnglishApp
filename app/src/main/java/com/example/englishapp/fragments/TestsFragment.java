@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,20 +21,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.example.englishapp.models.TestModel;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.TestAdapter;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.TestClickedListener;
+import com.example.englishapp.models.TestModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class TestsFragment extends Fragment implements TestClickedListener {
 
     private static final String TAG = "TestsFragment";
     private RecyclerView testRecycler;
     private TestAdapter testAdapter;
-    private ImageView imgAddTest;
+    private FloatingActionButton fab;
     private EditText inputSearch;
     private Dialog progressBar;
     private TextView dialogText;
@@ -54,7 +54,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     }
 
     private void setListeners() {
-        imgAddTest.setOnClickListener(v -> {
+        fab.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
 //            bundle.putSerializable(KEY_CHOSEN_CATEGORY, category);
             CreateTestFragment fragment = new CreateTestFragment();
@@ -87,7 +87,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
         ((MainActivity) getActivity()).setTitle(R.string.nameTests);
 
         testRecycler = view.findViewById(R.id.testRecyclerView);
-        imgAddTest = view.findViewById(R.id.imgAddTest);
+        fab = view.findViewById(R.id.fab);
         inputSearch = view.findViewById(R.id.inputSearch);
 
         progressBar = new Dialog(getActivity());

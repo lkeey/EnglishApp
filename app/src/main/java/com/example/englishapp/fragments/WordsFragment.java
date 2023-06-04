@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,20 +21,21 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.models.CardModel;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.example.englishapp.interfaces.CardClickedListener;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.CardWordAdapter;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CardClickedListener;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.models.CardModel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class WordsFragment extends Fragment implements CardClickedListener {
 
     private static final String TAG = "WordsFragment";
     private RecyclerView cardRecycler;
     private CardWordAdapter cardAdapter;
-    private ImageView imgAddCard;
+    private FloatingActionButton fab;
     private EditText inputSearch;
     private Dialog progressBar;
     private TextView dialogText;
@@ -56,7 +56,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
         ((MainActivity) getActivity()).setTitle(R.string.nameCardWords);
 
         cardRecycler = view.findViewById(R.id.cardsRecyclerView);
-        imgAddCard = view.findViewById(R.id.imgAddCard);
+        fab = view.findViewById(R.id.fab);
         inputSearch = view.findViewById(R.id.inputSearch);
 
         progressBar = new Dialog(getActivity());
@@ -99,7 +99,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void setListeners() {
-        imgAddCard.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new CreateWordCardFragment()));
+        fab.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new CreateWordCardFragment()));
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override

@@ -92,7 +92,7 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title, numberOfCards, level;
+        private TextView title, numberOfCards, level, author;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -100,6 +100,7 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             title = itemView.findViewById(R.id.title);
             numberOfCards = itemView.findViewById(R.id.numberOfCards);
             level = itemView.findViewById(R.id.level);
+            author = itemView.findViewById(R.id.author);
 
         }
 
@@ -108,6 +109,8 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             CardModel cardModel = cardModelList.get(position);
 
             title.setText(cardModel.getName());
+
+            author.setText(cardModel.getAuthor());
 
             numberOfCards.setText("" + cardModel.getAmountOfWords());
 

@@ -5,15 +5,17 @@ import java.io.Serializable;
 public class TestModel implements Serializable {
     private String id;
     private String name;
+    private String author;
     private int amountOfQuestion;
     private int topScore;
     private int time;
 
     public TestModel () {}
 
-    public TestModel(String id, String name, int amountOfQuestion, int topScore, int time) {
+    public TestModel(String id, String name, String author, int amountOfQuestion, int topScore, int time) {
         this.id = id;
         this.name = name;
+        this.author = author;
         this.amountOfQuestion = amountOfQuestion;
         this.topScore = topScore;
         this.time = time;
@@ -33,6 +35,14 @@ public class TestModel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public int getAmountOfQuestion() {

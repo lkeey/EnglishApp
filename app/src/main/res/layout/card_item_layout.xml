@@ -19,10 +19,19 @@
         android:padding="16dp">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"
+            android:textColor="#616161"
+            android:paddingHorizontal="4dp"
+            android:gravity="end"/>
+
+        <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:text="Title"
             android:textColor="@color/white"
             android:textAlignment="center"

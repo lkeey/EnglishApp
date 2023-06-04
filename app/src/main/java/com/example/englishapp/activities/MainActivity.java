@@ -2,6 +2,7 @@ package com.example.englishapp.activities;
 
 import static com.example.englishapp.database.Constants.KEY_CHECK_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
@@ -38,6 +39,7 @@ import com.example.englishapp.fragments.CategoryFragment;
 import com.example.englishapp.fragments.ChatFragment;
 import com.example.englishapp.fragments.DiscussFragment;
 import com.example.englishapp.fragments.LeaderBordFragment;
+import com.example.englishapp.fragments.MapUsersFragment;
 import com.example.englishapp.fragments.ProfileFragment;
 import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.fragments.ScoreFragment;
@@ -92,6 +94,7 @@ public class MainActivity extends BaseActivity {
 
             startForegroundService(intent);
         }
+
     }
 
     private void setListeners() {
@@ -203,6 +206,7 @@ public class MainActivity extends BaseActivity {
             boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
             String userUID = intent.getStringExtra(KEY_USER_UID);
             long totalTime = intent.getLongExtra(KEY_TEST_TIME, -1);
+            boolean isShowMap = intent.getBooleanExtra(KEY_LOCATION, false);
 
             Log.i(TAG, "STATUS " + status);
             Log.i(TAG, "UserUID - " + userUID + " - " + LIST_OF_USERS.size());
@@ -236,6 +240,12 @@ public class MainActivity extends BaseActivity {
 
                 setFragment(fragment);
 
+            } else if (isShowMap) {
+                Log.i(TAG, "show Map Fragment");
+
+                MapUsersFragment fragment = new MapUsersFragment();
+
+                setFragment(fragment);
             }
 
         } catch (Exception e) {

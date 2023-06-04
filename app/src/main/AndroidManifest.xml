@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- https://www.figma.com/file/pn5pjWQP4oWQyX01WUkHVk/Untitled?type=whiteboard&node-id=1-111&t=a1ryhXjOK7QmMqWM-0 -->
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,12 +26,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EnglishApp"
         tools:targetApi="28">
-        
         <!-- TODO change -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
-        
+
         <activity
             android:name=".activities.SplashActivity"
             android:exported="true">
@@ -46,15 +44,12 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        
         <activity
             android:name=".activities.ExamActivity"
             android:exported="false" />
-        
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />
-        
         <activity
             android:name=".activities.MainAuthenticationActivity"
             android:exported="false" />
@@ -71,21 +66,19 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service
             android:name=".services.ForegroundLocationService"
             android:enabled="true"
-            android:exported="true"></service>
-        
+            android:exported="true" />
+
         <receiver android:name=".receivers.AlarmReceiver" />
-            
-        <receiver android:name=".receivers.LocationBroadcastReceiver"
+        <receiver
+            android:name=".receivers.LocationBroadcastReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

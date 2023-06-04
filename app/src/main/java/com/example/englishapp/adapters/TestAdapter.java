@@ -97,7 +97,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
 
 
     public class TestHolder extends RecyclerView.ViewHolder {
-        private TextView title, numberOfQuestions, time, percent;
+        private TextView title, numberOfQuestions, time, percent, author;
         private ProgressBar progressBar;
 
         public TestHolder(@NonNull View itemView) {
@@ -107,6 +107,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
             numberOfQuestions = itemView.findViewById(R.id.numberOfQuestions);
             time = itemView.findViewById(R.id.time);
             percent = itemView.findViewById(R.id.percent);
+            author = itemView.findViewById(R.id.author);
             progressBar = itemView.findViewById(R.id.progressBar);
 
         }
@@ -124,6 +125,8 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
 
             percent.setText(progress + "%");
             time.setText(testModel.getTime() + " min");
+
+            author.setText(testModel.getAuthor());
 
             progressBar.setProgress(progress);
 

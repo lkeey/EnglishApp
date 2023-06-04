@@ -1,23 +1,27 @@
 package com.example.englishapp.activities;
 
-import static com.example.englishapp.database.DataBase.loadData;
+import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.REMOTE_MSG_USER_SENDER;
+import static com.example.englishapp.database.DataBase.loadData;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
+import com.example.englishapp.database.DataBase;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -30,6 +34,7 @@ public class SplashActivity extends AppCompatActivity {
     private static final String TAG = "BeginApp";
     private FirebaseAuth mAuth;
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    private View backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,12 +71,24 @@ public class SplashActivity extends AppCompatActivity {
             receiveData();
 
         }).start();
+
+//        init();
+    }
+
+    private void init() {
+        backgroundView = findViewById(R.id.backgroundView);
+
+        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotation);
+
+        backgroundView.setAnimation(animation);
     }
 
     private void receiveData() {
         try {
             Intent data = getIntent();
+
             String userUID = data.getStringExtra(REMOTE_MSG_USER_SENDER);
+            boolean isShowMap = data.getBooleanExtra(KEY_LOCATION, false);
 
             Log.i(TAG, "send uid - " + userUID);
 
@@ -82,6 +99,27 @@ public class SplashActivity extends AppCompatActivity {
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
                         intent.putExtra(KEY_USER_UID, userUID);
+
+                        startActivity(intent);
+
+                        SplashActivity.this.finish();
+
+                        Log.i(TAG, "work");
+
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not load data");
+                    }
+                });
+            } else if (isShowMap) {
+                loadData(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+
+                        intent.putExtra(KEY_LOCATION, true);
 
                         startActivity(intent);
 
