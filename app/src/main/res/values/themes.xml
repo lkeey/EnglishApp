@@ -1,4 +1,4 @@
-<resources xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="Theme.EnglishApp" parent="Theme.AppCompat.Light.NoActionBar">
@@ -63,6 +63,14 @@
     <style name="ThemeOverlay.EnglishApp.FullscreenContainer" parent="">
         <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
         <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
+
+    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">#F106BE</item>
+
+        <!--bottom navigation-->
+        <item name="android:navigationBarColor">#310275</item>
     </style>
 
 </resources>

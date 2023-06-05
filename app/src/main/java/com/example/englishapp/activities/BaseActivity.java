@@ -1,7 +1,7 @@
 package com.example.englishapp.activities;
 
-import static com.example.englishapp.database.DataBase.DATA_FIRESTORE;
-import static com.example.englishapp.database.DataBase.USER_MODEL;
+import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.os.Bundle;
 

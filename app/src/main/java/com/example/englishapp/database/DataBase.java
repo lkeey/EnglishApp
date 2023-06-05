@@ -27,14 +27,8 @@ import static com.example.englishapp.database.Constants.KEY_COLLECTION_STATISTIC
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_TESTS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_WORDS;
-import static com.example.englishapp.database.Constants.KEY_DOB;
-import static com.example.englishapp.database.Constants.KEY_EMAIL;
 import static com.example.englishapp.database.Constants.KEY_FCM_TOKEN;
-import static com.example.englishapp.database.Constants.KEY_GENDER;
-import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
-import static com.example.englishapp.database.Constants.KEY_MOBILE;
-import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_NUMBER_OF_OPTIONS;
 import static com.example.englishapp.database.Constants.KEY_OPTION;
 import static com.example.englishapp.database.Constants.KEY_PROFILE_IMG;
@@ -44,9 +38,7 @@ import static com.example.englishapp.database.Constants.KEY_TEST_ID;
 import static com.example.englishapp.database.Constants.KEY_TEST_NAME;
 import static com.example.englishapp.database.Constants.KEY_TEST_QUESTION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
-import static com.example.englishapp.database.Constants.KEY_TOTAL_USERS;
 import static com.example.englishapp.database.Constants.KEY_USER_SCORES;
-import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.KEY_WORD_CARD_ID;
 import static com.example.englishapp.database.Constants.KEY_WORD_DESCRIPTION;
 import static com.example.englishapp.database.Constants.KEY_WORD_ID;
@@ -54,6 +46,9 @@ import static com.example.englishapp.database.Constants.KEY_WORD_IMG;
 import static com.example.englishapp.database.Constants.KEY_WORD_LEVEL;
 import static com.example.englishapp.database.Constants.KEY_WORD_TEXT_EN;
 import static com.example.englishapp.database.Constants.NOT_VISITED;
+import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
+import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -69,18 +64,13 @@ import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.models.TestModel;
 import com.example.englishapp.models.UserModel;
 import com.example.englishapp.models.WordModel;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.mlkit.nl.translate.TranslateLanguage;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -95,11 +85,6 @@ public class DataBase {
     public static String CURRENT_CONVERSATION_ID = null;
     public static String CHOSEN_CATEGORY_ID = null;
     public static String CHOSEN_TEST_ID = null;
-    public static FirebaseFirestore DATA_FIRESTORE;
-    public static FirebaseAuth DATA_AUTH;
-    public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
-    public static UserModel USER_MODEL = new UserModel(null, null, null, null, null, null, null,null, 0, 0, 0, null, 1, 1);
-    public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
@@ -109,102 +94,16 @@ public class DataBase {
     public static List<String> LIST_OF_WORDS = new ArrayList<>();
     public static List<WordModel> LIST_OF_LEARNING_WORDS = new ArrayList<>();
 
-    public static void createUserData(String email, String name, String DOB, String gender, String mobile, String pathToImage, CompleteListener listener) {
-        DATA_AUTH = FirebaseAuth.getInstance();
-
-        Map<String, Object> userData = new ArrayMap<>();
-
-        userData.put(KEY_USER_UID, DATA_AUTH.getCurrentUser().getUid());
-        userData.put(KEY_EMAIL, email);
-
-        if (name != null) {
-            userData.put(KEY_NAME, name);
-        } else {
-            userData.put(KEY_NAME, FirebaseAuth.getInstance().getCurrentUser().getUid());
-        }
-
-        userData.put(KEY_MOBILE, mobile);
-        userData.put(KEY_GENDER, gender);
-        userData.put(KEY_DOB, DOB);
-        userData.put(KEY_PROFILE_IMG, pathToImage);
-        userData.put(KEY_SCORE, 0);
-        userData.put(KEY_BOOKMARKS, 0);
-
-        // russia default
-        userData.put(KEY_LANGUAGE_CODE, TranslateLanguage.RUSSIAN);
-
-        DATA_FIREBASE_MESSAGING.getInstance().getToken()
-                .addOnSuccessListener(s -> userData.put(KEY_FCM_TOKEN, s))
-                .addOnFailureListener(e -> Log.i(TAG, e.getMessage()));
-
-        userData.put(KEY_LOCATION, new GeoPoint(0, 0));
-
-        // set default image
-        userData.put(KEY_PROFILE_IMG, "https://firebasestorage.googleapis.com/v0/b/englishapp-341d3.appspot.com/o/PROFILE_IMAGES%2Fno-image.jpg?alt=media&token=eaa4fa62-9cc9-4dbd-b300-96a61a3955a6");
-
-        DocumentReference userDoc = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_USERS)
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-        WriteBatch batch = DATA_FIRESTORE.batch();
-
-        batch.set(userDoc, userData, SetOptions.merge());
-
-        DocumentReference docReference = DATA_FIRESTORE
-                .collection(KEY_COLLECTION_STATISTICS)
-                .document(KEY_TOTAL_USERS);
-
-        batch.update(docReference, KEY_TOTAL_USERS, FieldValue.increment(1));
-
-        batch.commit()
-                .addOnSuccessListener(unused -> {
-                    Log.i(TAG, "User Created");
-
-                    listener.OnSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    Log.i(TAG, "Fail To Create User " + e.getMessage());
-
-                    listener.OnFailure();
-                });
-    }
-
-    public static void getUserData(CompleteListener listener) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    try {
-
-                        USER_MODEL.setUid(documentSnapshot.getString(KEY_USER_UID));
-                        USER_MODEL.setName(documentSnapshot.getString(KEY_NAME));
-                        USER_MODEL.setEmail(documentSnapshot.getString(KEY_EMAIL));
-                        USER_MODEL.setMobile(documentSnapshot.getString(KEY_MOBILE));
-                        USER_MODEL.setFcmToken(documentSnapshot.getString(KEY_FCM_TOKEN));
-                        USER_MODEL.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
-                        USER_MODEL.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
-                        USER_MODEL.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
-                        USER_MODEL.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
-                        USER_MODEL.setGender(documentSnapshot.getString(KEY_GENDER));
-                        USER_MODEL.setLanguageCode(documentSnapshot.getString(KEY_LANGUAGE_CODE));
-
-                    } catch (Exception e) {
-                        Log.i(TAG, e.getMessage());
-                    }
-
-                    listener.OnSuccess();
-                })
-                .addOnFailureListener(e -> listener.OnFailure());
-    }
-
-
-    public static void loadData(CompleteListener listener) {
+    public void loadData(CompleteListener listener) {
         Log.i(TAG, "Load Data");
 
-        getUserData(new CompleteListener() {
+        DataBasePersonalData dataBasePersonalData = new DataBasePersonalData();
+
+        dataBasePersonalData.getUserData(new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "User data was loaded");
-                getListOfUsers(new CompleteListener() {
+                DataBaseUsers.getListOfUsers(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "Users were successfully loaded");
@@ -284,63 +183,6 @@ public class DataBase {
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
-    }
-
-    public static void getListOfUsers(CompleteListener listener) {
-        LIST_OF_USERS.clear();
-
-        Log.i(TAG, "Begin loading");
-
-        DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-            .orderBy(KEY_SCORE, Query.Direction.DESCENDING)
-            .limit(20)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                Log.i(TAG, "Get data");
-                try {
-                    int place = 1;
-
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        UserModel userModel = new UserModel();
-
-                        userModel.setUid(documentSnapshot.getString(KEY_USER_UID));
-                        userModel.setName(documentSnapshot.getString(KEY_NAME));
-                        userModel.setEmail(documentSnapshot.getString(KEY_EMAIL));
-                        userModel.setGender(documentSnapshot.getString(KEY_GENDER));
-                        userModel.setMobile(documentSnapshot.getString(KEY_MOBILE));
-                        userModel.setPathToImage(documentSnapshot.getString(KEY_PROFILE_IMG));
-                        userModel.setDateOfBirth(documentSnapshot.getString(KEY_DOB));
-                        userModel.setFcmToken(documentSnapshot.getString(KEY_FCM_TOKEN));
-                        userModel.setScore(documentSnapshot.getLong(KEY_SCORE).intValue());
-                        userModel.setBookmarksCount(documentSnapshot.getLong(KEY_BOOKMARKS).intValue());
-                        userModel.setLatitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLatitude());
-                        userModel.setLongitude(documentSnapshot.getGeoPoint(KEY_LOCATION).getLongitude());
-                        userModel.setPlace(place);
-
-                        LIST_OF_USERS.add(userModel);
-
-                        // set place for current user
-
-                        if (userModel.getUid().equals(USER_MODEL.getUid())) {
-                            USER_MODEL.setPlace(place);
-                        }
-
-                        place++;
-
-                        Log.i(TAG, "Created - " + userModel.getName() + " - " + userModel.getUid());
-
-                    }
-
-                } catch (Exception e) {
-                    Log.i(TAG, e.getMessage());
-                }
-
-                Log.i(TAG, "All good");
-
-                listener.OnSuccess();
-
-            })
-            .addOnFailureListener(e -> listener.OnFailure());
     }
 
     public static void getListOfCategories(CompleteListener listener) {

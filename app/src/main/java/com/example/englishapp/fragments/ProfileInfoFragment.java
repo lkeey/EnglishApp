@@ -10,7 +10,7 @@ import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_SCORE;
 import static com.example.englishapp.database.Constants.NAME_USER_PROFILE_IMG;
 import static com.example.englishapp.database.Constants.PATH_PROFILE_IMG;
-import static com.example.englishapp.database.DataBase.USER_MODEL;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -85,7 +85,7 @@ public class ProfileInfoFragment extends Fragment {
     private Uri imgUri;
     private String languageCode;
     private boolean isAddingScore;
-
+    private DataBase dataBase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -378,10 +378,10 @@ public class ProfileInfoFragment extends Fragment {
             userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
         }
 
-        DataBase.updateProfileData(userData, new CompleteListener() {
+        dataBase.updateProfileData(userData, new CompleteListener() {
             @Override
             public void OnSuccess() {
-                DataBase.loadData(new CompleteListener() {
+                dataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
 

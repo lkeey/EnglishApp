@@ -1,13 +1,13 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.DATA_FIRESTORE;
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CONVERSATION;
 import static com.example.englishapp.database.Constants.KEY_LAST_MESSAGE;
 import static com.example.englishapp.database.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.database.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.database.Constants.KEY_TIME_STAMP;
+import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.activities.MainActivity;
@@ -88,7 +90,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
         fab = view.findViewById(R.id.fab);
 
         recentChats = new ArrayList<>();
-        DataBase.getListOfUsers(new CompleteListener() {
+        DataBaseUsers.getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
                 conversationAdapter = new RecentConversationAdapter(
@@ -119,7 +121,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
                 @Override
                 public void OnSuccess() {
                     listener.OnSuccess();
-                    Log.i(TAG, "Token for - " + DataBase.USER_MODEL.getUid());
+                    Log.i(TAG, "Token for - " + DataBasePersonalData.USER_MODEL.getUid());
                 }
 
                 @Override

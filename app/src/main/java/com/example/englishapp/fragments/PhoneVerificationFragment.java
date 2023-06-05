@@ -20,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.activities.MainActivity;
@@ -33,6 +34,7 @@ import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import ru.tinkoff.decoro.MaskImpl;
@@ -50,6 +52,8 @@ public class PhoneVerificationFragment extends Fragment {
     private String verificationCodeBySystem;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
     private Dialog progressBar;
+    private DataBasePersonalData dataBasePersonalData;
+    private DataBase dataBase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,6 +68,9 @@ public class PhoneVerificationFragment extends Fragment {
 
         init(view);
 
+        dataBasePersonalData = new DataBasePersonalData();
+        dataBase = new DataBase();
+
         Bundle bundle = getArguments();
 
         if (bundle != null) {
@@ -72,9 +79,6 @@ public class PhoneVerificationFragment extends Fragment {
             Toast.makeText(getActivity(), "Phone - " + receiveInfo, Toast.LENGTH_SHORT).show();
 
             userPhone.setText(receiveInfo);
-
-        } else {
-//            Toast.makeText(getActivity(), "Null Number", Toast.LENGTH_SHORT).show();
         }
 
         return view;
@@ -212,7 +216,7 @@ public class PhoneVerificationFragment extends Fragment {
                         .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
                         // If no activity is passed, reCAPTCHA verification can not be used.
                         .setCallbacks(mCallbacks)// OnVerificationStateChangedCallbacks
-                        .setActivity(getActivity())
+                        .setActivity(requireActivity())
                         .build();
 
         PhoneAuthProvider.verifyPhoneNumber(options);
@@ -234,13 +238,13 @@ public class PhoneVerificationFragment extends Fragment {
                 if (task.isSuccessful()) {
                     Toast.makeText(getActivity(), "Sign In Was Successful", Toast.LENGTH_SHORT).show();
 
-                    if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+                    if (Objects.requireNonNull(task.getResult().getAdditionalUserInfo()).isNewUser()) {
                         Log.i(TAG, "New account");
 
-                        DataBase.createUserData(null, null, null , null, userPhone.getText().toString(), null , new CompleteListener() {
+                        dataBasePersonalData.createUserData(null, null, null , null, userPhone.getText().toString(), null , new CompleteListener() {
                             @Override
                             public void OnSuccess() {
-                                DataBase.loadData(new CompleteListener() {
+                                dataBase.loadData(new CompleteListener() {
                                     @Override
                                     public void OnSuccess() {
                                         progressBar.dismiss();
@@ -248,7 +252,7 @@ public class PhoneVerificationFragment extends Fragment {
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
                                         startActivity(intent);
-                                        getActivity().finish();
+                                        requireActivity().finish();
                                     }
 
                                     @Override
@@ -270,14 +274,14 @@ public class PhoneVerificationFragment extends Fragment {
                     } else {
                         Log.i(TAG, "Old account");
 
-                        DataBase.loadData(new CompleteListener() {
+                        dataBase.loadData(new CompleteListener() {
                             @Override
                             public void OnSuccess() {
                                 progressBar.dismiss();
 
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 startActivity(intent);
-                                getActivity().finish();
+                                requireActivity().finish();
                             }
 
                             @Override
@@ -291,7 +295,7 @@ public class PhoneVerificationFragment extends Fragment {
 
                 } else {
                     Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
-                    Log.i(TAG, "Fail" + task.getException().toString());
+                    Log.i(TAG, "Fail" + Objects.requireNonNull(task.getException()));
                     progressBar.dismiss();
                 }
             })

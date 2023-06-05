@@ -62,7 +62,7 @@
             android:text="@string/time"
             android:drawablePadding="4dp"
             app:drawableTint="@color/design_default_color_primary"
-            app:drawableStart="@drawable/ic_clock"
+            android:drawableStart="@drawable/ic_clock"
             android:textColor="@color/design_default_color_primary"
             android:textAlignment="center"
             android:textSize="20sp"/>

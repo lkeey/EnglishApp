@@ -2,6 +2,9 @@ package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import static com.example.englishapp.database.Constants.GOOGLE_API_KEY;
+import static com.example.englishapp.database.Constants.GOOGLE_CX;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -69,9 +72,8 @@ public class CreateWordCardFragment extends Fragment {
     private Spinner spinnerLevels;
     private EditText cardName, cardDescription;
     private Dialog progressBar;
-    private TextView dialogText;
     private final ArrayList<WordModel> listOfWords = new ArrayList<>();
-    private List<String> stringListLevels = new ArrayList<>();
+    private final List<String> stringListLevels = new ArrayList<>();
     private ActivityResultLauncher<Intent> pickImage;
     private ImageView chosenImg;
     private GoogleService googleService;
@@ -107,7 +109,7 @@ public class CreateWordCardFragment extends Fragment {
 
                         Toast.makeText(getActivity(), "Card Successfully Created", Toast.LENGTH_SHORT).show();
 
-                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
+                        ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
                         progressBar.dismiss();
                     }
@@ -118,7 +120,7 @@ public class CreateWordCardFragment extends Fragment {
 
                         Toast.makeText(getActivity(), "Error occurred... Try later", Toast.LENGTH_SHORT).show();
 
-                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
+                        ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
                         progressBar.dismiss();
                     }
@@ -210,56 +212,59 @@ public class CreateWordCardFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<SearchRes> call, @NonNull Response<SearchRes> response) {
                 SearchRes res = response.body();
-                if (response.isSuccessful() && res.getPages() != null && res.getPages().length > 0) {
+                if (response.isSuccessful()) {
+                    assert res != null;
+                    if (res.getPages() != null && res.getPages().length > 0) {
 
-                    // set image and description to layout
+                        // set image and description to layout
 
-                    wordDescription.setText(Html.fromHtml(res.getPages()[0].getExcerpt(), Html.FROM_HTML_MODE_COMPACT));
+                        wordDescription.setText(Html.fromHtml(res.getPages()[0].getExcerpt(), Html.FROM_HTML_MODE_COMPACT));
 
-                    if (res.getPages()[0].getThumbnail() != null) {
+                        if (res.getPages()[0].getThumbnail() != null) {
 
-                        getActivity().runOnUiThread(() -> {
+                            requireActivity().runOnUiThread(() -> {
 
-                            try {
-                                Log.i(TAG, "find img - " + "https:" + res.getPages()[0].getThumbnail().getUrl());
+                                try {
+                                    Log.i(TAG, "find img - " + "https:" + res.getPages()[0].getThumbnail().getUrl());
 
-                                URL url = new URL("https:" + res.getPages()[0].getThumbnail().getUrl());
+                                    URL url = new URL("https:" + res.getPages()[0].getThumbnail().getUrl());
 
-                                Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                                    Bitmap image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 
-                                Log.i(TAG, "image - " + image.getWidth() + " - " + image.getHeight());
+                                    Log.i(TAG, "image - " + image.getWidth() + " - " + image.getHeight());
 
-                                // rise the height and width
-                                Bitmap scaledBmp = Bitmap.createScaledBitmap(image, 200, 200, true);
+                                    // rise the height and width
+                                    Bitmap scaledBmp = Bitmap.createScaledBitmap(image, 200, 200, true);
 
-                                Log.i(TAG, "scaledBmp - " + scaledBmp.getWidth() + " - " + scaledBmp.getHeight());
+                                    Log.i(TAG, "scaledBmp - " + scaledBmp.getWidth() + " - " + scaledBmp.getHeight());
 
-                                imgWord.setImageBitmap(scaledBmp);
+                                    imgWord.setImageBitmap(scaledBmp);
 
-                                Log.i(TAG, "bitmap successfully set");
+                                    Log.i(TAG, "bitmap successfully set");
 
-                                imgWord.setBackground(null);
+                                    imgWord.setBackground(null);
 
-                            } catch (MalformedURLException e) {
-                                Log.i(TAG, "er - " + e.getMessage());
+                                } catch (MalformedURLException e) {
+                                    Log.i(TAG, "er - " + e.getMessage());
 
-                            } catch (Exception e) {
-                                Log.i(TAG, "e - " + e.getClass());
-                            }
-                        });
+                                } catch (Exception e) {
+                                    Log.i(TAG, "e - " + e.getClass());
+                                }
+                            });
 
-                        Log.i(TAG, "ok");
+                            Log.i(TAG, "ok");
 
-                    } else {
-                        Log.i(TAG, "not found image");
+                        } else {
+                            Log.i(TAG, "not found image");
+                        }
+
+                        // user can again search another word
+    //                              wordText.setFocusableInTouchMode(true);
+
+                        progress.setVisibility(View.GONE);
+                        btnSearch.setEnabled(true);
+
                     }
-
-                    // user can again search another word
-//                              wordText.setFocusableInTouchMode(true);
-
-                    progress.setVisibility(View.GONE);
-                    btnSearch.setEnabled(true);
-
                 }
             }
 
@@ -278,22 +283,22 @@ public class CreateWordCardFragment extends Fragment {
 
 
         Call<GoogleResults> call = serviceGoogle.find(
-        "AIzaSyDdBPCVzYyCmtFtZSSihqOSUsPZglM5x3E",
-                "42a504d9a5afa4755",
+                GOOGLE_API_KEY,
+                GOOGLE_CX,
                 wordText.getText().toString(),
                 "json",
                 "image"
 
         );
 
-        call.enqueue(new Callback<GoogleResults>() {
+        call.enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<GoogleResults> call, Response<GoogleResults> response) {
+            public void onResponse(@NonNull Call<GoogleResults> call, @NonNull Response<GoogleResults> response) {
 
             }
 
             @Override
-            public void onFailure(Call<GoogleResults> call, Throwable t) {
+            public void onFailure(@NonNull Call<GoogleResults> call, @NonNull Throwable t) {
 
             }
         });
@@ -349,7 +354,7 @@ public class CreateWordCardFragment extends Fragment {
 
     private void init(View view) {
 
-        ((MainActivity) getActivity()).setTitle(R.string.nameCreateCardWord);
+        ((MainActivity) requireActivity()).setTitle(R.string.nameCreateCardWord);
 
         layoutList = view.findViewById(R.id.layoutListWords);
         btnAdd = view.findViewById(R.id.btnAddWord);
@@ -364,7 +369,7 @@ public class CreateWordCardFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarSaving);
 
         stringListLevels.add("A1");
@@ -374,7 +379,7 @@ public class CreateWordCardFragment extends Fragment {
         stringListLevels.add("C1");
         stringListLevels.add("C2");
 
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, stringListLevels);
+        ArrayAdapter adapter = new ArrayAdapter(requireActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, stringListLevels);
         spinnerLevels.setAdapter(adapter);
 
         retrofit = new Retrofit.Builder()
@@ -405,7 +410,7 @@ public class CreateWordCardFragment extends Fragment {
                         try {
                             Log.i(TAG, "set bitmap");
 
-                            InputStream inputStream = getActivity().getContentResolver().openInputStream(imgUri);
+                            InputStream inputStream = requireActivity().getContentResolver().openInputStream(imgUri);
                             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                             chosenImg.setImageBitmap(bitmap);
 
@@ -427,8 +432,6 @@ public class CreateWordCardFragment extends Fragment {
 
         byte[] b = bmp.toByteArray();
 
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-
-        return temp;
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 }

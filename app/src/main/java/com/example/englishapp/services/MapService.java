@@ -4,10 +4,10 @@ import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
-import static com.example.englishapp.database.DataBase.DATA_FIRESTORE;
-import static com.example.englishapp.database.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.database.DataBase.findUserById;
-import static com.example.englishapp.database.DataBase.getListOfUsers;
+import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
+import static com.example.englishapp.database.DataBaseUsers.getListOfUsers;
 
 import android.content.Context;
 import android.util.Log;

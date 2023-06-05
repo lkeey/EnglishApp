@@ -1,7 +1,7 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

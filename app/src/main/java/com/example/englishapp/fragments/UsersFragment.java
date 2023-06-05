@@ -1,7 +1,7 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -14,26 +14,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.UserAdapter;
+import com.example.englishapp.database.DataBaseUsers;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.UserListener;
+import com.example.englishapp.models.UserModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class UsersFragment extends BottomSheetDialogFragment implements UserListener {
 
     private static final String TAG = "FragmentUsers";
     private RecyclerView recyclerView;
-    private Toolbar toolbar;
-    private Dialog progressBar;
-    private TextView dialogText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,21 +47,21 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
     private void init(View view) {
         recyclerView = view.findViewById(R.id.recyclerView);
 
-        progressBar = new Dialog(getActivity());
+        Dialog progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarLoadingUserData);
 
-        DataBase.getListOfUsers(new CompleteListener() {
+        DataBaseUsers.getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "Successfully got user data - " + DataBase.LIST_OF_USERS.size());
+                Log.i(TAG, "Successfully got user data - " + DataBaseUsers.LIST_OF_USERS.size());
 
-                UserAdapter userAdapter = new UserAdapter(DataBase.LIST_OF_USERS, UsersFragment.this, getContext());
+                UserAdapter userAdapter = new UserAdapter(DataBaseUsers.LIST_OF_USERS, UsersFragment.this, getContext());
                 recyclerView.setAdapter(userAdapter);
 
                 LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -92,7 +88,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment);
 
         } else {
             Toast.makeText(getActivity(), "It's You!", Toast.LENGTH_SHORT).show();

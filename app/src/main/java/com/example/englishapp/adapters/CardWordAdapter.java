@@ -21,12 +21,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHolder> {
-
-    private static final String TAG = "CardWordAdapter";
     private List<CardModel> cardModelList;
-    private List<CardModel> allCards;
-    private CardClickedListener listener;
-    private Context context;
+    private final List<CardModel> allCards;
+    private final CardClickedListener listener;
+    private final Context context;
     private Timer timer;
 
     public CardWordAdapter(List<CardModel> cardModelList, CardClickedListener listener, Context context) {
@@ -92,7 +90,7 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView title, numberOfCards, level, author;
+        private final TextView title, numberOfCards, level, author;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

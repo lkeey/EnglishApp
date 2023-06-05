@@ -63,7 +63,7 @@
             android:padding="12dp"
             android:hint="@string/write_description"
             android:textSize="20sp"
-            android:inputType="text"
+            android:inputType="textLongMessage"
             android:layout_margin="8dp"
             android:importantForAutofill="no"
             android:layout_marginStart="20dp"

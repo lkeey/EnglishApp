@@ -1,6 +1,7 @@
-package com.example.englishapp.messaging;
+package com.example.englishapp.interfaces;
 
 import com.example.englishapp.database.Constants;
+import com.example.englishapp.messaging.PushNotification;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;

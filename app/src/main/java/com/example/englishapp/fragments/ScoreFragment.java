@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.activities.MainActivity;
@@ -58,7 +59,7 @@ public class ScoreFragment extends Fragment {
     private void updateBookmarksAndScore() {
 
         // bookmarks
-        Log.i(TAG, "was - " + DataBase.USER_MODEL.getBookmarksCount() + " - " + DataBase.LIST_OF_BOOKMARKS.size());
+        Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBase.LIST_OF_BOOKMARKS.size());
 
         for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
             QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(i);
@@ -78,9 +79,9 @@ public class ScoreFragment extends Fragment {
             }
         }
 
-        DataBase.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARK_IDS.size());
+        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARK_IDS.size());
 
-        Log.i(TAG, "become - " + DataBase.USER_MODEL.getBookmarksCount());
+        Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
 
         // score
         DataBase.saveResult(finalScore, new CompleteListener() {

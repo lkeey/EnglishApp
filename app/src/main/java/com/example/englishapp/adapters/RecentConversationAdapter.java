@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
 import com.example.englishapp.interfaces.ConversationListener;
@@ -66,7 +67,7 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
 
             String textUID = message.getSenderId();
 
-            if(message.getSenderId().equals(DataBase.USER_MODEL.getUid())) {
+            if(message.getSenderId().equals(DataBasePersonalData.USER_MODEL.getUid())) {
                 textUID = message.getReceiverId();
             }
 

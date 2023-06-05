@@ -1,31 +1,32 @@
 package com.example.englishapp.activities;
 
+import static com.example.englishapp.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.REMOTE_MSG_USER_SENDER;
-import static com.example.englishapp.database.DataBase.loadData;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.repositories.PermissionRepository;
 import com.example.englishapp.R;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,23 +34,23 @@ public class SplashActivity extends AppCompatActivity {
 
     private static final String TAG = "BeginApp";
     private FirebaseAuth mAuth;
-    private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    private View backgroundView;
+    private DataBase dataBase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
 
-        getApplicationContext().getTheme().applyStyle(R.style.FullScreenTheme, true);
+        setContentView(R.layout.activity_splash);
 
         // get current user
         mAuth = FirebaseAuth.getInstance();
 
-//        mAuth.signOut();
+        dataBase = new DataBase();
+
+        DataBasePersonalData dataBasePersonalData = new DataBasePersonalData();
 
         // Access a Cloud Firestore instance from your Activity
-        DataBase.DATA_FIRESTORE = FirebaseFirestore.getInstance();
+        dataBasePersonalData.DATA_FIRESTORE = FirebaseFirestore.getInstance();
 
         new Thread(() -> {
             try {
@@ -60,27 +61,22 @@ public class SplashActivity extends AppCompatActivity {
 
             Log.i(TAG, "Launch App");
 
-//            Initialize the app
-//            FirebaseApp.initializeApp(/*context=*/ this);
-//            FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.getInstance();
-//            firebaseAppCheck.installAppCheckProviderFactory(
-//                    PlayIntegrityAppCheckProviderFactory.getInstance());
-
-//            check user's permissions
-
             receiveData();
 
         }).start();
 
-//        init();
+        init();
     }
 
     private void init() {
-        backgroundView = findViewById(R.id.backgroundView);
+        ImageView imgLogo = findViewById(R.id.appLogo);
 
-        Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotation);
+        Animation blinking = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blinking);
 
-        backgroundView.setAnimation(animation);
+        AnimationSet animation = new AnimationSet(false);
+        animation.addAnimation(blinking);
+
+        imgLogo.setAnimation(animation);
     }
 
     private void receiveData() {
@@ -93,7 +89,7 @@ public class SplashActivity extends AppCompatActivity {
             Log.i(TAG, "send uid - " + userUID);
 
             if (userUID != null) {
-                loadData(new CompleteListener() {
+                dataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
@@ -114,7 +110,7 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
             } else if (isShowMap) {
-                loadData(new CompleteListener() {
+                dataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
@@ -136,7 +132,26 @@ public class SplashActivity extends AppCompatActivity {
                 });
             } else {
 
-                checkPermissions();
+//                checkPermissions();
+
+                PermissionRepository repository = new PermissionRepository(SplashActivity.this);
+                List<String> permissions = repository.checkPermissions();
+
+                if (permissions.size() > 0) {
+
+                    Log.i(TAG, "Show dialog");
+
+                    ActivityCompat.requestPermissions(this, permissions.toArray(
+                            new String[0]), REQUEST_ID_MULTIPLE_PERMISSIONS
+                    );
+
+                } else {
+
+                    Log.i(TAG, "All permissions granted");
+
+                    beginWork();
+                }
+
             }
 
         } catch (Exception e) {
@@ -151,7 +166,7 @@ public class SplashActivity extends AppCompatActivity {
 
                 Log.i(TAG, "EMAIL - " + mAuth.getCurrentUser().getEmail());
 
-                DataBase.loadData(new CompleteListener() {
+                dataBase.loadData(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Intent intent = new Intent(SplashActivity.this, MainActivity.class);
@@ -188,136 +203,24 @@ public class SplashActivity extends AppCompatActivity {
         }
     }
 
-    private void checkPermissions() {
-
-        List<String> listPermissionsNeeded = new ArrayList<>();
-
-        int wallpaper = ContextCompat.checkSelfPermission(this, Manifest.permission.SET_WALLPAPER);
-        int internet = ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET);
-        int notifications = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS);
-        int storage = 0;
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-
-            storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES);
-
-            if (storage != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.READ_MEDIA_IMAGES);
-
-                Log.i(TAG, "storage");
-            }
-
-        } else {
-
-            storage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-
-            if (storage != PackageManager.PERMISSION_GRANTED) {
-                listPermissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-
-                Log.i(TAG, "storage");
-            }
-
-        }
-
-        int background_location = 0;
-
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-//
-//            background_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-//
-//            if (background_location != PackageManager.PERMISSION_GRANTED) {
-//                listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-//
-//                Log.i(TAG, "background");
-//            }
-//
-//        }
-
-        int coarse_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        int fine_location = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-
-        if (wallpaper != PackageManager.PERMISSION_GRANTED) {
-
-            listPermissionsNeeded.add(Manifest.permission.SET_WALLPAPER);
-
-            Log.i(TAG, "wallpaper");
-
-        }
-
-        if (internet != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.INTERNET);
-
-            Log.i(TAG, "internet");
-
-        }
-
-        if (notifications != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS);
-
-            Log.i(TAG, "notifications");
-        }
-
-        if (coarse_location != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-
-            Log.i(TAG, "coarse");
-        }
-
-        if (fine_location != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
-
-            Log.i(TAG, "fine");
-        }
-//
-//        if (background_location != PackageManager.PERMISSION_GRANTED) {
-//            listPermissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION);
-//
-//            Log.i(TAG, "background_location");
-//        }
-//
-//        if (coarse_location != PackageManager.PERMISSION_GRANTED) {
-//            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-//
-//            Log.i(TAG, "coarse_location");
-//        }
-
-        if (listPermissionsNeeded.size() > 0) {
-
-            Log.i(TAG, "Show dialog");
-
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(
-                    new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS
-            );
-
-        } else {
-
-            Log.i(TAG, "All permissions granted");
-
-            beginWork();
-        }
-
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case REQUEST_ID_MULTIPLE_PERMISSIONS:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted!", Toast.LENGTH_SHORT).show();
+        if (requestCode == PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    beginWork();
+                beginWork();
 
-                } else {
-                    Log.i(TAG, Arrays.toString(permissions));
+            } else {
+                Log.i(TAG, Arrays.toString(permissions));
 
-                    Toast.makeText(this, "Permissions Denied!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permissions Denied!", Toast.LENGTH_SHORT).show();
 
-                    SplashActivity.this.finish();
-                }
+                SplashActivity.this.finish();
+            }
         }
     }
 

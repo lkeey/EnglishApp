@@ -49,13 +49,12 @@ public class Constants {
     public static final String KEY_COLLECTION_TESTS = "TESTS";
     public static final String KEY_AMOUNT_TESTS = "AMOUNT_TESTS";
     public static final String KEY_TEST_ID = "TEST_ID";
-    public static final String KEY_TOP_SCORE = "TOP_SCORE";
     public static final String KEY_TEST_TIME = "TEST_TIME";
     public static final String KEY_AMOUNT_OF_QUESTIONS = "AMOUNT_OF_QUESTIONS";
     public static final String KEY_AUTHOR = "AUTHOR";
-
+    public static final String GOOGLE_API_KEY = "AIzaSyDdBPCVzYyCmtFtZSSihqOSUsPZglM5x3E";
+    public static final String GOOGLE_CX = "42a504d9a5afa4755";
     public static final String KEY_TEST_NAME = "TEST_NAME";
-    public static final String KEY_USER_PERSONAL_INFORMATION = "KEY_USER_PERSONAL_INFORMATION";
     public static final String KEY_USER_SCORES = "USER_SCORES";
     public static final String KEY_CHOSEN_CATEGORY = "CHOSEN_CATEGORY";
     public static final String KEY_TEST_QUESTION = "QUESTION";
@@ -81,8 +80,6 @@ public class Constants {
     public static final String KEY_COLLECTION_WORDS = "WORDS";
     public static final String KEY_LANGUAGE_CODE = "LANGUAGE_CODE";
     public static final String KEY_CHOSEN_CARD = "KEY_CHOSEN_CARD";
-    public static final String ALREADY_LEARNING = "ALREADY_LEARNING";
-    public static final String TARGET_LANGUAGE = "ALREADY_LEARNING";
     public static final String WORD_COUNTER = "WORD_COUNTER";
     public static final String MY_SHARED_PREFERENCES = "MY_SHARED_PREFERENCES";
     public static final String KEY_WORD_CARD_ID = "CARD_ID";

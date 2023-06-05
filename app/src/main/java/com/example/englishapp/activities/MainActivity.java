@@ -6,8 +6,8 @@ import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
-import static com.example.englishapp.database.DataBase.LIST_OF_USERS;
 import static com.example.englishapp.database.DataBase.findUserById;
+import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
 
 import android.Manifest;
 import android.app.AlarmManager;

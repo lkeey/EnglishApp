@@ -1,7 +1,7 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.DataBase.loadLearningWords;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -166,7 +166,7 @@ public class ProfileFragment extends Fragment {
         ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
 
         // set user's data
-        ((MainActivity) getActivity()).setTitle(USER_MODEL.getName());
+        requireActivity().setTitle(USER_MODEL.getName());
 
         userPlace.setText("" + USER_MODEL.getPlace());
         userScore.setText("" + USER_MODEL.getScore());

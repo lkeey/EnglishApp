@@ -11,8 +11,8 @@ import static com.example.englishapp.database.Constants.KEY_RECEIVER_ID;
 import static com.example.englishapp.database.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.database.Constants.KEY_TIME_STAMP;
 import static com.example.englishapp.database.DataBase.CURRENT_CONVERSATION_ID;
-import static com.example.englishapp.database.DataBase.DATA_FIRESTORE;
-import static com.example.englishapp.database.DataBase.USER_MODEL;
+import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -34,9 +34,10 @@ import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.MessageAdapter;
 import com.example.englishapp.database.Constants;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.messaging.DataModel;
-import com.example.englishapp.messaging.NotificationService;
+import com.example.englishapp.interfaces.NotificationService;
 import com.example.englishapp.messaging.PushNotification;
 import com.example.englishapp.models.ChatMessage;
 import com.example.englishapp.models.UserModel;
@@ -154,7 +155,7 @@ public class DiscussFragment extends Fragment {
     private void sendMessage() {
 
             HashMap<String, Object> message = new HashMap<>();
-            message.put(Constants.KEY_SENDER_ID, DataBase.USER_MODEL.getUid());
+            message.put(Constants.KEY_SENDER_ID, DataBasePersonalData.USER_MODEL.getUid());
             message.put(Constants.KEY_RECEIVER_ID, receivedUser.getUid());
             message.put(Constants.KEY_MESSAGE, inputMessage.getText().toString());
             message.put(Constants.KEY_TIME_STAMP, new Date());
@@ -162,7 +163,7 @@ public class DiscussFragment extends Fragment {
             DataBase.sendMessage(message, new CompleteListener() {
                 @Override
                 public void OnSuccess() {
-                    Log.i(TAG, "Created message from - " + DataBase.USER_MODEL.getUid() + " - to - " + receivedUser.getUid());
+                    Log.i(TAG, "Created message from - " + DataBasePersonalData.USER_MODEL.getUid() + " - to - " + receivedUser.getUid());
 
                     if (CURRENT_CONVERSATION_ID != null) {
                         updateConversation(inputMessage.getText().toString());
@@ -207,13 +208,13 @@ public class DiscussFragment extends Fragment {
     private void listenMessages() {
         try {
             DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
-                    .whereEqualTo(KEY_SENDER_ID, DataBase.USER_MODEL.getUid())
+                    .whereEqualTo(KEY_SENDER_ID, DataBasePersonalData.USER_MODEL.getUid())
                     .whereEqualTo(KEY_RECEIVER_ID, receivedUser.getUid())
                     .addSnapshotListener(eventListener);
 
             DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
                     .whereEqualTo(KEY_SENDER_ID, receivedUser.getUid())
-                    .whereEqualTo(KEY_RECEIVER_ID, DataBase.USER_MODEL.getUid())
+                    .whereEqualTo(KEY_RECEIVER_ID, DataBasePersonalData.USER_MODEL.getUid())
                     .addSnapshotListener(eventListener);
 
         } catch (Exception e) {

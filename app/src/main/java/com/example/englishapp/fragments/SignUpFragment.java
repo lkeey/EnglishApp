@@ -20,22 +20,20 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.activities.MainAuthenticationActivity;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.interfaces.AuthenticationListener;
+import com.example.englishapp.repositories.SignupRepository;
 
 public class SignUpFragment extends Fragment {
 
     private static final String TAG = "CreateUser";
     private EditText userEmail, userPassword,
             userConfirmedPassword;
-    private FirebaseAuth mAuth;
     private Dialog progressBar;
     private Button btnSignUp;
-    private TextView lblLogin, dialogText;
+    private TextView lblLogin;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,25 +41,21 @@ public class SignUpFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_sign_up, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-
         init(view);
 
-        getActivity().setTitle(R.string.nameSignUp);
+        requireActivity().setTitle(R.string.nameSignUp);
 
-        setListeners(view);
+        setListeners();
 
         return view;
 
     }
 
-    private void setListeners(View view) {
-        lblLogin.setOnClickListener(v -> {
-            ((MainAuthenticationActivity) getActivity()).setFragment(new LoginFragment());
-        });
+    private void setListeners() {
+        lblLogin.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new LoginFragment()));
 
         btnSignUp.setOnClickListener(v -> {
-            if (checkData(view)) {
+            if (checkData()) {
 
                 Log.i(TAG, "Data Checked");
 
@@ -84,58 +78,33 @@ public class SignUpFragment extends Fragment {
 
         progressBar.show();
 
-        mAuth.createUserWithEmailAndPassword(textEmail, textPassword)
-            .addOnCompleteListener(getActivity(), task -> {
-                if (task.isSuccessful()) {
+        SignupRepository repository = new SignupRepository();
+        repository.signUpUser(textEmail, textPassword, new AuthenticationListener() {
+            @Override
+            public void createNewAccount() {
+                progressBar.dismiss();
 
-                    DataBase.createUserData(textEmail, null, null, null, null, null, new CompleteListener() {
-                        @Override
-                        public void OnSuccess() {
-                            DataBase.loadData(new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    Toast.makeText(getActivity(), "Sign Up Was Successfully", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
+                startActivity(intent);
+                requireActivity().finish();
+            }
 
-                                    progressBar.dismiss();
+            @Override
+            public void logInAccount() {
 
-                                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                                    intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
-                                    startActivity(intent);
-                                    getActivity().finish();
-                                }
+            }
 
-                                @Override
-                                public void OnFailure() {
-                                    progressBar.dismiss();
+            @Override
+            public void onFailure() {
+                progressBar.dismiss();
 
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                        @Override
-                        public void OnFailure() {
-                            progressBar.dismiss();
-
-                            Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
-
-                    progressBar.dismiss();
-
-                } else {
-                    // If sign in fails, display a message to the user.
-                    Toast.makeText(getActivity(), task.getException().getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                    Toast.makeText(getActivity(), "Sign Up Failed",
-                            Toast.LENGTH_SHORT).show();
-                    progressBar.dismiss();
-                }
-            });
+                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     
-    private boolean checkData(View view) {
+    private boolean checkData() {
         boolean status = false;
 
         String textEmail = userEmail.getText().toString();
@@ -187,7 +156,7 @@ public class SignUpFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarCreating);
 
     }

@@ -1,7 +1,6 @@
 package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
-
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
@@ -24,34 +23,29 @@ import androidx.activity.result.IntentSenderRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.activities.MainAuthenticationActivity;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.interfaces.AuthenticationListener;
+import com.example.englishapp.repositories.LoginRepository;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.common.api.ApiException;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginUser";
     private EditText userEmail, userPassword;
     private Button btnLogin;
-    private TextView forgotPassword, signUp, dialogText;
-    private FirebaseAuth mAuth;
+    private TextView forgotPassword, signUp;
     private Dialog progressBar;
     private RelativeLayout signGoogle, signPhone;
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
     private ActivityResultLauncher<IntentSenderRequest> activityResultLauncher;
-
+    private LoginRepository repository;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -60,9 +54,9 @@ public class LoginFragment extends Fragment {
 
         init(view);
 
-        mAuth = FirebaseAuth.getInstance();
+        repository = new LoginRepository();
 
-        getActivity().setTitle(R.string.nameLogin);
+        requireActivity().setTitle(R.string.nameLogin);
 
         setListeners();
 
@@ -72,26 +66,24 @@ public class LoginFragment extends Fragment {
 
     private void setListeners() {
 
-        signUp.setOnClickListener(v -> {
-            ((MainAuthenticationActivity) getActivity()).setFragment(new SignUpFragment());
-        });
+        signUp.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new SignUpFragment()));
 
         btnLogin.setOnClickListener(v -> {
             if (validateData()) {
+                Log.i(TAG, "begin logging");
+
                 login();
             }
         });
 
         signGoogle.setOnClickListener(v -> googleSignIn());
 
-        signPhone.setOnClickListener(v -> ((MainAuthenticationActivity) getActivity()).setFragment(new PhoneVerificationFragment()));
+        signPhone.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new PhoneVerificationFragment()));
 
-        forgotPassword.setOnClickListener(v -> {
-            ((MainAuthenticationActivity) getActivity()).setFragment(new ForgotPasswordFragment());
-        });
+        forgotPassword.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new ForgotPasswordFragment()));
 
         // for google authentication
-        oneTapClient = Identity.getSignInClient(getActivity());
+        oneTapClient = Identity.getSignInClient(requireActivity());
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
@@ -152,7 +144,7 @@ public class LoginFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarLogging);
 
     }
@@ -160,7 +152,7 @@ public class LoginFragment extends Fragment {
     private void googleSignIn() {
 
         oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener(getActivity(), result -> {
+            .addOnSuccessListener(requireActivity(), result -> {
                 try {
 
                     Log.i(TAG, "begin sign in google");
@@ -178,7 +170,7 @@ public class LoginFragment extends Fragment {
 
                 }
             })
-            .addOnFailureListener(getActivity(), e -> {
+            .addOnFailureListener(requireActivity(), e -> {
                 Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "fail - " + e.getMessage());
             });
@@ -188,82 +180,35 @@ public class LoginFragment extends Fragment {
 
         progressBar.show();
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
-            .addOnCompleteListener(task -> {
+        repository.firebaseAuthWithGoogle(idToken, new AuthenticationListener() {
+            @Override
+            public void createNewAccount() {
+                progressBar.dismiss();
 
-                Log.i(TAG, "Completed task " + task);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
+                startActivity(intent);
+                Log.i(TAG, "STARTED");
 
-                if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Google Sign In Was Successfully", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
 
-                    FirebaseUser user = mAuth.getCurrentUser();
+            @Override
+            public void logInAccount() {
+                progressBar.dismiss();
 
-                    if(task.getResult().getAdditionalUserInfo().isNewUser()) {
-                        DataBase.createUserData(user.getEmail().trim(), user.getDisplayName(), null, null, user.getPhoneNumber(), null, new CompleteListener() {
-                            @Override
-                            public void OnSuccess() {
-                                DataBase.loadData(new CompleteListener() {
-                                    @Override
-                                    public void OnSuccess() {
-                                        progressBar.dismiss();
-                                        try {
-                                            Log.i(TAG, "STARTING ACTIVITY");
+                Intent intent = new Intent(requireActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
+            }
 
-                                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                                            intent.putExtra(SHOW_FRAGMENT_DIALOG, true);
-                                            startActivity(intent);
-                                            Log.i(TAG, "STARTED");
+            @Override
+            public void onFailure() {
+                progressBar.dismiss();
 
-                                            getActivity().finish();
-                                        } catch (Exception e) {
-                                            Log.i(TAG, e.getMessage());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void OnFailure() {
-                                        progressBar.dismiss();
-
-                                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-
-                            }
-
-                            @Override
-                            public void OnFailure() {
-                                progressBar.dismiss();
-
-                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } else {
-                        DataBase.loadData(new CompleteListener() {
-                            @Override
-                            public void OnSuccess() {
-                                progressBar.dismiss();
-
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
-                            }
-
-                            @Override
-                            public void OnFailure() {
-                                progressBar.dismiss();
-
-                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                } else {
-                    progressBar.dismiss();
-
-                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            });
+                Toast.makeText(requireActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private boolean validateData() {
@@ -283,43 +228,29 @@ public class LoginFragment extends Fragment {
     private void login() {
         progressBar.show();
 
-        mAuth.signInWithEmailAndPassword(userEmail.getText().toString().trim(), userPassword.getText().toString().trim())
-                .addOnCompleteListener(getActivity(), task -> {
-                    if (task.isSuccessful()) {
-                        // Sign in success, update UI with the signed-in user's information
+        repository.login(userEmail.getText().toString().trim(), userPassword.getText().toString().trim(), new AuthenticationListener() {
+            @Override
+            public void createNewAccount() {
 
-                        Toast.makeText(getActivity(), "Authentication was successfully",
-                                Toast.LENGTH_SHORT).show();
+            }
 
-                        DataBase.loadData(new CompleteListener() {
-                            @Override
-                            public void OnSuccess() {
-                                progressBar.dismiss();
+            @Override
+            public void logInAccount() {
+                progressBar.dismiss();
 
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
+                Intent intent = new Intent(requireActivity(), MainActivity.class);
+                startActivity(intent);
+                requireActivity().finish();
 
-                            }
+            }
 
-                            @Override
-                            public void OnFailure() {
-                                Toast.makeText(getActivity(), "Something went wrong",
-                                        Toast.LENGTH_SHORT).show();
+            @Override
+            public void onFailure() {
+                Toast.makeText(requireActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
 
-                                progressBar.dismiss();
-                            }
-                        });
-
-                    } else {
-                        // If sign in fails, display a message to the user.
-
-                        Toast.makeText(getActivity(), task.getException().getMessage(),
-                                Toast.LENGTH_SHORT).show();
-
-                        progressBar.dismiss();
-                    }
-                });
+                progressBar.dismiss();
+            }
+        });
     }
 
 }

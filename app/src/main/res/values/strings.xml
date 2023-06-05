@@ -72,5 +72,15 @@
     <string name="write_word_in_english">Write Word In English</string>
     <string name="write_description">Write Description</string>
     <string name="search_in_wikipedia">Search In Wikipedia</string>
+    <string name="what_card_are_you_looking_for">What card are you looking for?</string>
+    <string name="numberofcards">numberOfCards</string>
+    <string name="level">level</string>
+    <string name="write_e_mail">Write E-mail</string>
+    <string name="write_password">Write Password</string>
+    <string name="i_forgot_password">I Forgot Password</string>
+    <string name="do_not_have_an_account">Do not have an account?</string>
+    <string name="login">Login</string>
+    <string name="sign_in_with_google">Sign In With Google</string>
+    <string name="sign_in_by_phone_number">Sign In By Phone Number</string>
 
 </resources>

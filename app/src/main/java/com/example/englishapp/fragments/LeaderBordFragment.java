@@ -1,8 +1,8 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.USER_MODEL;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -20,13 +20,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
-import com.example.englishapp.interfaces.UserListener;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.PlaceAdapter;
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseUsers;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.UserListener;
+import com.example.englishapp.models.UserModel;
 
 public class LeaderBordFragment extends Fragment implements UserListener {
 
@@ -54,7 +55,7 @@ public class LeaderBordFragment extends Fragment implements UserListener {
         userRank = view.findViewById(R.id.userRank);
         recyclerUsers = view.findViewById(R.id.recyclerUsers);
 
-        totalUsers.setText("Amount Of Users: " + DataBase.LIST_OF_USERS.size());
+        totalUsers.setText("Amount Of Users: " + DataBaseUsers.LIST_OF_USERS.size());
         userScore.setText("Score: " + USER_MODEL.getScore());
         userRank.setText("Place: " + USER_MODEL.getPlace());
 
@@ -75,14 +76,16 @@ public class LeaderBordFragment extends Fragment implements UserListener {
 
         progressBar.show();
 
-        DataBase.getUserData(new CompleteListener() {
+        DataBasePersonalData dataBasePersonalData = new DataBasePersonalData();
+
+        dataBasePersonalData.getUserData(new CompleteListener() {
             @Override
             public void OnSuccess() {
 
-                DataBase.getListOfUsers(new CompleteListener() {
+                DataBaseUsers.getListOfUsers(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        adapter = new PlaceAdapter(DataBase.LIST_OF_USERS, LeaderBordFragment.this, getContext());
+                        adapter = new PlaceAdapter(DataBaseUsers.LIST_OF_USERS, LeaderBordFragment.this, getContext());
                         recyclerUsers.setAdapter(adapter);
                         progressBar.dismiss();
 

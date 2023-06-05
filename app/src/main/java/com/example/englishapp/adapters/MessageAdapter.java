@@ -12,10 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.models.ChatMessage;
+import com.example.englishapp.models.UserModel;
 
 import java.util.List;
 
@@ -72,8 +72,8 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public int getItemViewType(int position) {
         Log.i(TAG, "SENDER - " + sender.getName() + " - " + messages.get(position).getSenderId());
 
-        if(messages.get(position).getSenderId().equals(DataBase.USER_MODEL.getUid())) {
-            Log.i(TAG, "User's message - " + DataBase.USER_MODEL.getName() + " - " + DataBase.USER_MODEL.getUid());
+        if(messages.get(position).getSenderId().equals(DataBasePersonalData.USER_MODEL.getUid())) {
+            Log.i(TAG, "User's message - " + DataBasePersonalData.USER_MODEL.getName() + " - " + DataBasePersonalData.USER_MODEL.getUid());
 
             return VIEW_TYPE_SENT;
         } else {

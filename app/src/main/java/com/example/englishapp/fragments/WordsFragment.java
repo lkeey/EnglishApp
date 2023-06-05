@@ -38,7 +38,6 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     private FloatingActionButton fab;
     private EditText inputSearch;
     private Dialog progressBar;
-    private TextView dialogText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,7 +52,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameCardWords);
+        ((MainActivity) requireActivity()).setTitle(R.string.nameCardWords);
 
         cardRecycler = view.findViewById(R.id.cardsRecyclerView);
         fab = view.findViewById(R.id.fab);
@@ -64,7 +63,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
 
         dialogText.setText(R.string.progressBarOpening);
 
@@ -82,7 +81,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
                 cardRecycler.setAdapter(cardAdapter);
 
-                Log.i(TAG, "Cards were successfully loaded");
+                Log.i(TAG, "Cards were successfully loaded - " + DataBase.LIST_OF_CARDS.size());
 
                 progressBar.dismiss();
             }
@@ -99,7 +98,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void setListeners() {
-        fab.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new CreateWordCardFragment()));
+        fab.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new CreateWordCardFragment()));
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override

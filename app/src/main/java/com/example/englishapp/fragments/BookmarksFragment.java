@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.activities.MainActivity;
@@ -90,7 +91,7 @@ public class BookmarksFragment extends Fragment {
             }
         }
 
-        DataBase.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARKS.size());
+        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARKS.size());
 
         progressBar.show();
 

@@ -13,21 +13,22 @@ import androidx.fragment.app.Fragment;
 import com.example.englishapp.R;
 import com.example.englishapp.fragments.LoginFragment;
 
+import java.util.Objects;
+
 public class MainAuthenticationActivity extends AppCompatActivity {
 
-    private static final String TAG = "Activity Authentication";
-    private Toolbar toolbar;
-    private static FrameLayout mainFrame;
+    private static final String TAG = "ActivityAuthentication";
+    private FrameLayout mainFrame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_authentication);
 
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -45,20 +46,24 @@ public class MainAuthenticationActivity extends AppCompatActivity {
     }
 
     public void setTitle(String title) {
-        getSupportActionBar().setTitle(title);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        Log.i(TAG, "CLICKED");
 
         if (item.getItemId() == android.R.id.home) {
 
             Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-            if (getSupportFragmentManager().getBackStackEntryCount() > 2){
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1){
+
                 getSupportFragmentManager().popBackStackImmediate();
 
             } else {
-                super.onBackPressed();
+
+                MainAuthenticationActivity.this.finish();
             }
 
         }

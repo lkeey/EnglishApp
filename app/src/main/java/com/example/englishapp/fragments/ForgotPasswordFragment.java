@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class ForgotPasswordFragment extends Fragment {
 
-
     private static final String TAG = "Reset Password";
     private Button btnResetPassword;
     private EditText userEmail;
@@ -99,8 +98,6 @@ public class ForgotPasswordFragment extends Fragment {
 
     private void resetPassword(String textEmail) {
         authProfile = FirebaseAuth.getInstance();
-
-
 
         authProfile.sendPasswordResetEmail(textEmail).addOnCompleteListener(task -> {
             if (task.isSuccessful()){
