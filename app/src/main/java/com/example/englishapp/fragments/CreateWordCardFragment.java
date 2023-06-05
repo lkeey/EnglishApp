@@ -1,7 +1,6 @@
 package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
-
 import static com.example.englishapp.database.Constants.GOOGLE_API_KEY;
 import static com.example.englishapp.database.Constants.GOOGLE_CX;
 
@@ -39,7 +38,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseCards;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.GoogleService;
 import com.example.englishapp.interfaces.WikiService;
@@ -102,7 +101,9 @@ public class CreateWordCardFragment extends Fragment {
 
                 Log.i(TAG, "pos - " + spinnerLevels.getSelectedItem().toString());
 
-                DataBase.createCardData(listOfWords, cardName.getText().toString(), cardDescription.getText().toString(), spinnerLevels.getSelectedItem().toString(), new CompleteListener() {
+                DataBaseCards dataBaseCards = new DataBaseCards();
+
+                dataBaseCards.createCardData(listOfWords, cardName.getText().toString(), cardDescription.getText().toString(), spinnerLevels.getSelectedItem().toString(), new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "Card successfully created");

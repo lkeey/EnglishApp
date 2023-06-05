@@ -82,5 +82,13 @@
     <string name="login">Login</string>
     <string name="sign_in_with_google">Sign In With Google</string>
     <string name="sign_in_by_phone_number">Sign In By Phone Number</string>
+    <string name="dateOfBirth">Your Date Of Birth is </string>
+    <string name="write_name">Write Name</string>
+    <string name="click_to_choose_your_date_of_birth">Click To Choose Your Date Of Birth</string>
+    <string name="gender">Gender</string>
+    <string name="female">Female</string>
+    <string name="male">Male</string>
+    <string name="choose_language_you_know">Choose language you know</string>
+    <string name="update">Update</string>
 
 </resources>

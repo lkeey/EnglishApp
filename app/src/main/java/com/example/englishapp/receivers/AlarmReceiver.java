@@ -1,6 +1,7 @@
 package com.example.englishapp.receivers;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
 import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.WORD_COUNTER;
@@ -91,6 +92,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         SharedPreferences sh = context.getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
         int counter = sh.getInt(WORD_COUNTER, -1);
+        String langCode = sh.getString(KEY_LANGUAGE_CODE, "ru");
 
         words = RoomDataBase.
                 getDatabase(context)
@@ -120,7 +122,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         myEdit.apply();
 
-        translateString(currentWord, new CompleteListener() {
+        translateString(currentWord, langCode, new CompleteListener() {
             @Override
             public void OnSuccess() {
 
@@ -187,7 +189,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    private void translateString(String currentWord, CompleteListener listener) {
+    private void translateString(String currentWord, String languageCode, CompleteListener listener) {
 
         Log.i(TAG, "begin");
 
@@ -195,8 +197,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         TranslatorOptions options =
                 new TranslatorOptions.Builder()
                     .setSourceLanguage(TranslateLanguage.ENGLISH)
-                    // TODO change to target
-                    .setTargetLanguage(TranslateLanguage.RUSSIAN)
+                    .setTargetLanguage(languageCode)
                     .build();
 
         Log.i(TAG, "begin 2");

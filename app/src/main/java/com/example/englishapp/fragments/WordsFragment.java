@@ -24,7 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.CardWordAdapter;
-import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseCards;
 import com.example.englishapp.interfaces.CardClickedListener;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.CardModel;
@@ -37,12 +37,15 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     private CardWordAdapter cardAdapter;
     private FloatingActionButton fab;
     private EditText inputSearch;
+    private DataBaseCards dataBaseCards;
     private Dialog progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_words, container, false);
+
+        dataBaseCards = new DataBaseCards();
 
         init(view);
 
@@ -52,7 +55,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void init(View view) {
-        ((MainActivity) requireActivity()).setTitle(R.string.nameCardWords);
+        requireActivity().setTitle(R.string.nameCardWords);
 
         cardRecycler = view.findViewById(R.id.cardsRecyclerView);
         fab = view.findViewById(R.id.fab);
@@ -73,15 +76,15 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
         progressBar.show();
 
-        DataBase.loadWordCardsData(new CompleteListener() {
+        dataBaseCards.loadWordCardsData(new CompleteListener() {
             @Override
             public void OnSuccess() {
 
-                cardAdapter = new CardWordAdapter(DataBase.LIST_OF_CARDS, WordsFragment.this, getActivity());
+                cardAdapter = new CardWordAdapter(DataBaseCards.LIST_OF_CARDS, WordsFragment.this, getActivity());
 
                 cardRecycler.setAdapter(cardAdapter);
 
-                Log.i(TAG, "Cards were successfully loaded - " + DataBase.LIST_OF_CARDS.size());
+                Log.i(TAG, "Cards were successfully loaded - " + DataBaseCards.LIST_OF_CARDS.size());
 
                 progressBar.dismiss();
             }
@@ -114,7 +117,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(DataBase.LIST_OF_CARDS.size() != 0) {
+                if(DataBaseCards.LIST_OF_CARDS.size() != 0) {
                     cardAdapter.searchCards(key.toString());
                 }
             }
@@ -123,8 +126,6 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
     @Override
     public void onCardClicked(CardModel cardModel) {
-
-//        Toast.makeText(getActivity(), "Clicked - " + cardModel.getName(), Toast.LENGTH_SHORT).show();
 
         Log.i(TAG, "clicked - " + cardModel.getName());
 

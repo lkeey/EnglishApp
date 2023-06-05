@@ -1,6 +1,5 @@
 package com.example.englishapp.fragments;
 
-import static com.example.englishapp.database.DataBase.loadLearningWords;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.content.Intent;
@@ -22,35 +21,29 @@ import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.activities.MainAuthenticationActivity;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.RoomDataBase;
 import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.models.WordModel;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.mlkit.common.model.DownloadConditions;
-import com.google.mlkit.nl.translate.TranslateLanguage;
-import com.google.mlkit.nl.translate.Translation;
-import com.google.mlkit.nl.translate.Translator;
-import com.google.mlkit.nl.translate.TranslatorOptions;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "FragmentProfile";
     private Toolbar toolbar;
-    private ImageView imgUser;
-    private TextView userPlace, userScore;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
-    private List<WordModel> words = new ArrayList<>();
+    private DataBaseLearningWords dataBaseLearningWords;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        dataBaseLearningWords = new DataBaseLearningWords();
 
         getWords();
 
@@ -77,7 +70,7 @@ public class ProfileFragment extends Fragment {
 
                                 Log.i(TAG, "bookmarks loaded - " + DataBase.LIST_OF_BOOKMARKS.size());
 
-                                ((MainActivity) getActivity()).setFragment(new BookmarksFragment());
+                                ((MainActivity) requireActivity()).setFragment(new BookmarksFragment());
 
                                 Log.i(TAG, "set fragment");
                             }
@@ -105,9 +98,9 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        layoutLeaderBord.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new LeaderBordFragment()));
+        layoutLeaderBord.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment()));
 
-        layoutProfile.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new ProfileInfoFragment()));
+        layoutProfile.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new ProfileInfoFragment()));
 
         layoutLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -117,7 +110,7 @@ public class ProfileFragment extends Fragment {
                     .requestEmail()
                     .build();
 
-            GoogleSignInClient mClient = GoogleSignIn.getClient(getActivity(), gso);
+            GoogleSignInClient mClient = GoogleSignIn.getClient(requireActivity(), gso);
             mClient.signOut().addOnCompleteListener(task -> {
 
                 if (task.isSuccessful()) {
@@ -130,46 +123,42 @@ public class ProfileFragment extends Fragment {
                     );
 
                     startActivity(intent);
-                    getActivity().finish();
+                    requireActivity().finish();
 
                 } else {
-                    Log.i(TAG, "Error - " + task.getException().getMessage());
+                    Log.i(TAG, "Error - " + Objects.requireNonNull(task.getException()).getMessage());
                     Toast.makeText(getActivity(), "Can not logout... Please, try later", Toast.LENGTH_SHORT).show();
                 }
             });
         });
 
-        toolbar.setNavigationOnClickListener(v -> {
-
-            getActivity().onBackPressed();
-
-        });
+        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
 
     }
 
     private void init(View view) {
 
         toolbar = view.findViewById(R.id.toolbar);
-        imgUser = view.findViewById(R.id.userImage);
-        userPlace = view.findViewById(R.id.userPlace);
-        userScore = view.findViewById(R.id.userScore);
+        ImageView imgUser = view.findViewById(R.id.userImage);
+        TextView userPlace = view.findViewById(R.id.userPlace);
+        TextView userScore = view.findViewById(R.id.userScore);
         layoutBookmark = view.findViewById(R.id.layoutBookmark);
         layoutLeaderBord = view.findViewById(R.id.layoutLeaderBord);
         layoutProfile = view.findViewById(R.id.layoutProfile);
         layoutLogout = view.findViewById(R.id.layoutLogout);
 
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
-        ((MainActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
+        ((MainActivity) requireActivity()).setSupportActionBar(toolbar);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(true);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_btn_back);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setHomeButtonEnabled(true);
 
         // set user's data
         requireActivity().setTitle(USER_MODEL.getName());
 
-        userPlace.setText("" + USER_MODEL.getPlace());
-        userScore.setText("" + USER_MODEL.getScore());
+        userPlace.setText(String.valueOf(USER_MODEL.getPlace()));
+        userScore.setText(String.valueOf(USER_MODEL.getScore()));
 
         Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
 
@@ -185,60 +174,23 @@ public class ProfileFragment extends Fragment {
                 .roomDao()
                 .getRowCount();
 
-        view1.setText(" - " + count + " - " + DataBase.LIST_OF_LEARNING_WORDS.size());
+        view1.setText(" - " + count + " - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
 
         Log.i(TAG, "beginning");
 
-        loadEn();
-
-    }
-
-    private void loadEn() {
-
-        Log.i(TAG, "begin");
-
-        // Create an English-German translator:
-        TranslatorOptions options =
-                new TranslatorOptions.Builder()
-                        .setSourceLanguage(TranslateLanguage.ENGLISH)
-                        .setTargetLanguage(TranslateLanguage.GERMAN)
-                        .build();
-
-        Log.i(TAG, "begin 2");
-
-        final Translator englishGermanTranslator =
-                Translation.getClient(options);
-
-        Log.i(TAG, "begin 3");
-
-        DownloadConditions conditions = new DownloadConditions.Builder()
-                .requireWifi()
-                .build();
-
-        Log.i(TAG, "begin 4");
-
-        englishGermanTranslator.downloadModelIfNeeded(conditions)
-            .addOnSuccessListener(unused -> {
-                Log.i(TAG, "begin 5");
-
-                englishGermanTranslator.translate("hello").addOnSuccessListener(s -> Log.i(TAG, "translated - " + s))
-                .addOnFailureListener(e -> Log.i(TAG, "can not translate - " + e.getMessage()));
-
-            })
-            .addOnFailureListener(e -> Log.i(TAG, "can not install - " + e.getMessage()));
     }
 
     private void getWords() {
 
-        loadLearningWords(getContext(), new CompleteListener() {
+        dataBaseLearningWords.loadLearningWords(getContext(), new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "size - " + DataBase.LIST_OF_LEARNING_WORDS.size());
+                Log.i(TAG, "size - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
             }
 
             @Override
             public void OnFailure() {
-                Log.i(TAG, "can not");
+                Log.i(TAG, "can not load");
             }
         });
 

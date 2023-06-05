@@ -8,31 +8,25 @@ import static com.example.englishapp.database.Constants.KEY_GENDER;
 import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_SCORE;
-import static com.example.englishapp.database.Constants.NAME_USER_PROFILE_IMG;
-import static com.example.englishapp.database.Constants.PATH_PROFILE_IMG;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.icu.util.Calendar;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.ArrayMap;
-import android.util.Base64;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -52,39 +46,34 @@ import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.example.englishapp.repositories.UpdateProfileRepository;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Calendar;
 import java.util.Map;
 
 public class ProfileInfoFragment extends Fragment {
 
     private static final String TAG = "UpdateProfileInfo";
-    private String pathToImage, userDOB;
+    private String userDOB;
     private EditText userName, userEmail;
     private Dialog progressBar;
     private Button btnUpdate;
     private ImageView profileImg;
     private RadioGroup radioGroupGender;
     private RadioButton radioBtnGender;
-    private TextView dialogText, textChooseDOB;
+    private TextView textChooseDOB;
     private ActivityResultLauncher<Intent> pickImage;
     private DatePickerDialog datePicker;
-    private StorageReference storageReference;
-    private FirebaseAuth authProfile;
     private Spinner spinnerLanguage;
-    private FirebaseUser firebaseUser;
     private Uri imgUri;
     private String languageCode;
     private boolean isAddingScore;
+    private DataBasePersonalData dataBasePersonalData;
     private DataBase dataBase;
 
     @Override
@@ -96,8 +85,11 @@ public class ProfileInfoFragment extends Fragment {
 
         setPreviousData(view);
 
+        dataBasePersonalData = new DataBasePersonalData();
+        dataBase = new DataBase();
+
         try {
-            getActivity().setTitle(R.string.nameLogin);
+            requireActivity().setTitle(R.string.nameLogin);
         } catch (Exception e) {
             Log.i(TAG, "e - " + e.getMessage());
         }
@@ -133,11 +125,8 @@ public class ProfileInfoFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarCreating);
-
-        storageReference = FirebaseStorage.getInstance().getReference(PATH_PROFILE_IMG);
-        authProfile = FirebaseAuth.getInstance();
 
         pickImage = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -149,7 +138,7 @@ public class ProfileInfoFragment extends Fragment {
                             try {
                                 Log.i(TAG, "set bitmap");
 
-                                InputStream inputStream = getActivity().getContentResolver().openInputStream(imgUri);
+                                InputStream inputStream = requireActivity().getContentResolver().openInputStream(imgUri);
                                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                                 profileImg.setImageBitmap(bitmap);
 
@@ -180,11 +169,11 @@ public class ProfileInfoFragment extends Fragment {
 
             Log.i(TAG, "PATH - " + USER_MODEL.getPathToImage());
 
-            Glide.with(getContext()).load(USER_MODEL.getPathToImage()).into(profileImg);
+            Glide.with(requireActivity()).load(USER_MODEL.getPathToImage()).into(profileImg);
 
             if (USER_MODEL.getDateOfBirth() != null) {
                 userDOB = USER_MODEL.getDateOfBirth();
-                textChooseDOB.setText("Your Date Of Birth is " + USER_MODEL.getDateOfBirth());
+                textChooseDOB.setText(R.string.dateOfBirth + USER_MODEL.getDateOfBirth());
             }
 
             if (USER_MODEL.getLanguageCode() != null) {
@@ -233,7 +222,7 @@ public class ProfileInfoFragment extends Fragment {
 
                 userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
 
-                textChooseDOB.setText("Your Date Of Birth is " + userDOB);
+                textChooseDOB.setText(R.string.dateOfBirth + userDOB);
             }, year, month, day);
 
             datePicker.show();
@@ -289,79 +278,6 @@ public class ProfileInfoFragment extends Fragment {
 
     }
 
-//    private String getLanguageCode(String language) {
-//        String langCode;
-//
-//        switch (language) {
-//
-//            case "Belarusian":
-//                langCode = TranslateLanguage.BELARUSIAN;
-//                break;
-//
-//            case "Danish":
-//                langCode = TranslateLanguage.DANISH;
-//                break;
-//
-//            case "German":
-//                langCode = TranslateLanguage.GERMAN;
-//                break;
-//
-//            case "Greek":
-//                langCode = TranslateLanguage.EL;
-//                break;
-//
-//            case "English":
-//                langCode = TranslateLanguage.EN;
-//                break;
-//
-//            case "Spanish":
-//                langCode = TranslateLanguage.ES;
-//                break;
-//
-//            default:
-//                langCode = TranslateLanguage.RU;
-//                break;
-//        }
-//
-//        return langCode;
-//    }
-//
-//    private void setLanguage(int langCode) {
-//
-//        switch (langCode) {
-//            case FirebaseTranslateLanguage.BE:
-//                spinnerLanguage.setSelection(0);
-//                break;
-//
-//            case FirebaseTranslateLanguage.DA:
-//                spinnerLanguage.setSelection(1);
-//                break;
-//
-//            case FirebaseTranslateLanguage.DE:
-//                spinnerLanguage.setSelection(2);
-//
-//                break;
-//
-//            case FirebaseTranslateLanguage.EL:
-//                spinnerLanguage.setSelection(3);
-//                break;
-//
-//            case FirebaseTranslateLanguage.EN:
-//                spinnerLanguage.setSelection(4);
-//                break;
-//
-//            case FirebaseTranslateLanguage.ES:
-//                spinnerLanguage.setSelection(5);
-//                break;
-//
-//            default:
-//                spinnerLanguage.setSelection(6);
-//                break;
-//        }
-//    }
-
-
-
     private void updateUser(String textEmail, String textName, String textDOB, String textGender, String langCode)  {
 
         progressBar.show();
@@ -378,7 +294,7 @@ public class ProfileInfoFragment extends Fragment {
             userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
         }
 
-        dataBase.updateProfileData(userData, new CompleteListener() {
+        dataBasePersonalData.updateProfileData(userData, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 dataBase.loadData(new CompleteListener() {
@@ -388,7 +304,19 @@ public class ProfileInfoFragment extends Fragment {
                         if(imgUri != null) {
                             Log.i(TAG, "HAVE IMAGE");
 
-                            uploadPicture(imgUri);
+                            UpdateProfileRepository updateProfileRepository = new UpdateProfileRepository();
+
+                            updateProfileRepository.uploadPicture(imgUri, requireActivity(), new CompleteListener() {
+                                @Override
+                                public void OnSuccess() {
+                                    Toast.makeText(getActivity(), "Photo was successfully updated", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void OnFailure() {
+                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
 
                         Log.i(TAG, "Successfully set data");
@@ -397,7 +325,7 @@ public class ProfileInfoFragment extends Fragment {
 
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
-                        getActivity().finish();
+                        requireActivity().finish();
                     }
 
                     @Override
@@ -442,17 +370,13 @@ public class ProfileInfoFragment extends Fragment {
             userEmail.setError(getResources().getString(R.string.requiredEmail));
             userEmail.requestFocus();
 
-        } else if (TextUtils.isEmpty(userDOB) && !(USER_MODEL.getDateOfBirth() != null)) {
+        } else if (TextUtils.isEmpty(userDOB) && USER_MODEL.getDateOfBirth() == null) {
             Toast.makeText(getActivity(), R.string.errorDOB, Toast.LENGTH_SHORT).show();
             textChooseDOB.setError(getResources().getString(R.string.requiredDOB));
             textChooseDOB.requestFocus();
 
         } else if (radioGroupGender.getCheckedRadioButtonId() == -1) {
             Toast.makeText(getActivity(), R.string.errorGender, Toast.LENGTH_SHORT).show();
-
-            // Radio Button does not have this method:
-            // radioBtnGender.setError(getResources().getString(R.string.requiredGender));
-            // radioBtnGender.requestFocus();
 
         } else if (languageCode == null) {
             Toast.makeText(getActivity(), "Please choose language", Toast.LENGTH_SHORT).show();
@@ -465,67 +389,4 @@ public class ProfileInfoFragment extends Fragment {
     }
 
 
-    private void uploadPicture(Uri uriImg) {
-
-        Log.i(TAG, "Create fileReference");
-
-        Log.i(TAG, "UID - " + authProfile.getCurrentUser().getUid());
-
-        Log.i(TAG, "EXTENSION - " + getFileExtension(uriImg));
-
-        //Save image
-        StorageReference fileReference = storageReference.child(authProfile.getCurrentUser().getUid() + "/" + NAME_USER_PROFILE_IMG + "." + getFileExtension(uriImg));
-
-        Log.i(TAG, fileReference.toString());
-
-        //Upload image to Storage
-        fileReference.putFile(uriImg).addOnSuccessListener(taskSnapshot -> fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-            Log.i(TAG, "PATH" + uri.toString());
-
-            firebaseUser = authProfile.getCurrentUser();
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setPhotoUri(uri).build();
-
-            firebaseUser.updateProfile(profileUpdates);
-
-            pathToImage = uri.toString();
-
-            Log.i(TAG, "PATH01 - " + pathToImage);
-
-            DataBase.updateImage(pathToImage, new CompleteListener() {
-                @Override
-                public void OnSuccess() {
-                    Log.i(TAG, "Photo successfully saved");
-                }
-
-                @Override
-                public void OnFailure() {
-                    Log.i(TAG, "Unable to save photo");
-
-                }
-            });
-
-        })).addOnFailureListener(e -> Toast.makeText(getActivity(), "Something went wrong - " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
-
-    private String encodeImage(Bitmap bitmap) {
-        int previewWidth = 150;
-        int previewHeight = bitmap.getHeight() * previewWidth / bitmap.getWidth();
-
-        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, previewWidth, previewHeight, false);
-
-        ByteArrayOutputStream byteArrayInputStream = new ByteArrayOutputStream();
-        previewBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayInputStream);
-
-        byte[] bytes = byteArrayInputStream.toByteArray();
-
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
-    }
-
-    private String getFileExtension(Uri uriImage) {
-        ContentResolver contentResolver = getActivity().getContentResolver();
-        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-
-        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uriImage));
-    }
 }

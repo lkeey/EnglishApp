@@ -1,23 +1,16 @@
 package com.example.englishapp.database;
 
-import static com.example.englishapp.database.Constants.KEY_AMOUNT_CARDS;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_CATEGORIES;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_DISCUSSIONS;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_OF_QUESTIONS;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_SENT_MESSAGES;
 import static com.example.englishapp.database.Constants.KEY_AMOUNT_TESTS;
-import static com.example.englishapp.database.Constants.KEY_AMOUNT_WORDS;
 import static com.example.englishapp.database.Constants.KEY_ANSWER;
 import static com.example.englishapp.database.Constants.KEY_AUTHOR;
 import static com.example.englishapp.database.Constants.KEY_BOOKMARKS;
-import static com.example.englishapp.database.Constants.KEY_CARD_DESCRIPTION;
-import static com.example.englishapp.database.Constants.KEY_CARD_ID;
-import static com.example.englishapp.database.Constants.KEY_CARD_LEVEL;
-import static com.example.englishapp.database.Constants.KEY_CARD_NAME;
 import static com.example.englishapp.database.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.database.Constants.KEY_CATEGORY_NAME;
 import static com.example.englishapp.database.Constants.KEY_CATEGORY_NUMBER_OF_TESTS;
-import static com.example.englishapp.database.Constants.KEY_COLLECTION_CARDS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CATEGORIES;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CHAT;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CONVERSATION;
@@ -26,12 +19,10 @@ import static com.example.englishapp.database.Constants.KEY_COLLECTION_QUESTIONS
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_TESTS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
-import static com.example.englishapp.database.Constants.KEY_COLLECTION_WORDS;
 import static com.example.englishapp.database.Constants.KEY_FCM_TOKEN;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_NUMBER_OF_OPTIONS;
 import static com.example.englishapp.database.Constants.KEY_OPTION;
-import static com.example.englishapp.database.Constants.KEY_PROFILE_IMG;
 import static com.example.englishapp.database.Constants.KEY_QUESTION_ID;
 import static com.example.englishapp.database.Constants.KEY_SCORE;
 import static com.example.englishapp.database.Constants.KEY_TEST_ID;
@@ -39,31 +30,20 @@ import static com.example.englishapp.database.Constants.KEY_TEST_NAME;
 import static com.example.englishapp.database.Constants.KEY_TEST_QUESTION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_SCORES;
-import static com.example.englishapp.database.Constants.KEY_WORD_CARD_ID;
-import static com.example.englishapp.database.Constants.KEY_WORD_DESCRIPTION;
-import static com.example.englishapp.database.Constants.KEY_WORD_ID;
-import static com.example.englishapp.database.Constants.KEY_WORD_IMG;
-import static com.example.englishapp.database.Constants.KEY_WORD_LEVEL;
-import static com.example.englishapp.database.Constants.KEY_WORD_TEXT_EN;
 import static com.example.englishapp.database.Constants.NOT_VISITED;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.ArrayMap;
-import android.util.Base64;
 import android.util.Log;
 
 import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.models.CardModel;
 import com.example.englishapp.models.CategoryModel;
 import com.example.englishapp.models.OptionModel;
 import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.models.TestModel;
 import com.example.englishapp.models.UserModel;
-import com.example.englishapp.models.WordModel;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -74,7 +54,6 @@ import com.google.firebase.firestore.WriteBatch;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,9 +69,6 @@ public class DataBase {
     public static List<QuestionModel> LIST_OF_QUESTIONS = new ArrayList<>();
     public static List<String> LIST_OF_BOOKMARK_IDS = new ArrayList<>();
     public static List<QuestionModel> LIST_OF_BOOKMARKS = new ArrayList<>();
-    public static List<CardModel> LIST_OF_CARDS = new ArrayList<>();
-    public static List<String> LIST_OF_WORDS = new ArrayList<>();
-    public static List<WordModel> LIST_OF_LEARNING_WORDS = new ArrayList<>();
 
     public void loadData(CompleteListener listener) {
         Log.i(TAG, "Load Data");
@@ -158,31 +134,6 @@ public class DataBase {
         reference.update(KEY_FCM_TOKEN, token)
                 .addOnSuccessListener(unused -> listener.OnSuccess())
                 .addOnFailureListener(e -> listener.OnFailure());
-    }
-
-
-    public static void updateImage(String path, CompleteListener listener) {
-
-        Log.i(TAG, "Path - " + path);
-        try {
-            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-                    .document(USER_MODEL.getUid());
-
-            reference.update(KEY_PROFILE_IMG, path)
-                    .addOnSuccessListener(unused -> {
-                        Log.i(TAG, "Image was changed");
-
-                        USER_MODEL.setPathToImage(path);
-                        listener.OnSuccess();
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.i(TAG, "Can not load image - " + e.getMessage());
-
-                        listener.OnFailure();
-                    });
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
     }
 
     public static void getListOfCategories(CompleteListener listener) {
@@ -288,24 +239,6 @@ public class DataBase {
 
             listener.OnFailure();
         });
-    }
-
-    public static void updateProfileData(Map profileMap, CompleteListener listener) {
-
-        WriteBatch batch = DATA_FIRESTORE.batch();
-
-        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
-                .document(USER_MODEL.getUid());
-
-        batch.update(reference, profileMap);
-
-        batch.commit()
-            .addOnSuccessListener(unused -> {
-               listener.OnSuccess();
-            })
-            .addOnFailureListener(e -> {
-                listener.OnFailure();
-            });
     }
 
     public static void sendMessage(HashMap<String, Object> mapMsg, CompleteListener listener) {
@@ -891,289 +824,4 @@ public class DataBase {
         .addOnFailureListener(e -> listener.OnFailure());
     }
 
-    public static void loadWordCardsData(CompleteListener listener) {
-        LIST_OF_CARDS.clear();
-
-        Log.i(TAG, "Begin loading cards");
-
-        CategoryModel chosenCategory = findCategoryById(CHOSEN_CATEGORY_ID);
-
-        DATA_FIRESTORE.collection(KEY_COLLECTION_CARDS)
-            .limit(20)
-            .whereEqualTo(KEY_CATEGORY_ID, chosenCategory.getId())
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-                Log.i(TAG, "Get cards");
-
-                try {
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-
-                        CardModel cardModel = new CardModel();
-
-                        cardModel.setId(documentSnapshot.getString(KEY_CARD_ID));
-                        cardModel.setName(documentSnapshot.getString(KEY_CARD_NAME));
-                        cardModel.setLevel(documentSnapshot.getString(KEY_CARD_LEVEL));
-                        cardModel.setDescription(documentSnapshot.getString(KEY_CARD_DESCRIPTION));
-                        cardModel.setAmountOfWords(documentSnapshot.getLong(KEY_AMOUNT_WORDS).intValue());
-                        cardModel.setAuthor(documentSnapshot.getString(KEY_AUTHOR));
-
-                        LIST_OF_CARDS.add(cardModel);
-
-                        Log.i(TAG, "Find card - " + cardModel.getId());
-
-                    }
-                } catch (Exception e) {
-                    Log.i(TAG, "Card error - " + e.getMessage());
-                }
-
-                Log.i(TAG, "All good");
-
-                listener.OnSuccess();
-
-            })
-            .addOnFailureListener(e -> listener.OnFailure());
-
-    }
-
-    public static void createCardData(ArrayList<WordModel> listOfWords, String name, String description, String level, CompleteListener listener) {
-        try {
-            Map<String, Object> cardData = new ArrayMap<>();
-
-            String randomID = null;
-
-            while (true) {
-                try {
-
-                    randomID = RandomStringUtils.random(20, true, true);
-
-                    Log.i(TAG, "random id - " + randomID);
-
-                    findCardById(randomID);
-
-                } catch (Exception e) {
-                    Log.i(TAG, "not found card");
-
-                    break;
-                }
-            }
-
-            cardData.put(KEY_CARD_ID, randomID);
-            cardData.put(KEY_CARD_NAME, name);
-            cardData.put(KEY_CARD_LEVEL, level);
-            cardData.put(KEY_AMOUNT_WORDS, listOfWords.size());
-            cardData.put(KEY_CARD_DESCRIPTION, description);
-            cardData.put(KEY_AUTHOR, USER_MODEL.getName());
-            cardData.put(KEY_CATEGORY_ID, CHOSEN_CATEGORY_ID);
-
-            Log.i(TAG, "set card data");
-
-            WriteBatch batch = DATA_FIRESTORE.batch();
-
-            DocumentReference testDocument = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_CARDS)
-                    .document(randomID);
-
-            batch.set(testDocument, cardData, SetOptions.merge());
-
-            Log.i(TAG, "set batch");
-
-            // update amount of tests in category
-            Log.i(TAG, "CHOSEN_CATEGORY_ID - " + CHOSEN_CATEGORY_ID);
-
-            // update statistics
-            DocumentReference docReference = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_STATISTICS)
-                    .document(KEY_AMOUNT_CARDS);
-
-            batch.update(docReference, KEY_AMOUNT_CARDS, FieldValue.increment(1));
-
-            docReference = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_STATISTICS)
-                    .document(KEY_AMOUNT_WORDS);
-
-            Log.i(TAG, "Size words - " + listOfWords.size());
-            batch.update(docReference, KEY_AMOUNT_WORDS, FieldValue.increment(listOfWords.size()));
-
-            Log.i(TAG, "update statistics");
-
-            String randomId = randomID;
-            batch.commit().addOnSuccessListener(unused -> {
-
-                LIST_OF_CARDS.add(new CardModel(
-                        randomId,
-                        name,
-                        level,
-                        description,
-                        USER_MODEL.getName(),
-                        listOfWords.size()
-                ));
-
-                Log.i(TAG, "Card was successfully created - " + name);
-
-//                listener.OnSuccess();
-
-                createWordsData(listOfWords, level, randomId, listener);
-
-            }).addOnFailureListener(e -> {
-                Log.i(TAG, "Can not create card - " + e.getMessage());
-
-                listener.OnFailure();
-            });
-
-        } catch (Exception e) {
-            Log.i(TAG, "error - " + e.getMessage());
-        }
-    }
-
-    private static void createWordsData(ArrayList<WordModel> listOfWords, String level, String cardId, CompleteListener listener) {
-
-        WriteBatch batch = DATA_FIRESTORE.batch();
-
-        for(int i=0; i < listOfWords.size(); i++) {
-
-            Map<String, Object> wordData = new ArrayMap<>();
-
-            WordModel wordModel = listOfWords.get(i);
-
-            Log.i(TAG, "wordModel - " + wordModel.getTextEn() + " - " + wordModel.getImage().toString());
-
-            wordData.put(KEY_WORD_ID, CHOSEN_CATEGORY_ID + "_" + cardId + "_" + i);
-            wordData.put(KEY_WORD_CARD_ID, cardId);
-            wordData.put(KEY_WORD_TEXT_EN, wordModel.getTextEn());
-            wordData.put(KEY_WORD_DESCRIPTION, wordModel.getDescription());
-            wordData.put(KEY_WORD_LEVEL, level);
-            wordData.put(KEY_WORD_IMG, wordModel.getImage());
-
-            DocumentReference wordDocument = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_WORDS)
-                    .document(CHOSEN_CATEGORY_ID + "_" + cardId +"_" + i);
-
-            batch.set(wordDocument, wordData, SetOptions.merge());
-
-        }
-
-        batch.commit().addOnSuccessListener(unused -> {
-
-            Log.i(TAG, "Words were successfully added");
-
-            listener.OnSuccess();
-
-        }).addOnFailureListener(e -> {
-
-            Log.i(TAG, "Fail to save words - " + e.getMessage());
-
-            listener.OnFailure();
-
-        });
-
-    }
-
-    public static CardModel findCardById(String cardId) {
-
-        return LIST_OF_CARDS.stream().filter(card -> card.getId().equals(cardId)).findAny()
-                .orElseThrow(() -> new RuntimeException("not found"));
-    }
-
-    public static void loadWords(CompleteListener listener) {
-        DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-
-                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
-                    String str = documentSnapshot.getString(KEY_WORD_TEXT_EN);
-
-                    Log.i(TAG, "found str - " + str);
-
-                    LIST_OF_WORDS.add(str);
-                }
-
-                Log.i(TAG, "size - " + LIST_OF_WORDS.size());
-
-                listener.OnSuccess();
-
-            })
-            .addOnFailureListener(e -> {
-
-                Log.i(TAG, "error words - " + e.getMessage());
-
-                listener.OnFailure();
-
-            });
-    }
-
-    public static void loadWordsByCard(Context context, String cardId, CompleteListener listener) {
-
-        Log.i(TAG, "card - " + cardId);
-
-        DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS)
-            .limit(20)
-//            .whereEqualTo(KEY_WORD_CARD_ID, cardId)
-            .get()
-            .addOnSuccessListener(queryDocumentSnapshots -> {
-
-                for (DocumentSnapshot documentSnapshot: queryDocumentSnapshots) {
-
-                    WordModel wordModel = new WordModel();
-                    wordModel.setLevel(documentSnapshot.getString(KEY_WORD_LEVEL));
-                    wordModel.setDescription(documentSnapshot.getString(KEY_WORD_DESCRIPTION));
-                    wordModel.setTextEn(documentSnapshot.getString(KEY_WORD_TEXT_EN));
-
-                    // TODO load bitmap
-
-                    wordModel.setImage(documentSnapshot.getString(KEY_WORD_TEXT_EN));
-
-                    Log.i(TAG, "found word - " + wordModel.getTextEn());
-
-                    LIST_OF_LEARNING_WORDS.add(wordModel);
-                }
-
-                Log.i(TAG, "size - " + LIST_OF_LEARNING_WORDS.size());
-
-                listener.OnSuccess();
-
-            })
-            .addOnFailureListener(e -> {
-
-                Log.i(TAG, "error words learning - " + e.getMessage());
-
-                listener.OnFailure();
-
-            });
-}
-    public static String bitMapToString(Bitmap bitmap){
-
-        ByteArrayOutputStream bmp = new  ByteArrayOutputStream();
-
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, bmp);
-
-        byte [] b = bmp.toByteArray();
-
-        String temp = Base64.encodeToString(b, Base64.DEFAULT);
-
-        return temp;
-    }
-
-    public static void loadLearningWords(Context context, CompleteListener listener) {
-
-        Log.i(TAG, "load words");
-
-        LIST_OF_LEARNING_WORDS.clear();
-
-        new Thread(() -> {
-            try {
-
-                LIST_OF_LEARNING_WORDS =
-                        RoomDataBase.getDatabase(context)
-                                .roomDao()
-                                .getAllWords();
-
-                listener.OnSuccess();
-
-            } catch (Exception e) {
-                Log.i(TAG, "can not load learning words - " + e.getMessage());
-
-                listener.OnFailure();
-            }
-        });
-    }
 }

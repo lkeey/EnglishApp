@@ -3,10 +3,10 @@ package com.example.englishapp.fragments;
 import static android.content.Context.ALARM_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_CARD;
+import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
 import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.WORD_COUNTER;
-import static com.example.englishapp.database.DataBase.LIST_OF_LEARNING_WORDS;
 
 import android.app.AlarmManager;
 import android.app.Dialog;
@@ -26,13 +26,11 @@ import android.widget.Toast;
 
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.receivers.AlarmReceiver;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.database.RoomDataBase;
+import com.example.englishapp.database.DataBaseLearningWords;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.interfaces.RoomDao;
 import com.example.englishapp.models.CardModel;
-import com.example.englishapp.models.WordModel;
+import com.example.englishapp.receivers.AlarmReceiver;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.mlkit.common.model.DownloadConditions;
@@ -52,7 +50,6 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
     private Button btnLearn;
     private CardModel receivedCard;
     private Dialog progressBar;
-    private RoomDao roomDao;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,8 +74,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
             TranslatorOptions options =
                     new TranslatorOptions.Builder()
                             .setSourceLanguage(TranslateLanguage.ENGLISH)
-                            // TODO change to target
-                            .setTargetLanguage(TranslateLanguage.RUSSIAN)
+                            .setTargetLanguage(DataBasePersonalData.USER_MODEL.getLanguageCode())
                             .build();
 
             final Translator translator =
@@ -149,35 +145,19 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
         dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarOpening);
 
-        roomDao = RoomDataBase.getDatabase(getContext())
-                .roomDao();
     }
 
     private void learnWords() {
 
         Log.i(TAG, "learnWords - " + receivedCard.getAmountOfWords() + " - " + receivedCard.getId());
 
-        // TODO get right card
-        DataBase.loadWordsByCard(getContext(), receivedCard.getId(), new CompleteListener() {
+        DataBaseLearningWords dataBaseLearningWords = new DataBaseLearningWords();
+        dataBaseLearningWords.uploadLearningWords(getContext(), receivedCard.getId(), new CompleteListener() {
             @Override
             public void OnSuccess() {
                 try {
 
-                    Log.i(TAG, "amount loaded words - " + LIST_OF_LEARNING_WORDS);
-
-
-
-                    roomDao.deleteAll();
-
-                    for (WordModel wordModel: LIST_OF_LEARNING_WORDS) {
-
-                            RoomDataBase.getDatabase(getContext())
-                                    .roomDao()
-                                    .insertWord(wordModel);
-
-                        Log.i(TAG, "added - " + wordModel.getTextEn());
-
-                    }
+                    Log.i(TAG, "amount loaded words - " + dataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
 
                     // create periodic task
                     AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(ALARM_SERVICE);
@@ -188,7 +168,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(((MainActivity) getActivity()), 1, intent, PendingIntent.FLAG_MUTABLE);
 
                     // every 5 minute
-                    alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 2 * 60 * 1000, 2 * 60 * 1000, pendingIntent);
+                    alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 5 * 60 * 1000, 2 * 60 * 1000, pendingIntent);
 
                     Log.i(TAG, "Successfully set");
 
@@ -198,6 +178,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
 
                     // write all the data entered by the user in SharedPreference and apply
                     myEdit.putInt(WORD_COUNTER, 0);
+                    myEdit.putString(KEY_LANGUAGE_CODE, DataBasePersonalData.USER_MODEL.getLanguageCode());
                     myEdit.apply();
 
                     Toast.makeText(getActivity(), "You will get notifications with chosen words", Toast.LENGTH_SHORT).show();

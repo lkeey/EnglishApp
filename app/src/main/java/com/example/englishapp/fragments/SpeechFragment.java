@@ -2,8 +2,8 @@ package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
-import static com.example.englishapp.database.DataBase.LIST_OF_WORDS;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
+import static com.example.englishapp.database.DataBaseWords.LIST_OF_WORDS;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,8 +22,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
 import com.example.englishapp.database.Constants;
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseWords;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.google.firebase.firestore.DocumentReference;
 
@@ -79,20 +79,22 @@ public class SpeechFragment extends Fragment {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        DataBase.loadWords(new CompleteListener() {
+        DataBaseWords dataBaseWords = new DataBaseWords();
+
+        dataBaseWords.loadWords(null, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "successfully load words");
 
                 if (LIST_OF_WORDS.size() > 1) {
 
-                    chosenStr = LIST_OF_WORDS.get(new Random().nextInt(LIST_OF_WORDS.size() - 1));
+                    chosenStr = LIST_OF_WORDS.get(new Random().nextInt(LIST_OF_WORDS.size() - 1)).getTextEn();
 
                     textWord.setText(chosenStr);
 
                 } else if (LIST_OF_WORDS.size() == 1) {
 
-                    textWord.setText(LIST_OF_WORDS.get(0));
+                    textWord.setText(LIST_OF_WORDS.get(0).getTextEn());
 
                 } else {
 

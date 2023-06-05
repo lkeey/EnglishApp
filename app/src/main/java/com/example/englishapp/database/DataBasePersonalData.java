@@ -129,4 +129,48 @@ public class DataBasePersonalData {
                 });
     }
 
+    public void updateProfileData(Map profileMap, CompleteListener listener) {
+
+        WriteBatch batch = DATA_FIRESTORE.batch();
+
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        batch.update(reference, profileMap);
+
+        batch.commit()
+                .addOnSuccessListener(unused -> {
+                    listener.OnSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    listener.OnFailure();
+                });
+    }
+
+    public void updateImage(String path, CompleteListener listener) {
+
+        Log.i(TAG, "Path - " + path);
+        try {
+            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                    .document(USER_MODEL.getUid());
+
+            reference.update(KEY_PROFILE_IMG, path)
+                    .addOnSuccessListener(unused -> {
+                        Log.i(TAG, "Image was changed");
+
+                        USER_MODEL.setPathToImage(path);
+                        listener.OnSuccess();
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.i(TAG, "Can not load image - " + e.getMessage());
+
+                        listener.OnFailure();
+                    });
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
+    }
+
+
+
 }
