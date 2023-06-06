@@ -189,7 +189,7 @@ public class DiscussFragment extends Fragment {
 
                     // send notification
                     sendNotificationToUser(
-                         USER_MODEL.getFcmToken(),
+                         receivedUser.getFcmToken(),
                             "New message from " + USER_MODEL.getName(),
                             inputMessage.getText().toString(),
                          USER_MODEL.getUid()

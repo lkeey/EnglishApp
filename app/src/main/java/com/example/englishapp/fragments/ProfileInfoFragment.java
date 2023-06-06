@@ -2,12 +2,6 @@ package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
 import static com.example.englishapp.database.Constants.KEY_ADD_SCORE;
-import static com.example.englishapp.database.Constants.KEY_DOB;
-import static com.example.englishapp.database.Constants.KEY_EMAIL;
-import static com.example.englishapp.database.Constants.KEY_GENDER;
-import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
-import static com.example.englishapp.database.Constants.KEY_NAME;
-import static com.example.englishapp.database.Constants.KEY_SCORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.DatePickerDialog;
@@ -21,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.ArrayMap;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -45,8 +38,6 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.repositories.UpdateProfileRepository;
 import com.google.mlkit.nl.translate.TranslateLanguage;
@@ -54,7 +45,6 @@ import com.google.mlkit.nl.translate.TranslateLanguage;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Map;
 
 public class ProfileInfoFragment extends Fragment {
 
@@ -73,8 +63,6 @@ public class ProfileInfoFragment extends Fragment {
     private Uri imgUri;
     private String languageCode;
     private boolean isAddingScore;
-    private DataBasePersonalData dataBasePersonalData;
-    private DataBase dataBase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,9 +72,6 @@ public class ProfileInfoFragment extends Fragment {
         init(view);
 
         setPreviousData(view);
-
-        dataBasePersonalData = new DataBasePersonalData();
-        dataBase = new DataBase();
 
         try {
             requireActivity().setTitle(R.string.nameLogin);
@@ -126,7 +111,7 @@ public class ProfileInfoFragment extends Fragment {
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
-        dialogText.setText(R.string.progressBarCreating);
+        dialogText.setText(R.string.progressBarUpdating);
 
         pickImage = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -143,8 +128,6 @@ public class ProfileInfoFragment extends Fragment {
                                 profileImg.setImageBitmap(bitmap);
 
                                 Log.i(TAG, "set bitmap 2");
-
-//                            encodedImage = encodeImage(bitmap);
 
                             } catch (FileNotFoundException e) {
                                 Log.i(TAG, e.getMessage());
@@ -173,7 +156,7 @@ public class ProfileInfoFragment extends Fragment {
 
             if (USER_MODEL.getDateOfBirth() != null) {
                 userDOB = USER_MODEL.getDateOfBirth();
-                textChooseDOB.setText(R.string.dateOfBirth + USER_MODEL.getDateOfBirth());
+                textChooseDOB.setText(getString(R.string.dateOfBirth) + " " + USER_MODEL.getDateOfBirth());
             }
 
             if (USER_MODEL.getLanguageCode() != null) {
@@ -222,7 +205,7 @@ public class ProfileInfoFragment extends Fragment {
 
                 userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
 
-                textChooseDOB.setText(R.string.dateOfBirth + userDOB);
+                textChooseDOB.setText(getString(R.string.dateOfBirth)  + " " +  userDOB);
             }, year, month, day);
 
             datePicker.show();
@@ -245,13 +228,46 @@ public class ProfileInfoFragment extends Fragment {
 
                     Log.i(TAG, "Data Checked");
 
+                    progressBar.show();
 
-                    updateUser(
+//                    updateUser(
+//                            userEmail.getText().toString(),
+//                            userName.getText().toString(),
+//                            userDOB,
+//                            radioBtnGender.getText().toString(),
+//                            languageCode
+//                    );
+
+                    new UpdateProfileRepository().updateUser(
                             userEmail.getText().toString(),
                             userName.getText().toString(),
                             userDOB,
                             radioBtnGender.getText().toString(),
-                            languageCode
+                            languageCode,
+                            isAddingScore,
+                            imgUri,
+                            getContext(),
+                            new CompleteListener() {
+                                @Override
+                                public void OnSuccess() {
+                                    Log.i(TAG, "Successfully set data");
+
+                                    Toast.makeText(getActivity(), "Personal data successfully updated", Toast.LENGTH_SHORT).show();
+
+                                    progressBar.dismiss();
+
+                                    ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
+                                }
+
+                                @Override
+                                public void OnFailure() {
+                                    Log.i(TAG, "Fail to set data");
+
+                                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+
+                                    progressBar.dismiss();
+                                }
+                            }
                     );
 
 
@@ -276,74 +292,6 @@ public class ProfileInfoFragment extends Fragment {
             }
         });
 
-    }
-
-    private void updateUser(String textEmail, String textName, String textDOB, String textGender, String langCode)  {
-
-        progressBar.show();
-
-        Map<String, Object> userData = new ArrayMap<>();
-
-        userData.put(KEY_EMAIL, textEmail);
-        userData.put(KEY_NAME, textName);
-        userData.put(KEY_DOB, textDOB);
-        userData.put(KEY_GENDER, textGender);
-        userData.put(KEY_LANGUAGE_CODE, langCode);
-
-        if(isAddingScore) {
-            userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
-        }
-
-        dataBasePersonalData.updateProfileData(userData, new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-                dataBase.loadData(new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-
-                        if(imgUri != null) {
-                            Log.i(TAG, "HAVE IMAGE");
-
-                            UpdateProfileRepository updateProfileRepository = new UpdateProfileRepository();
-
-                            updateProfileRepository.uploadPicture(imgUri, requireActivity(), new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    Toast.makeText(getActivity(), "Photo was successfully updated", Toast.LENGTH_SHORT).show();
-                                }
-
-                                @Override
-                                public void OnFailure() {
-                                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-
-                        Log.i(TAG, "Successfully set data");
-
-                        progressBar.dismiss();
-
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        startActivity(intent);
-                        requireActivity().finish();
-                    }
-
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "Can not set user data");
-
-                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-                        progressBar.dismiss();
-                    }
-                });
-            }
-            @Override
-            public void OnFailure() {
-                Toast.makeText(getActivity(), "Sign Up Failed",
-                        Toast.LENGTH_SHORT).show();
-                progressBar.dismiss();
-            }
-        });
     }
 
     private boolean checkData(View view) {

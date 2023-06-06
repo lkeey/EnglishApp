@@ -89,6 +89,23 @@ public class MainActivity extends BaseActivity {
 
 //        startCheckingPosition();
 
+        startLocationService();
+
+    }
+
+    private void startLocationService() {
+        if(!LocationManager.getInstance(this).isLocationEnabled()) {
+            progressLocation.show();
+        }
+
+        OneTimeWorkRequest foregroundWorkRequest = new OneTimeWorkRequest.Builder(LocationWork.class)
+            .addTag("LocationWork")
+            .setBackoffCriteria(
+                    BackoffPolicy.LINEAR,
+                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    TimeUnit.SECONDS
+            ).build();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Intent intent = new Intent(MainActivity.this, ForegroundLocationService.class);
 
