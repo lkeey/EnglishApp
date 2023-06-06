@@ -152,9 +152,7 @@ public class DataBase {
                     batch.update(docReference, KEY_AMOUNT_SENT_MESSAGES, FieldValue.increment(1));
 
                     batch.commit()
-                        .addOnSuccessListener(unused -> {
-                            listener.OnSuccess();
-                        })
+                        .addOnSuccessListener(unused -> listener.OnSuccess())
                         .addOnFailureListener(e -> {
                             listener.OnFailure();
                         });
