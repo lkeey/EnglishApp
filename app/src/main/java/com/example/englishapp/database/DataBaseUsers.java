@@ -30,7 +30,7 @@ public class DataBaseUsers {
     private static final String TAG = "DataBaseUsers";
     public static List<UserModel> LIST_OF_USERS = new ArrayList<>();
 
-    public static void getListOfUsers(CompleteListener listener) {
+    public void getListOfUsers(CompleteListener listener) {
         LIST_OF_USERS.clear();
 
         Log.i(TAG, "Begin loading");

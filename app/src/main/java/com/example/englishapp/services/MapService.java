@@ -7,7 +7,6 @@ import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.DataBase.findUserById;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
-import static com.example.englishapp.database.DataBaseUsers.getListOfUsers;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.UserListener;
 import com.example.englishapp.models.UserModel;
@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
 
@@ -35,11 +36,13 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
     private final Context context;
     private final UserListener listener;
     private static List<MarkerOptions> markers;
+    private final DataBaseUsers dataBaseUsers;
 
     public MapService(UserListener listener, Context context) {
         this.listener = listener;
         this.context = context;
-        this.markers = new ArrayList<>();
+        markers = new ArrayList<>();
+        this.dataBaseUsers = new DataBaseUsers();
     }
 
     @Override
@@ -67,7 +70,7 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
             Log.i(TAG, "size - " + markers.size());
 
-            getListOfUsers(new CompleteListener() {
+            dataBaseUsers.getListOfUsers(new CompleteListener() {
                 @Override
                 public void OnSuccess() {
                     for(UserModel user: LIST_OF_USERS) {
@@ -142,8 +145,8 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
                             MarkerOptions marker = findMarkerByUserId(documentChange.getDocument().getString(KEY_USER_UID));
 
                             marker.position(new LatLng(
-                                    documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLatitude(),
-                                    documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLongitude()
+                                    Objects.requireNonNull(documentChange.getDocument().getGeoPoint(KEY_LOCATION)).getLatitude(),
+                                    Objects.requireNonNull(documentChange.getDocument().getGeoPoint(KEY_LOCATION)).getLongitude()
                             ));
 
                             marker.title(documentChange.getDocument().getString(KEY_NAME));
@@ -160,8 +163,8 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
                     } else if (documentChange.getType() == DocumentChange.Type.ADDED) {
                         MarkerOptions marker = new MarkerOptions()
                                 .position(new LatLng(
-                                        documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLatitude(),
-                                        documentChange.getDocument().getGeoPoint(KEY_LOCATION).getLongitude()
+                                        Objects.requireNonNull(documentChange.getDocument().getGeoPoint(KEY_LOCATION)).getLatitude(),
+                                        Objects.requireNonNull(documentChange.getDocument().getGeoPoint(KEY_LOCATION)).getLongitude()
 
                                 ))
                                 .title(documentChange.getDocument().getString(KEY_NAME))
@@ -185,7 +188,7 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
 
         Log.i(TAG, "Amount markers - " + markers.size());
 
-        return markers.stream().filter(marker -> marker.getSnippet().equals(userUID)).findAny()
+        return markers.stream().filter(marker -> Objects.equals(marker.getSnippet(), userUID)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
 }

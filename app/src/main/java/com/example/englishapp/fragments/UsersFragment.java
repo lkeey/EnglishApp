@@ -30,10 +30,13 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
 
     private static final String TAG = "FragmentUsers";
     private RecyclerView recyclerView;
+    private DataBaseUsers dataBaseUsers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        dataBaseUsers = new DataBaseUsers();
 
         Log.i(TAG, "Show List Of Users");
 
@@ -56,7 +59,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarLoadingUserData);
 
-        DataBaseUsers.getListOfUsers(new CompleteListener() {
+        dataBaseUsers.getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "Successfully got user data - " + DataBaseUsers.LIST_OF_USERS.size());

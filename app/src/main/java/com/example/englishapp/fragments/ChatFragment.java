@@ -49,11 +49,14 @@ public class ChatFragment extends Fragment implements ConversationListener {
     private RecentConversationAdapter conversationAdapter;
     private ArrayList recentChats;
     private FloatingActionButton fab;
+    private DataBaseUsers dataBaseUsers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
+
+        dataBaseUsers = new DataBaseUsers();
 
         init(view);
 
@@ -90,7 +93,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
         fab = view.findViewById(R.id.fab);
 
         recentChats = new ArrayList<>();
-        DataBaseUsers.getListOfUsers(new CompleteListener() {
+        dataBaseUsers.getListOfUsers(new CompleteListener() {
             @Override
             public void OnSuccess() {
                 conversationAdapter = new RecentConversationAdapter(

@@ -1,6 +1,5 @@
 package com.example.englishapp.adapters;
 
-import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.models.CategoryModel;
 import com.example.englishapp.interfaces.CategoryClickedListener;
+import com.example.englishapp.models.CategoryModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +25,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private List<CategoryModel> categoryModelList;
     private CategoryClickedListener listener;
     private List<CategoryModel> allCategories;
-    private Context context;
     private Timer timer;
 
-    public CategoryAdapter(List<CategoryModel> categoryModelList, CategoryClickedListener listener, Context context) {
+    public CategoryAdapter(List<CategoryModel> categoryModelList, CategoryClickedListener listener) {
         this.categoryModelList = categoryModelList;
-        this.context = context;
         this.listener = listener;
         allCategories = categoryModelList;
     }
@@ -110,10 +107,15 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
 
         public void setData(int position) {
-            itemView.setOnClickListener(v -> listener.onCategoryClicked(categoryModelList.get(position)));
 
             categoryName.setText(categoryModelList.get(position).getName());
             numberOfTests.setText(String.valueOf(categoryModelList.get(position).getNumberOfTests()));
+
+            itemView.setOnClickListener(v -> {
+                Log.i(TAG, "find - " + categoryModelList.get(position));
+
+                listener.onCategoryClicked(categoryModelList.get(position));
+            });
 
         }
     }

@@ -26,6 +26,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.CategoryAdapter;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseCategories;
 import com.example.englishapp.interfaces.CategoryClickedListener;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.CategoryModel;
@@ -35,13 +36,13 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     private static final String TAG = "CategoryFragment";
     private CategoryAdapter categoryAdapter;
-    private RecyclerView recyclerCategories;
     private Dialog progressBar;
-    private TextView dialogText, textClose;
+    private TextView textClose;
     private Button btnCreateCategory;
     private ProgressBar progressCategory;
     private FloatingActionButton fab;
     private EditText inputSearch, inputNameCategory;
+    private DataBaseCategories dataBaseCategories;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,16 +50,13 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
         View view = inflater.inflate(R.layout.fragment_category, container, false);
 
-        try {
-            init(view);
+        dataBaseCategories = new DataBaseCategories();
 
-            setListeners();
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
+        init(view);
+
+        setListeners();
 
         return view;
-        
     }
 
     private void setListeners() {
@@ -82,7 +80,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
             } else {
                 progressCategory.setVisibility(View.VISIBLE);
 
-                DataBase.createCategory(nameCategory, new CompleteListener() {
+                dataBaseCategories.createCategory(nameCategory, new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "Category was created");
@@ -119,7 +117,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(DataBase.LIST_OF_CATEGORIES.size() != 0) {
+                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
                     categoryAdapter.searchCategories(key.toString());
                 }
             }
@@ -129,13 +127,16 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     private void init(View view) {
 
-        ((MainActivity) getActivity()).setTitle(R.string.nameFeed);
+        requireActivity().setTitle(R.string.nameFeed);
 
-        recyclerCategories = view.findViewById(R.id.recyclerCategories);
+        RecyclerView recyclerCategories = view.findViewById(R.id.recyclerCategories);
         fab = view.findViewById(R.id.fab);
+
+        Log.i(TAG, "LIST_OF_CATEGORIES - " + DataBaseCategories.LIST_OF_CATEGORIES);
+
         inputSearch = view.findViewById(R.id.inputSearch);
 
-        categoryAdapter = new CategoryAdapter(DataBase.LIST_OF_CATEGORIES, this, getActivity());
+        categoryAdapter = new CategoryAdapter(DataBaseCategories.LIST_OF_CATEGORIES, CategoryFragment.this);
         recyclerCategories.setAdapter(categoryAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
@@ -149,7 +150,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         textClose = progressBar.findViewById(R.id.textCancel);
         btnCreateCategory = progressBar.findViewById(R.id.btnCreateCategory);
         inputNameCategory = progressBar.findViewById(R.id.inputSearch);
@@ -170,6 +171,6 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         SplashLearningFragment fragment = new SplashLearningFragment();
         fragment.setArguments(bundle);
 
-        ((MainActivity) getActivity()).setFragment(fragment);
+        ((MainActivity) requireActivity()).setFragment(fragment);
     }
 }

@@ -36,12 +36,15 @@ public class LeaderBordFragment extends Fragment implements UserListener {
     private PlaceAdapter adapter;
     private Dialog progressBar;
     private ImageView userImg;
+    private DataBaseUsers dataBaseUsers;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_leader_bord, container, false);
+
+        dataBaseUsers = new DataBaseUsers();
 
         init(view);
 
@@ -82,7 +85,7 @@ public class LeaderBordFragment extends Fragment implements UserListener {
             @Override
             public void OnSuccess() {
 
-                DataBaseUsers.getListOfUsers(new CompleteListener() {
+                dataBaseUsers.getListOfUsers(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         adapter = new PlaceAdapter(DataBaseUsers.LIST_OF_USERS, LeaderBordFragment.this, getContext());

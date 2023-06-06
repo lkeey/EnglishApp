@@ -11,7 +11,6 @@ import static com.example.englishapp.database.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CARDS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.database.DataBase.CHOSEN_CATEGORY_ID;
-import static com.example.englishapp.database.DataBase.findCategoryById;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
@@ -137,7 +136,7 @@ public class DataBaseCards {
         LIST_OF_CARDS.clear();
 
         if (CHOSEN_CATEGORY_ID != null) {
-            CategoryModel chosenCategory = findCategoryById(CHOSEN_CATEGORY_ID);
+            CategoryModel chosenCategory = new DataBaseCategories().findCategoryById(CHOSEN_CATEGORY_ID);
 
             DATA_FIRESTORE.collection(KEY_COLLECTION_CARDS)
                 .limit(20)

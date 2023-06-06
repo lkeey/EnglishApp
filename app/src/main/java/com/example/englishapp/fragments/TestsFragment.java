@@ -25,6 +25,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.TestAdapter;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseCategories;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.TestClickedListener;
 import com.example.englishapp.models.TestModel;
@@ -39,12 +40,15 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     private EditText inputSearch;
     private Dialog progressBar;
     private TextView dialogText;
+    private DataBaseCategories dataBaseCategories;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_tests, container, false);
+
+        dataBaseCategories = new DataBaseCategories();
 
         init(view);
 
@@ -76,7 +80,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(DataBase.LIST_OF_CATEGORIES.size() != 0) {
+                if(dataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
                     testAdapter.searchTests(key.toString());
                 }
             }

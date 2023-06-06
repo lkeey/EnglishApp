@@ -13,12 +13,13 @@ import com.example.englishapp.R;
 import com.example.englishapp.adapters.LearningPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 
+import java.util.Objects;
+
 public class SplashLearningFragment extends Fragment {
 
     private static final String TAG = "SplashLearningFragment";
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
-    private LearningPagerAdapter viewAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,10 +36,10 @@ public class SplashLearningFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
 
-        viewAdapter = new LearningPagerAdapter(getActivity());
+        LearningPagerAdapter viewAdapter = new LearningPagerAdapter(requireActivity());
         viewPager.setAdapter(viewAdapter);
 
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 Log.i(TAG, "onTabSelected - " + tab.getPosition());
@@ -63,7 +64,7 @@ public class SplashLearningFragment extends Fragment {
                 super.onPageSelected(position);
 
                 Log.i(TAG, "onPageSelected - " + position);
-                tabLayout.getTabAt(position).select();
+                Objects.requireNonNull(tabLayout.getTabAt(position)).select();
             }
         });
     }
