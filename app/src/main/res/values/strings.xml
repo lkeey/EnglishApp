@@ -91,5 +91,13 @@
     <string name="male">Male</string>
     <string name="choose_language_you_know">Choose language you know</string>
     <string name="update">Update</string>
+    <string name="name_must_be_not_empty">Name must be not empty</string>
+    <string name="please_choose_time_doing">Please, choose time doing</string>
+    <string name="question_must_be_not_empty">Question must be not empty</string>
+    <string name="option_must_be_not_empty">Option must be not empty</string>
+    <string name="must_be_only_1_correct_option">Must be only 1 correct option</string>
+    <string name="there_are_must_be_1_correct_option">There are must be 1 correct option</string>
+    <string name="must_be_at_least_2_options">Must be at least 2 options</string>
+    <string name="add_at_least_one_question">Add at least one question</string>
 
 </resources>

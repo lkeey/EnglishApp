@@ -23,7 +23,7 @@
             android:backgroundTint="@color/purple_200"
             android:contentDescription="@string/add_image"
             app:riv_oval="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="32dp"
             android:elevation="3dp"
             android:scaleType="center"
             app:layout_constraintEnd_toEndOf="parent"

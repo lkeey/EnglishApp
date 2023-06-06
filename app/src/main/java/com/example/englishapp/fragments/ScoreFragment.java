@@ -17,12 +17,16 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.database.Constants;
+import com.example.englishapp.database.DataBaseBookmarks;
+import com.example.englishapp.database.DataBaseExam;
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseQuestions;
+import com.example.englishapp.database.DataBaseScores;
+import com.example.englishapp.database.DataBaseTests;
+import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.QuestionModel;
 
 import java.util.concurrent.TimeUnit;
@@ -59,32 +63,32 @@ public class ScoreFragment extends Fragment {
     private void updateBookmarksAndScore() {
 
         // bookmarks
-        Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBase.LIST_OF_BOOKMARKS.size());
+        Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
-        for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
-            QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(i);
+        for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
+            QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(i);
 
-            Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
+            Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
 
-            if (questionModel.isBookmarked() && !DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBase.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
+            if (questionModel.isBookmarked() && !DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
 
                 Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
             }
 
-            if (!questionModel.isBookmarked() && DataBase.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBase.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
+            if (!questionModel.isBookmarked() && DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
 
                 Log.i(TAG, "Removed - " + questionModel.getQuestion());
             }
         }
 
-        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARK_IDS.size());
+        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.size());
 
         Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
 
         // score
-        DataBase.saveResult(finalScore, new CompleteListener() {
+        new DataBaseExam().saveResult(finalScore, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 progressBar.dismiss();
@@ -111,11 +115,11 @@ public class ScoreFragment extends Fragment {
         int wrongQuestions = 0;
         int unAttemptedQuestions = 0;
 
-        int sizeOfQuestions = DataBase.LIST_OF_QUESTIONS.size();
+        int sizeOfQuestions = DataBaseQuestions.LIST_OF_QUESTIONS.size();
 
         for (int i=0; i < sizeOfQuestions; i++) {
 
-            QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(i);
+            QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(i);
 
             if (questionModel.getSelectedOption() == -1) {
                 unAttemptedQuestions++;
@@ -188,14 +192,14 @@ public class ScoreFragment extends Fragment {
 
     private void reAttempt() {
         try {
-            DataBase.loadMyScores(new CompleteListener() {
+            new DataBaseScores().loadMyScores(new CompleteListener() {
                 @Override
                 public void OnSuccess() {
-                    if (DataBase.CHOSEN_TEST_ID != null) {
+                    if (DataBaseTests.CHOSEN_TEST_ID != null) {
                         TestInfoDialogFragment fragment = new TestInfoDialogFragment();
 
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(KEY_CHOSEN_TEST, DataBase.findTestById(DataBase.CHOSEN_TEST_ID));
+                        bundle.putSerializable(KEY_CHOSEN_TEST, new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID));
                         fragment.setArguments(bundle);
 
                         fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);

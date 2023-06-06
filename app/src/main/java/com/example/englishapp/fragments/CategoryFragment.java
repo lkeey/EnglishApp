@@ -25,7 +25,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.CategoryAdapter;
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.DataBaseCategories;
 import com.example.englishapp.interfaces.CategoryClickedListener;
 import com.example.englishapp.interfaces.CompleteListener;
@@ -164,7 +163,7 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
     public void onCategoryClicked(CategoryModel category) {
         Log.i(TAG, "Category - " + category.getName());
 
-        DataBase.CHOSEN_CATEGORY_ID = category.getId();
+        DataBaseCategories.CHOSEN_CATEGORY_ID = category.getId();
 
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_CHOSEN_CATEGORY, category);

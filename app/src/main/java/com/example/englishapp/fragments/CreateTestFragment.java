@@ -1,5 +1,14 @@
 package com.example.englishapp.fragments;
 
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_AMOUNT_OPTIONS;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_LOT_CORRECT_OPTIONS;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_NAME;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_NO_CORRECT_OPTION;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_NO_QUESTIONS;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_OPTION;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_QUESTION;
+import static com.example.englishapp.repositories.CreateTestRepository.CODE_TIME;
+
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -20,12 +29,11 @@ import android.widget.Toast;
 import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.example.englishapp.models.OptionModel;
-import com.example.englishapp.models.QuestionModel;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.database.DataBaseTests;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.repositories.CreateTestRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +46,8 @@ public class CreateTestFragment extends Fragment {
     private EditText testName;
     private int timeDoing;
     private Dialog progressBar;
-    private TextView dialogText;
-    private final ArrayList<QuestionModel> listOfQuestions = new ArrayList<>();
-    private List<String> stringListOption = new ArrayList<>();
+    private final List<String> stringListOption = new ArrayList<>();
+    private DataBaseTests dataBaseTests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,13 +56,15 @@ public class CreateTestFragment extends Fragment {
 
         init(view);
 
+        dataBaseTests = new DataBaseTests();
+
         setListeners();
 
         return view;
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameCreateTest);
+        requireActivity().setTitle(R.string.nameCreateTest);
 
         layoutList = view.findViewById(R.id.layoutList);
         btnAdd = view.findViewById(R.id.btnAddQuestion);
@@ -69,7 +78,7 @@ public class CreateTestFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarSaving);
 
         stringListOption.add("Wrong");
@@ -88,14 +97,14 @@ public class CreateTestFragment extends Fragment {
 
                 progressBar.show();
 
-                DataBase.createTestData(listOfQuestions, testName.getText().toString(), timeDoing, new CompleteListener() {
+                dataBaseTests.createTestData(CreateTestRepository.listOfQuestions, testName.getText().toString(), timeDoing, new CompleteListener() {
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "Successfully created");
 
                         Toast.makeText(getActivity(), "Test successfully created", Toast.LENGTH_SHORT).show();
 
-                        ((MainActivity) getActivity()).setFragment(new CategoryFragment());
+                        ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
                         progressBar.dismiss();
                     }
@@ -120,110 +129,47 @@ public class CreateTestFragment extends Fragment {
 
     private boolean readData() {
 
-        boolean resultOption;
+        int status = new CreateTestRepository().readData(
+                testName.getText().toString(),
+                timeDoing,
+                layoutList
+        );
 
-        listOfQuestions.clear();
-
-        if (testName.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(), "Name must be not empty", Toast.LENGTH_SHORT).show();
-
-            return false;
-        }
-
-        if (timeDoing < 1) {
-            Toast.makeText(getActivity(), "Please, choose time doing", Toast.LENGTH_SHORT).show();
+        if (status == CODE_NAME) {
+            Toast.makeText(getActivity(), getString(R.string.name_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
             return false;
-        }
-
-        for(int i=0; i < layoutList.getChildCount(); i++) {
-            resultOption = false;
-
-            View viewChild = layoutList.getChildAt(i);
-
-            EditText editText = viewChild.findViewById(R.id.editText);
-            LinearLayout listOption = viewChild.findViewById(R.id.layoutListOptions);
-
-            QuestionModel questionModel = new QuestionModel();
-
-            if (!editText.getText().toString().isEmpty()) {
-                questionModel.setQuestion(editText.getText().toString());
-            } else {
-                Toast.makeText(getActivity(), "Question must be not empty", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            ArrayList<OptionModel> listOfOptions = new ArrayList<>();
-
-            for(int n=0; n < listOption.getChildCount(); n++) {
-
-                View viewOption = listOption.getChildAt(n);
-
-                EditText editTextOption = viewOption.findViewById(R.id.editTextOption);
-                AppCompatSpinner spinnerOption = viewOption.findViewById(R.id.spinnerOptions);
-
-                OptionModel optionModel = new OptionModel();
-
-                if (!editTextOption.getText().toString().isEmpty()) {
-                    optionModel.setOption(editTextOption.getText().toString());
-                } else {
-                    Toast.makeText(getActivity(), "Option must be not empty", Toast.LENGTH_SHORT).show();
-
-                    return false;
-                }
-
-                if (spinnerOption.getSelectedItemPosition() == 1) {
-
-                    if (resultOption) {
-                        // if there are more than one correct answer
-                        Toast.makeText(getActivity(), "Must be only 1 correct option", Toast.LENGTH_SHORT).show();
-
-                        return false;
-                    }
-
-                    resultOption = true;
-
-                    optionModel.setCorrect(true);
-
-                } else {
-                    optionModel.setCorrect(false);
-                }
-
-
-                Log.i(TAG, "Option - " + optionModel.getOption() + " - " + optionModel.isCorrect());
-
-                listOfOptions.add(optionModel);
-            }
-
-            if (!resultOption) {
-                Toast.makeText(getActivity(), "There are must be 1 correct option", Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-
-            if (listOfOptions.size() < 2) {
-                Toast.makeText(getActivity(), "Must be at least 2 options", Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-
-            questionModel.setOptionsList(listOfOptions);
-
-
-            listOfQuestions.add(questionModel);
-        }
-
-        if(listOfQuestions.size() == 0) {
-
-            Toast.makeText(getActivity(), "Add at least one question", Toast.LENGTH_SHORT).show();
+        } else if (status == CODE_TIME) {
+            Toast.makeText(getActivity(), getString(R.string.please_choose_time_doing), Toast.LENGTH_SHORT).show();
 
             return false;
+        } else if (status == CODE_QUESTION) {
+            Toast.makeText(getActivity(), getString(R.string.question_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
+            return false;
+        } else if (status == CODE_OPTION) {
+            Toast.makeText(getActivity(), getString(R.string.option_must_be_not_empty), Toast.LENGTH_SHORT).show();
+
+            return false;
+        } else if (status == CODE_NO_CORRECT_OPTION) {
+            Toast.makeText(getActivity(), getString(R.string.must_be_only_1_correct_option), Toast.LENGTH_SHORT).show();
+
+            return false;
+        } else if (status == CODE_LOT_CORRECT_OPTIONS) {
+            Toast.makeText(getActivity(), getString(R.string.there_are_must_be_1_correct_option), Toast.LENGTH_SHORT).show();
+
+            return false;
+        } else if (status == CODE_AMOUNT_OPTIONS) {
+            Toast.makeText(getActivity(), getString(R.string.must_be_at_least_2_options), Toast.LENGTH_SHORT).show();
+
+            return false;
+        } else if (status == CODE_NO_QUESTIONS) {
+            Toast.makeText(getActivity(), getString(R.string.add_at_least_one_question), Toast.LENGTH_SHORT).show();
+
+            return false;
+        } else {
+            return true;
         }
-
-        Toast.makeText(getActivity(), "Data Is Valid", Toast.LENGTH_SHORT).show();
-
-        return true;
     }
 
     private void addView() {

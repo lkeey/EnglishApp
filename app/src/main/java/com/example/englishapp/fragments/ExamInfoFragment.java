@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
-import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.activities.ExamActivity;
 import com.example.englishapp.adapters.InfoQuestionsAdapter;
+import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.interfaces.QuestionListener;
+import com.example.englishapp.models.QuestionModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class ExamInfoFragment extends BottomSheetDialogFragment implements QuestionListener {
@@ -34,7 +34,7 @@ public class ExamInfoFragment extends BottomSheetDialogFragment implements Quest
 
         gridQuestions = view.findViewById(R.id.gridQuestions);
 
-        infoQuestionsAdapter = new InfoQuestionsAdapter(DataBase.LIST_OF_QUESTIONS, ExamInfoFragment.this);
+        infoQuestionsAdapter = new InfoQuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamInfoFragment.this);
         gridQuestions.setAdapter(infoQuestionsAdapter);
 
     }

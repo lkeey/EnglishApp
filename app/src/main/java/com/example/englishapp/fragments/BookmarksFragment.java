@@ -21,13 +21,13 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.adapters.QuestionsAdapter;
+import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.R;
 import com.example.englishapp.models.QuestionModel;
-import com.example.englishapp.adapters.QuestionsAdapter;
 
 import java.util.Iterator;
 
@@ -66,7 +66,7 @@ public class BookmarksFragment extends Fragment {
         });
 
         nextQuestion.setOnClickListener(v -> {
-            if (numberOfQuestion < DataBase.LIST_OF_BOOKMARKS.size()) {
+            if (numberOfQuestion < DataBaseBookmarks.LIST_OF_BOOKMARKS.size()) {
                 bookmarkRecyclerView.smoothScrollToPosition(numberOfQuestion + 1);
             }
         });
@@ -79,7 +79,7 @@ public class BookmarksFragment extends Fragment {
 
     private void saveBookmarks() {
 
-        Iterator<QuestionModel> questionModelIterator = DataBase.LIST_OF_BOOKMARKS.iterator();
+        Iterator<QuestionModel> questionModelIterator = DataBaseBookmarks.LIST_OF_BOOKMARKS.iterator();
 
         while(questionModelIterator.hasNext()) {
 
@@ -91,11 +91,11 @@ public class BookmarksFragment extends Fragment {
             }
         }
 
-        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBase.LIST_OF_BOOKMARKS.size());
+        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
         progressBar.show();
 
-        DataBase.saveBookmarks(new CompleteListener() {
+        new DataBaseBookmarks().saveBookmarks(new CompleteListener() {
             @Override
             public void OnSuccess() {
 
@@ -151,16 +151,16 @@ public class BookmarksFragment extends Fragment {
         layoutManager.setOrientation(RecyclerView.HORIZONTAL);
         bookmarkRecyclerView.setLayoutManager(layoutManager);
 
-        Log.i(TAG, "amount bookmarks - " + DataBase.LIST_OF_BOOKMARKS.size());
+        Log.i(TAG, "amount bookmarks - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
-        QuestionsAdapter adapter = new QuestionsAdapter(DataBase.LIST_OF_BOOKMARKS, getActivity(), true);
+        QuestionsAdapter adapter = new QuestionsAdapter(DataBaseBookmarks.LIST_OF_BOOKMARKS, getActivity(), true);
         bookmarkRecyclerView.setAdapter(adapter);
 
         progressBar.dismiss();
 
         numberOfQuestion = 0;
 
-        questionNumber.setText("1 / " + DataBase.LIST_OF_BOOKMARKS.size());
+        questionNumber.setText("1 / " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
 
     }
@@ -177,7 +177,7 @@ public class BookmarksFragment extends Fragment {
                 View view = snapHelper.findSnapView(recyclerView.getLayoutManager());
                 numberOfQuestion = recyclerView.getLayoutManager().getPosition(view);
 
-                QuestionModel questionModel = DataBase.LIST_OF_BOOKMARKS.get(numberOfQuestion);
+                QuestionModel questionModel = DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion);
 
                 // if question was bookmarked
                 if (questionModel.isBookmarked()) {
@@ -186,7 +186,7 @@ public class BookmarksFragment extends Fragment {
                     imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
 
-                questionNumber.setText((numberOfQuestion + 1) + "/" + DataBase.LIST_OF_BOOKMARKS.size());
+                questionNumber.setText((numberOfQuestion + 1) + "/" + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
             }
 
             @Override
@@ -198,13 +198,13 @@ public class BookmarksFragment extends Fragment {
 
     private void addToBookmark() {
 
-        QuestionModel questionModel = DataBase.LIST_OF_BOOKMARKS.get(numberOfQuestion);
+        QuestionModel questionModel = DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion);
 
         if (questionModel.isBookmarked()) {
 
             Log.i(TAG, "Already bookmark");
 
-            DataBase.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(false);
+            DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(false);
 
             imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
 
@@ -212,7 +212,7 @@ public class BookmarksFragment extends Fragment {
 
             Log.i(TAG, "New bookmark");
 
-            DataBase.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(true);
+            DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(true);
 
             imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
         }

@@ -15,8 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
+import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.models.OptionModel;
 
 import java.util.List;
@@ -79,7 +79,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 itemView.setOnClickListener(v -> setOption(optionName, position));
 
-                DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
 
             } else if (isShowing && optionModel.isCorrect()) {
 
@@ -92,11 +92,11 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
         private void setOption(TextView tv, int optionNum) {
 
-            int selectedOption = DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption();
+            int selectedOption = DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption();
 
             if (selectedOption != optionNum) {
 
-                Log.i(TAG, "selected - " + optionNum + " - " + DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
+                Log.i(TAG, "selected - " + optionNum + " - " + DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
 
                 // select new text view
                 tv.setBackgroundResource(R.drawable.selected_btn);
@@ -104,7 +104,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 if (selectedOption != -1) {
                     // unselect old text view
-                    TextView beforeChoice = DataBase.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(selectedOption).getTv();
+                    TextView beforeChoice = DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(selectedOption).getTv();
 
                     beforeChoice.setBackgroundResource(R.drawable.round_view_with_stroke);
                     beforeChoice.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
@@ -112,26 +112,26 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 changeStatus(ANSWERED);
 
-                DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(optionNum);
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(optionNum);
 
             } else {
 
-                Log.i(TAG, "unselected - " + optionNum + " - " + DataBase.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
+                Log.i(TAG, "unselected - " + optionNum + " - " + DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
 
                 tv.setBackgroundResource(R.drawable.round_view_with_stroke);
                 tv.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
 
                 changeStatus(UNANSWERED);
 
-                DataBase.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(-1);
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).setSelectedOption(-1);
 
             }
         }
 
         private void changeStatus(int status) {
 
-            if(DataBase.LIST_OF_QUESTIONS.get(questionId).getStatus() != REVIEW) {
-                DataBase.LIST_OF_QUESTIONS.get(questionId).setStatus(status);
+            if(DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getStatus() != REVIEW) {
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).setStatus(status);
             }
 
         }

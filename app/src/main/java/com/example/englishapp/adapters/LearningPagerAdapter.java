@@ -16,6 +16,7 @@ public class LearningPagerAdapter extends FragmentStateAdapter {
 
     public LearningPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
+
     }
 
     @NonNull
@@ -28,7 +29,7 @@ public class LearningPagerAdapter extends FragmentStateAdapter {
                 return new WordsFragment();
 
             default:
-                Log.i(TAG, "WordsFragment");
+                Log.i(TAG, "TestsFragment");
 
                 return new TestsFragment();
         }

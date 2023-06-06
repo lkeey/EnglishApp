@@ -8,7 +8,7 @@ import static com.example.englishapp.database.Constants.KEY_WORD_ID;
 import static com.example.englishapp.database.Constants.KEY_WORD_IMG;
 import static com.example.englishapp.database.Constants.KEY_WORD_LEVEL;
 import static com.example.englishapp.database.Constants.KEY_WORD_TEXT_EN;
-import static com.example.englishapp.database.DataBase.CHOSEN_CATEGORY_ID;
+import static com.example.englishapp.database.DataBaseCategories.CHOSEN_CATEGORY_ID;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 
 import android.util.ArrayMap;

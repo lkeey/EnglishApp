@@ -24,8 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.TestAdapter;
-import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBaseCategories;
+import com.example.englishapp.database.DataBaseQuestions;
+import com.example.englishapp.database.DataBaseScores;
+import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.TestClickedListener;
 import com.example.englishapp.models.TestModel;
@@ -39,8 +42,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     private FloatingActionButton fab;
     private EditText inputSearch;
     private Dialog progressBar;
-    private TextView dialogText;
-    private DataBaseCategories dataBaseCategories;
+    private DataBaseTests dataBaseTests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,7 +50,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
         View view = inflater.inflate(R.layout.fragment_tests, container, false);
 
-        dataBaseCategories = new DataBaseCategories();
+        dataBaseTests = new DataBaseTests();
 
         init(view);
 
@@ -64,7 +66,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
             CreateTestFragment fragment = new CreateTestFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) getActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment);
         });
 
         inputSearch.addTextChangedListener(new TextWatcher() {
@@ -80,7 +82,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(dataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
+                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
                     testAdapter.searchTests(key.toString());
                 }
             }
@@ -88,7 +90,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     }
 
     private void init(View view) {
-        ((MainActivity) getActivity()).setTitle(R.string.nameTests);
+        requireActivity().setTitle(R.string.nameTests);
 
         testRecycler = view.findViewById(R.id.testRecyclerView);
         fab = view.findViewById(R.id.fab);
@@ -99,7 +101,7 @@ public class TestsFragment extends Fragment implements TestClickedListener {
         progressBar.setCancelable(false);
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
 
         dialogText.setText(R.string.progressBarOpening);
 
@@ -109,13 +111,13 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
         progressBar.show();
 
-        DataBase.loadTestsData(new CompleteListener() {
+        dataBaseTests.loadTestsData(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                DataBase.loadMyScores(new CompleteListener() {
+                new DataBaseScores().loadMyScores(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        testAdapter = new TestAdapter(DataBase.LIST_OF_TESTS, TestsFragment.this, getContext());
+                        testAdapter = new TestAdapter(DataBaseTests.LIST_OF_TESTS, TestsFragment.this, getContext());
                         testRecycler.setAdapter(testAdapter);
 
                         Log.i(TAG, "Successfully loaded");
@@ -142,17 +144,17 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
         progressBar.show();
 
-        DataBase.CHOSEN_TEST_ID = test.getId();
+        DataBaseTests.CHOSEN_TEST_ID = test.getId();
 
         TestInfoDialogFragment fragment = new TestInfoDialogFragment();
 
         Bundle bundle = new Bundle();
         bundle.putSerializable(KEY_CHOSEN_TEST, test);
         fragment.setArguments(bundle);
-        DataBase.loadBookmarkIds(new CompleteListener() {
+        new DataBaseBookmarks().loadBookmarkIds(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                DataBase.loadQuestions(new CompleteListener() {
+                new DataBaseQuestions().loadQuestions(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
 

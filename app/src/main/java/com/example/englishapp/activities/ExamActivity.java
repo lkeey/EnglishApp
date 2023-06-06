@@ -28,9 +28,10 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
-import com.example.englishapp.database.DataBase;
 import com.example.englishapp.R;
 import com.example.englishapp.adapters.QuestionsAdapter;
+import com.example.englishapp.database.DataBaseQuestions;
+import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.fragments.ExamInfoFragment;
 import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.models.TestModel;
@@ -112,34 +113,34 @@ public class ExamActivity extends BaseActivity {
 
     private void addToBookmark() {
 
-        QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion);
+        QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion);
 
         if (questionModel.isBookmarked()) {
 
             Log.i(TAG, "Already bookmark");
 
-            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(false);
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(false);
 
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
 
             if (questionModel.getSelectedOption() != -1) {
                 Log.i(TAG, "New status - ANSWERED");
 
-                DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(ANSWERED);
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(ANSWERED);
 
             } else {
                 Log.i(TAG, "New status - UNANSWERED");
 
-                DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
+                DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
             }
 
         } else {
 
             Log.i(TAG, "New bookmark");
 
-            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(true);
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(true);
 
-            DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(REVIEW);
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(REVIEW);
 
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
         }
@@ -157,11 +158,11 @@ public class ExamActivity extends BaseActivity {
                 View view = snapHelper.findSnapView(recyclerView.getLayoutManager());
                 numberOfQuestion = recyclerView.getLayoutManager().getPosition(view);
 
-                QuestionModel questionModel = DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion);
+                QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion);
 
                 // if user did not answer
                 if (questionModel.getStatus() == NOT_VISITED) {
-                    DataBase.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
+                    DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
                 }
 
                 // if question was bookmarked
@@ -212,13 +213,13 @@ public class ExamActivity extends BaseActivity {
 
         numberOfQuestion = 0;
 
-        testModel = DataBase.findTestById(DataBase.CHOSEN_TEST_ID);
+        testModel = new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID);
 
-        questionNumber.setText("1 / " + DataBase.LIST_OF_QUESTIONS.size());
+        questionNumber.setText("1 / " + DataBaseQuestions.LIST_OF_QUESTIONS.size());
         testName.setText(testModel.getName());
         amountTime.setText(testModel.getTime() + " minutes");
 
-        questionsAdapter = new QuestionsAdapter(DataBase.LIST_OF_QUESTIONS, ExamActivity.this, false);
+        questionsAdapter = new QuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamActivity.this, false);
         recyclerQuestions.setAdapter(questionsAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(ExamActivity.this);
@@ -226,7 +227,7 @@ public class ExamActivity extends BaseActivity {
         recyclerQuestions.setLayoutManager(manager);
 
         // if question was bookmarked
-        if (DataBase.LIST_OF_QUESTIONS.get(0).isBookmarked()) {
+        if (DataBaseQuestions.LIST_OF_QUESTIONS.get(0).isBookmarked()) {
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
         } else {
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);

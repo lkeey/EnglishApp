@@ -10,7 +10,7 @@ import static com.example.englishapp.database.Constants.KEY_CARD_NAME;
 import static com.example.englishapp.database.Constants.KEY_CATEGORY_ID;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_CARDS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_STATISTICS;
-import static com.example.englishapp.database.DataBase.CHOSEN_CATEGORY_ID;
+import static com.example.englishapp.database.DataBaseCategories.CHOSEN_CATEGORY_ID;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 

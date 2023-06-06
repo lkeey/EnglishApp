@@ -45,6 +45,16 @@ public class SplashLearningFragment extends Fragment {
                 Log.i(TAG, "onTabSelected - " + tab.getPosition());
 
                 viewPager.setCurrentItem(tab.getPosition());
+
+                switch (tab.getPosition()) {
+                    case 1:
+                        requireActivity().setTitle(R.string.nameCardWords);
+                        break;
+
+                    default:
+                        requireActivity().setTitle(R.string.nameTests);
+                        break;
+                }
             }
 
             @Override

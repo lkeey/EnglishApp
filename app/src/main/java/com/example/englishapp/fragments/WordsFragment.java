@@ -55,6 +55,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
     }
 
     private void init(View view) {
+
         requireActivity().setTitle(R.string.nameCardWords);
 
         cardRecycler = view.findViewById(R.id.cardsRecyclerView);

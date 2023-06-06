@@ -20,13 +20,14 @@ import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.activities.MainAuthenticationActivity;
-import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.RoomDataBase;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
@@ -37,6 +38,10 @@ public class ProfileFragment extends Fragment {
     private Toolbar toolbar;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
     private DataBaseLearningWords dataBaseLearningWords;
+    private float avatarAnimateStartPointY = 0F;
+    private float avatarCollapseAnimationChangeWeight = 0F;
+    private boolean isCalculated = false;
+    private float verticalToolbarAvatarMargin = 0F;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,26 +54,51 @@ public class ProfileFragment extends Fragment {
 
         init(view);
 
+//        setImg(view);
+
         setListeners();
 
         return view;
+    }
+
+    private void setImg(View view) {
+
+
+        AppBarLayout appBarLayout = view.findViewById(R.id.abl_main);
+
+        if (!isCalculated) {
+            avatarAnimateStartPointY = Math.abs((appBarLayout.getHeight() - (135 + 24)) / appBarLayout.getTotalScrollRange());
+
+            avatarCollapseAnimationChangeWeight = 1 / (1 - avatarAnimateStartPointY);
+
+            verticalToolbarAvatarMargin = (toolbar.getHeight() - 45) * 2;
+            isCalculated = true;
+        }
+
+        appBarLayout.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
+
+            float offset = Math.abs(verticalOffset / appBarLayout1.getTotalScrollRange());
+
+            updateViews(view, offset);
+        });
+
     }
 
     private void setListeners() {
 
         layoutBookmark.setOnClickListener(v -> {
             if (USER_MODEL.getBookmarksCount() > 0) {
-                DataBase.loadBookmarkIds(new CompleteListener() {
+                new DataBaseBookmarks().loadBookmarkIds(new CompleteListener() {
                     @Override
                     public void OnSuccess() {
 
-                        Log.i(TAG, "loaded bookmark ids - " + DataBase.LIST_OF_BOOKMARK_IDS.size());
+                        Log.i(TAG, "loaded bookmark ids - " + DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.size());
 
-                        DataBase.loadBookmarks(new CompleteListener() {
+                        new DataBaseBookmarks().loadBookmarks(new CompleteListener() {
                             @Override
                             public void OnSuccess() {
 
-                                Log.i(TAG, "bookmarks loaded - " + DataBase.LIST_OF_BOOKMARKS.size());
+                                Log.i(TAG, "bookmarks loaded - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
                                 ((MainActivity) requireActivity()).setFragment(new BookmarksFragment());
 
@@ -195,5 +225,36 @@ public class ProfileFragment extends Fragment {
         });
 
     }
+
+    private void updateViews(View view, float offset) {
+
+        /* Collapse avatar img*/
+        ImageView ivUserAvatar = view.findViewById(R.id.userImage);
+
+//        if (offset > avatarAnimateStartPointY) {
+//            float avatarCollapseAnimateOffset = (offset - avatarAnimateStartPointY) * avatarCollapseAnimationChangeWeight;
+//            float avatarSize = EXPAND_AVATAR_SIZE - (EXPAND_AVATAR_SIZE - COLLAPSE_IMAGE_SIZE) * avatarCollapseAnimateOffset;
+//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
+//            layoutParams.height = Math.round(avatarSize);
+//            layoutParams.width = Math.round(avatarSize);
+//
+//            TextView invisibleTextViewWorkAround = findViewById(R.id.iv_user_name);
+//            invisibleTextViewWorkAround.setTextSize(TypedValue.COMPLEX_UNIT_PX, offset);
+//
+//            float translationX = ((appBarLayout.getWidth() - horizontalToolbarAvatarMargin - avatarSize) / 2) * avatarCollapseAnimateOffset;
+//            float translationY = ((toolbar.getHeight()  - verticalToolbarAvatarMargin - avatarSize ) / 2) * avatarCollapseAnimateOffset;
+//            ivUserAvatar.setTranslationX(translationX);
+//            ivUserAvatar.setTranslationY(translationY);
+//        } else {
+//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
+//            if (layoutParams.height != EXPAND_AVATAR_SIZE) {
+//                layoutParams.height = EXPAND_AVATAR_SIZE;
+//                layoutParams.width = EXPAND_AVATAR_SIZE;
+//                ivUserAvatar.setLayoutParams(layoutParams);
+//            }
+//            ivUserAvatar.setTranslationX(0f);
+//        }
+    }
+
 
 }

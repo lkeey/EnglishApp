@@ -29,7 +29,7 @@ public class DataBaseCategories {
 
     private static final String TAG = "CategoriesDao";
     public static List<CategoryModel> LIST_OF_CATEGORIES = new ArrayList<>();
-
+    public static String CHOSEN_CATEGORY_ID = null;
     public void createCategory(String name, CompleteListener listener) {
         Map<String, Object> categoryData = new ArrayMap<>();
 

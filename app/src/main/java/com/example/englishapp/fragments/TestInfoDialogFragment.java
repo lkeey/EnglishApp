@@ -11,12 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.R;
-import com.example.englishapp.database.Constants;
-import com.example.englishapp.models.TestModel;
 import com.example.englishapp.activities.ExamActivity;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.database.Constants;
+import com.example.englishapp.database.DataBaseQuestions;
+import com.example.englishapp.models.TestModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class TestInfoDialogFragment extends BottomSheetDialogFragment {
@@ -64,7 +64,7 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
 
         btnDoTest.setOnClickListener(v -> {
 
-            if (DataBase.LIST_OF_QUESTIONS.size() >= 0) {
+            if (DataBaseQuestions.LIST_OF_QUESTIONS.size() >= 0) {
                 Intent intent = new Intent(((MainActivity) getActivity()), ExamActivity.class);
                 startActivity(intent);
 
@@ -77,9 +77,9 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
         });
 
         // set all answers with basic data
-        for (int i=0; i < DataBase.LIST_OF_QUESTIONS.size(); i++) {
-            DataBase.LIST_OF_QUESTIONS.get(i).setSelectedOption(-1);
-            DataBase.LIST_OF_QUESTIONS.get(i).setStatus(Constants.NOT_VISITED);
+        for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(i).setSelectedOption(-1);
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(i).setStatus(Constants.NOT_VISITED);
         }
 
     }
