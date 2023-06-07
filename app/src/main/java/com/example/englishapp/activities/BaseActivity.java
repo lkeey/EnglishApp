@@ -1,5 +1,6 @@
 package com.example.englishapp.activities;
 
+import static com.example.englishapp.database.Constants.KEY_INSTABUG;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
@@ -25,7 +26,7 @@ public class BaseActivity extends AppCompatActivity {
                 .document(USER_MODEL.getUid());
 
         // instabug
-        new Instabug.Builder(getApplication(), "90431510fb778d8222a6eab9d08c4e3c")
+        new Instabug.Builder(getApplication(), KEY_INSTABUG)
                 .setInvocationEvents(InstabugInvocationEvent.SHAKE, InstabugInvocationEvent.SCREENSHOT, InstabugInvocationEvent.TWO_FINGER_SWIPE_LEFT)
                 .build();
     }

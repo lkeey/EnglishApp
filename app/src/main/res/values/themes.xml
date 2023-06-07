@@ -73,4 +73,12 @@
         <item name="android:navigationBarColor">#310275</item>
     </style>
 
+    <style name="Theme.Exam.FullScreen" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/design_default_color_primary</item>
+
+        <!--bottom navigation-->
+        <item name="android:navigationBarColor">@color/design_default_color_primary</item>
+    </style>
+
 </resources>

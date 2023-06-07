@@ -25,26 +25,29 @@ import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.QuestionsAdapter;
 import com.example.englishapp.database.DataBaseBookmarks;
-import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.QuestionModel;
+import com.example.englishapp.repositories.BookmarkRepository;
 
-import java.util.Iterator;
+import java.util.Objects;
 
 public class BookmarksFragment extends Fragment {
 
     private static final String TAG = "FragmentBookmark";
     private RecyclerView bookmarkRecyclerView;
     private Dialog progressBar;
-    private TextView dialogText, questionNumber;
+    private TextView questionNumber;
     private Button btnSave;
     private ImageView imgBookmark, imgBack, previousQuestion, nextQuestion;
     private int numberOfQuestion;
+    private BookmarkRepository bookmarkRepository;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_bookmarks, container, false);
+
+        bookmarkRepository = new BookmarkRepository();
 
         init(view);
 
@@ -57,7 +60,7 @@ public class BookmarksFragment extends Fragment {
 
     private void setListeners() {
 
-        imgBack.setOnClickListener(v -> getActivity().onBackPressed());
+        imgBack.setOnClickListener(v -> requireActivity().onBackPressed());
 
         previousQuestion.setOnClickListener(v -> {
             if (numberOfQuestion > 0) {
@@ -79,33 +82,18 @@ public class BookmarksFragment extends Fragment {
 
     private void saveBookmarks() {
 
-        Iterator<QuestionModel> questionModelIterator = DataBaseBookmarks.LIST_OF_BOOKMARKS.iterator();
-
-        while(questionModelIterator.hasNext()) {
-
-            QuestionModel nextQuestion = questionModelIterator.next();
-            if (!nextQuestion.isBookmarked()) {
-                questionModelIterator.remove();
-
-                Log.i(TAG, "removed - " + nextQuestion.getQuestion());
-            }
-        }
-
-        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
-
         progressBar.show();
 
-        new DataBaseBookmarks().saveBookmarks(new CompleteListener() {
+        bookmarkRepository.saveBookmarks(new CompleteListener() {
             @Override
             public void OnSuccess() {
-
                 progressBar.dismiss();
 
                 Log.i(TAG, "successfully saved");
 
                 Toast.makeText(getActivity(), "Bookmarks successfully saved", Toast.LENGTH_SHORT).show();
 
-                ((MainActivity) getActivity()).setFragment(new ProfileFragment());
+                ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
             }
 
             @Override
@@ -114,9 +102,9 @@ public class BookmarksFragment extends Fragment {
 
                 Log.i(TAG, "error occurred");
 
-                Toast.makeText(getActivity(), "Can not save bookmarks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), "Can not save bookmarks", Toast.LENGTH_SHORT).show();
 
-                ((MainActivity) getActivity()).setFragment(new ProfileFragment());
+                ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
             }
         });
 
@@ -124,7 +112,7 @@ public class BookmarksFragment extends Fragment {
 
     private void init(View view) {
 
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
 
         bookmarkRecyclerView = view.findViewById(R.id.bookmarksRecyclerView);
         questionNumber = view.findViewById(R.id.questionNumber);
@@ -134,7 +122,7 @@ public class BookmarksFragment extends Fragment {
         imgBack = view.findViewById(R.id.imgBack);
         btnSave = view.findViewById(R.id.btnSave);
 
-        imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+        imgBookmark.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
 
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
@@ -142,8 +130,8 @@ public class BookmarksFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
-        dialogText.setText("Loading");
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
+        dialogText.setText(R.string.progressBarSaving);
 
         progressBar.show();
 
@@ -175,18 +163,20 @@ public class BookmarksFragment extends Fragment {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 View view = snapHelper.findSnapView(recyclerView.getLayoutManager());
-                numberOfQuestion = recyclerView.getLayoutManager().getPosition(view);
+                if (view != null) {
+                    numberOfQuestion = Objects.requireNonNull(recyclerView.getLayoutManager()).getPosition(view);
+                }
 
                 QuestionModel questionModel = DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion);
 
                 // if question was bookmarked
                 if (questionModel.isBookmarked()) {
-                    imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+                    imgBookmark.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
                 } else {
-                    imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
+                    imgBookmark.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
 
-                questionNumber.setText((numberOfQuestion + 1) + "/" + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
+                questionNumber.setText((numberOfQuestion + 1) + " / " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
             }
 
             @Override
@@ -198,23 +188,12 @@ public class BookmarksFragment extends Fragment {
 
     private void addToBookmark() {
 
-        QuestionModel questionModel = DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion);
+        int status = bookmarkRepository.addToBookmark(numberOfQuestion);
 
-        if (questionModel.isBookmarked()) {
-
-            Log.i(TAG, "Already bookmark");
-
-            DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(false);
-
-            imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-
+        if (status == BookmarkRepository.CODE_BOOKMARKED) {
+            imgBookmark.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
         } else {
-
-            Log.i(TAG, "New bookmark");
-
-            DataBaseBookmarks.LIST_OF_BOOKMARKS.get(numberOfQuestion).setBookmarked(true);
-
-            imgBookmark.setColorFilter(ContextCompat.getColor(getActivity(), R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
+            imgBookmark.setColorFilter(ContextCompat.getColor(requireActivity(), R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
         }
     }
 }

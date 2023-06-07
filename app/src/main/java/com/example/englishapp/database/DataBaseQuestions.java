@@ -7,9 +7,9 @@ import static com.example.englishapp.database.Constants.KEY_OPTION;
 import static com.example.englishapp.database.Constants.KEY_QUESTION_ID;
 import static com.example.englishapp.database.Constants.KEY_TEST_ID;
 import static com.example.englishapp.database.Constants.KEY_TEST_QUESTION;
-import static com.example.englishapp.database.Constants.NOT_VISITED;
 import static com.example.englishapp.database.DataBaseBookmarks.LIST_OF_BOOKMARK_IDS;
 import static com.example.englishapp.database.DataBaseCategories.CHOSEN_CATEGORY_ID;
+import static com.example.englishapp.database.DataBaseExam.NOT_VISITED;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBaseTests.CHOSEN_TEST_ID;
 

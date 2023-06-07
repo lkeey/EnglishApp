@@ -16,9 +16,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class ExamInfoFragment extends BottomSheetDialogFragment implements QuestionListener {
 
-    private GridView gridQuestions;
-    private InfoQuestionsAdapter infoQuestionsAdapter;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,17 +29,11 @@ public class ExamInfoFragment extends BottomSheetDialogFragment implements Quest
 
     private void init(View view) {
 
-        gridQuestions = view.findViewById(R.id.gridQuestions);
+        GridView gridQuestions = view.findViewById(R.id.gridQuestions);
 
-        infoQuestionsAdapter = new InfoQuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamInfoFragment.this);
+        InfoQuestionsAdapter infoQuestionsAdapter = new InfoQuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamInfoFragment.this);
         gridQuestions.setAdapter(infoQuestionsAdapter);
 
-    }
-
-    public int getTheme() {
-        // to set border radius
-
-        return R.style.AppBottomSheetDialogTheme;
     }
 
     @Override
@@ -50,5 +41,11 @@ public class ExamInfoFragment extends BottomSheetDialogFragment implements Quest
         ExamActivity.goToQuestion(position);
 
         ExamInfoFragment.this.dismiss();
+    }
+
+    public int getTheme() {
+        // to set border radius
+
+        return R.style.AppBottomSheetDialogTheme;
     }
 }

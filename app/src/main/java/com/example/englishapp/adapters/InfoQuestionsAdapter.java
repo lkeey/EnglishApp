@@ -1,8 +1,8 @@
 package com.example.englishapp.adapters;
 
-import static com.example.englishapp.database.Constants.ANSWERED;
-import static com.example.englishapp.database.Constants.REVIEW;
-import static com.example.englishapp.database.Constants.UNANSWERED;
+import static com.example.englishapp.database.DataBaseExam.ANSWERED;
+import static com.example.englishapp.database.DataBaseExam.REVIEW;
+import static com.example.englishapp.database.DataBaseExam.UNANSWERED;
 
 import android.content.res.ColorStateList;
 import android.util.Log;
@@ -15,8 +15,8 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 
 import com.example.englishapp.R;
-import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.interfaces.QuestionListener;
+import com.example.englishapp.models.QuestionModel;
 
 import java.util.List;
 

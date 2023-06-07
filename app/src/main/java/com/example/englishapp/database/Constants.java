@@ -83,8 +83,6 @@ public class Constants {
     public static final String WORD_COUNTER = "WORD_COUNTER";
     public static final String MY_SHARED_PREFERENCES = "MY_SHARED_PREFERENCES";
     public static final String KEY_WORD_CARD_ID = "CARD_ID";
-    public static final int NOT_VISITED = 0;
-    public static final int UNANSWERED = 1;
-    public static final int ANSWERED = 2;
-    public static final int REVIEW = 3;
+    public static String KEY_INSTABUG = "90431510fb778d8222a6eab9d08c4e3c";
+    public static String KEY_UPDATE_ADAPTER = "UPDATE_ADAPTER";
 }

@@ -41,6 +41,7 @@
     <string name="progressBarOpening">Opening...</string>
     <string name="progressBarSaving">Saving...</string>
     <string name="progressBarUpdating">Updating...</string>
+    <string name="progressBarLoading">Loading...</string>
 
     <string name="failExist">User does not exist</string>
 
@@ -99,5 +100,25 @@
     <string name="there_are_must_be_1_correct_option">There are must be 1 correct option</string>
     <string name="must_be_at_least_2_options">Must be at least 2 options</string>
     <string name="add_at_least_one_question">Add at least one question</string>
+    <string name="minutes">" minutes"</string>
+    <string name="location">Location</string>
+    <string name="please_enable_geolocation">Please, Enable Geolocation</string>
+    <string name="cancel">Cancel</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="answered">Answered</string>
+    <string name="not_visited">Not Visited</string>
+    <string name="unanswered">Unanswered</string>
+    <string name="review">Review</string>
+    <string name="your_score_is">Your Score Is</string>
+    <string name="time_taken">Time Taken</string>
+    <string name="_5_minutes">5 minutes</string>
+    <string name="total_questions">Total Questions</string>
+    <string name="correct">Correct</string>
+    <string name="wrong">Wrong</string>
+    <string name="un_attempted">Un-Attempted</string>
+    <string name="number">number</string>
+    <string name="check_your_place_in_leaderboard">Check Your Place In LeaderBoard</string>
+    <string name="re_attempt">Re-Attempt</string>
+    <string name="view_answers">View Answers</string>
 
 </resources>

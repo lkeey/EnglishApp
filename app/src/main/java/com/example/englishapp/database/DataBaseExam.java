@@ -20,10 +20,15 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class DataBaseExam {
 
     private static final String TAG = "ExamDao";
+    public static final int NOT_VISITED = 0;
+    public static final int UNANSWERED = 1;
+    public static final int ANSWERED = 2;
+    public static final int REVIEW = 3;
 
     public void saveResult(int finalScore, CompleteListener listener) {
         WriteBatch batch = DATA_FIRESTORE.batch();
@@ -51,7 +56,7 @@ public class DataBaseExam {
 
                 if (finalScore > testModel.getTopScore()) {
 
-                    int userExperience = documentSnapshot.getLong(KEY_SCORE).intValue();
+                    int userExperience = Objects.requireNonNull(documentSnapshot.getLong(KEY_SCORE)).intValue();
                     int allScore = userExperience + finalScore - testModel.getTopScore();
 
                     Log.i(TAG, "user - " + userExperience + " - all score - " + allScore + " - top - " + testModel.getTopScore());
@@ -74,14 +79,10 @@ public class DataBaseExam {
                 batch.update(userDocument, userData);
 
                 batch.commit()
-                        .addOnSuccessListener(unused -> {
-
-                            listener.OnSuccess();
-                        })
-                        .addOnFailureListener(e -> listener.OnFailure());
+                    .addOnSuccessListener(unused -> listener.OnSuccess())
+                    .addOnFailureListener(e -> listener.OnFailure());
             })
             .addOnFailureListener(e -> listener.OnFailure());
     }
-
 
 }

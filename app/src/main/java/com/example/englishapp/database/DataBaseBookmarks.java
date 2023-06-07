@@ -9,7 +9,7 @@ import static com.example.englishapp.database.Constants.KEY_NUMBER_OF_OPTIONS;
 import static com.example.englishapp.database.Constants.KEY_OPTION;
 import static com.example.englishapp.database.Constants.KEY_QUESTION_ID;
 import static com.example.englishapp.database.Constants.KEY_TEST_QUESTION;
-import static com.example.englishapp.database.Constants.NOT_VISITED;
+import static com.example.englishapp.database.DataBaseExam.NOT_VISITED;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
@@ -25,6 +25,7 @@ import com.google.firebase.firestore.WriteBatch;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DataBaseBookmarks {
 
@@ -85,14 +86,10 @@ public class DataBaseBookmarks {
                     ArrayList<OptionModel> optionModels = new ArrayList<>();
 
                     // find options for question
-                    for (int n = 0; n < (document.getLong(KEY_NUMBER_OF_OPTIONS).intValue()); n++) {
+                    for (int n = 0; n < (Objects.requireNonNull(document.getLong(KEY_NUMBER_OF_OPTIONS)).intValue()); n++) {
                         OptionModel optionModel = new OptionModel();
 
-                        if (n == document.getLong(KEY_ANSWER).intValue()) {
-                            optionModel.setCorrect(true);
-                        } else {
-                            optionModel.setCorrect(false);
-                        }
+                        optionModel.setCorrect(n == Objects.requireNonNull(document.getLong(KEY_ANSWER)).intValue());
 
                         optionModel.setOption(document.getString(KEY_OPTION + "_" + n));
 
@@ -104,7 +101,7 @@ public class DataBaseBookmarks {
 
                     questionModel.setQuestion(document.getString(KEY_TEST_QUESTION));
                     questionModel.setId(document.getString(KEY_QUESTION_ID));
-                    questionModel.setCorrectAnswer(document.getLong(KEY_ANSWER).intValue());
+                    questionModel.setCorrectAnswer(Objects.requireNonNull(document.getLong(KEY_ANSWER)).intValue());
                     questionModel.setOptionsList(optionModels);
                     questionModel.setBookmarked(true);
                     questionModel.setStatus(NOT_VISITED);
@@ -130,7 +127,7 @@ public class DataBaseBookmarks {
 
     }
 
-    public static void saveBookmarks(CompleteListener listener) {
+    public void saveBookmarks(CompleteListener listener) {
 
         WriteBatch batch = DATA_FIRESTORE.batch();
 

@@ -1,6 +1,7 @@
 package com.example.englishapp.fragments;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_TEST;
+import static com.example.englishapp.database.DataBaseExam.NOT_VISITED;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.ExamActivity;
 import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.database.Constants;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.models.TestModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -79,7 +79,7 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
         // set all answers with basic data
         for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
             DataBaseQuestions.LIST_OF_QUESTIONS.get(i).setSelectedOption(-1);
-            DataBaseQuestions.LIST_OF_QUESTIONS.get(i).setStatus(Constants.NOT_VISITED);
+            DataBaseQuestions.LIST_OF_QUESTIONS.get(i).setStatus(NOT_VISITED);
         }
 
     }

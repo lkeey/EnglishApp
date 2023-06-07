@@ -20,14 +20,12 @@ import androidx.fragment.app.Fragment;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.database.Constants;
-import com.example.englishapp.database.DataBaseBookmarks;
-import com.example.englishapp.database.DataBaseExam;
-import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.database.DataBaseScores;
 import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.QuestionModel;
+import com.example.englishapp.repositories.ScoreRepository;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +33,7 @@ public class ScoreFragment extends Fragment {
 
     private static final String TAG = "FragmentScore";
     private TextView totalScore, timeTaken, totalQuestions,
-            amountCorrect, amountWrong, amountUnAttempted,
-            dialogText;
+            amountCorrect, amountWrong, amountUnAttempted;
     private Button btnCheckLeader, btnReAttempt, btnViewAnswers;
     private long timeLeft;
     private Dialog progressBar;
@@ -61,36 +58,10 @@ public class ScoreFragment extends Fragment {
     }
 
     private void updateBookmarksAndScore() {
-
-        // bookmarks
-        Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
-
-        for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
-            QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(i);
-
-            Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
-
-            if (questionModel.isBookmarked() && !DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
-
-                Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
-            }
-
-            if (!questionModel.isBookmarked() && DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
-
-                Log.i(TAG, "Removed - " + questionModel.getQuestion());
-            }
-        }
-
-        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.size());
-
-        Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
-
-        // score
-        new DataBaseExam().saveResult(finalScore, new CompleteListener() {
+        new ScoreRepository().updateData(finalScore, new CompleteListener() {
             @Override
             public void OnSuccess() {
+                Toast.makeText(getActivity(), "Your score was successfully updated", Toast.LENGTH_SHORT).show();
                 progressBar.dismiss();
             }
 
@@ -136,7 +107,7 @@ public class ScoreFragment extends Fragment {
         amountWrong.setText(String.valueOf(wrongQuestions));
         amountUnAttempted.setText(String.valueOf(unAttemptedQuestions));
 
-        totalQuestions.setText("" + sizeOfQuestions);
+        totalQuestions.setText(String.valueOf(sizeOfQuestions));
 
         // set score
         finalScore = correctQuestions * 100 / sizeOfQuestions;
@@ -154,16 +125,11 @@ public class ScoreFragment extends Fragment {
     }
 
     private void setListeners() {
-        btnCheckLeader.setOnClickListener(v -> ((MainActivity) getActivity()).setFragment(new LeaderBordFragment()));
+        btnCheckLeader.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment()));
 
         btnReAttempt.setOnClickListener(v -> reAttempt());
 
-        btnViewAnswers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "View answers", Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnViewAnswers.setOnClickListener(v -> Toast.makeText(getActivity(), "View answers", Toast.LENGTH_SHORT).show());
 
     }
 
@@ -184,10 +150,10 @@ public class ScoreFragment extends Fragment {
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogText = progressBar.findViewById(R.id.dialogText);
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarOpening);
 
-        ((MainActivity) getActivity()).setTitle(R.string.nameResult);
+        ((MainActivity) requireActivity()).setTitle(R.string.nameResult);
     }
 
     private void reAttempt() {

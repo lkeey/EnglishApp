@@ -1,11 +1,9 @@
 package com.example.englishapp.activities;
 
-import static com.example.englishapp.database.Constants.ANSWERED;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
-import static com.example.englishapp.database.Constants.NOT_VISITED;
-import static com.example.englishapp.database.Constants.REVIEW;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
-import static com.example.englishapp.database.Constants.UNANSWERED;
+import static com.example.englishapp.database.DataBaseExam.NOT_VISITED;
+import static com.example.englishapp.database.DataBaseExam.UNANSWERED;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -35,16 +33,17 @@ import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.fragments.ExamInfoFragment;
 import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.models.TestModel;
+import com.example.englishapp.repositories.ExamRepository;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class ExamActivity extends BaseActivity {
     private static final String TAG = "ActivityExam";
-    private QuestionsAdapter questionsAdapter;
     private ExamInfoFragment fragment;
     private TestModel testModel;
     private static RecyclerView recyclerQuestions;
-    private TextView questionNumber, amountTime, testName;
+    private TextView questionNumber, amountTime;
     private Button btnSubmit, btnContinue, btnExit, btnCancel, btnComplete;
     private ImageView questionList, bookMarkImg, previousQuestion, nextQuestion;
     private CountDownTimer timer;
@@ -72,6 +71,9 @@ public class ExamActivity extends BaseActivity {
         btnContinue.setOnClickListener(v -> dialogExit.dismiss());
 
         btnExit.setOnClickListener(v -> {
+
+            timer.cancel();
+
             Intent intent = new Intent(ExamActivity.this, MainActivity.class);
             startActivity(intent);
 
@@ -113,35 +115,11 @@ public class ExamActivity extends BaseActivity {
 
     private void addToBookmark() {
 
-        QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion);
+        int status = new ExamRepository().addToBookmark(numberOfQuestion);
 
-        if (questionModel.isBookmarked()) {
-
-            Log.i(TAG, "Already bookmark");
-
-            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(false);
-
+        if (status == ExamRepository.CODE_UNBOOKMARKED) {
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
-
-            if (questionModel.getSelectedOption() != -1) {
-                Log.i(TAG, "New status - ANSWERED");
-
-                DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(ANSWERED);
-
-            } else {
-                Log.i(TAG, "New status - UNANSWERED");
-
-                DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(UNANSWERED);
-            }
-
         } else {
-
-            Log.i(TAG, "New bookmark");
-
-            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setBookmarked(true);
-
-            DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion).setStatus(REVIEW);
-
             bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.yellow), android.graphics.PorterDuff.Mode.SRC_IN);
         }
     }
@@ -156,7 +134,9 @@ public class ExamActivity extends BaseActivity {
                 super.onScrollStateChanged(recyclerView, newState);
 
                 View view = snapHelper.findSnapView(recyclerView.getLayoutManager());
-                numberOfQuestion = recyclerView.getLayoutManager().getPosition(view);
+                if (view != null) {
+                    numberOfQuestion = Objects.requireNonNull(recyclerView.getLayoutManager()).getPosition(view);
+                }
 
                 QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(numberOfQuestion);
 
@@ -172,7 +152,7 @@ public class ExamActivity extends BaseActivity {
                     bookMarkImg.setColorFilter(ContextCompat.getColor(ExamActivity.this, R.color.white), android.graphics.PorterDuff.Mode.SRC_IN);
                 }
 
-                questionNumber.setText((numberOfQuestion + 1) + "/" + testModel.getAmountOfQuestion());
+                questionNumber.setText((numberOfQuestion + 1) + " / " + testModel.getAmountOfQuestion());
             }
 
             @Override
@@ -186,7 +166,7 @@ public class ExamActivity extends BaseActivity {
         recyclerQuestions = findViewById(R.id.recyclerQuestions);
         questionNumber = findViewById(R.id.questionNumber);
         amountTime = findViewById(R.id.amountTime);
-        testName = findViewById(R.id.testName);
+        TextView testName = findViewById(R.id.testName);
         btnSubmit = findViewById(R.id.btnSubmit);
         questionList = findViewById(R.id.questionList);
         bookMarkImg = findViewById(R.id.bookMarkImg);
@@ -217,9 +197,9 @@ public class ExamActivity extends BaseActivity {
 
         questionNumber.setText("1 / " + DataBaseQuestions.LIST_OF_QUESTIONS.size());
         testName.setText(testModel.getName());
-        amountTime.setText(testModel.getTime() + " minutes");
+        amountTime.setText(testModel.getTime() + getString(R.string.minutes));
 
-        questionsAdapter = new QuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamActivity.this, false);
+        QuestionsAdapter questionsAdapter = new QuestionsAdapter(DataBaseQuestions.LIST_OF_QUESTIONS, ExamActivity.this, false);
         recyclerQuestions.setAdapter(questionsAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(ExamActivity.this);
@@ -236,7 +216,7 @@ public class ExamActivity extends BaseActivity {
     }
 
     private void startTimer() {
-        long totalTime = testModel.getTime()*60*1_000;
+        long totalTime = (long) testModel.getTime() * 60 * 1_000;
         timer = new CountDownTimer(totalTime, 1_000) {
             @Override
             public void onTick(long remainingTime) {
@@ -254,12 +234,6 @@ public class ExamActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
-//                Intent intent = new Intent(QuestionsActivity.this, ScoreActivity.class);
-//
-//                long totalTime = DbQuery.testModelList.get(DbQuery.selectedTestIndex).getTime()*60*1_000;
-//                intent.putExtra("TIME_TAKEN", totalTime - timeCounter);
-//
-//                startActivity(intent);
                 try {
                     Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
 

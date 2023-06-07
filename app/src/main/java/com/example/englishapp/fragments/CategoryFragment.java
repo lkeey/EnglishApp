@@ -135,13 +135,23 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
         inputSearch = view.findViewById(R.id.inputSearch);
 
-        categoryAdapter = new CategoryAdapter(DataBaseCategories.LIST_OF_CATEGORIES, CategoryFragment.this);
-        recyclerCategories.setAdapter(categoryAdapter);
+        dataBaseCategories.getListOfCategories(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                categoryAdapter = new CategoryAdapter(DataBaseCategories.LIST_OF_CATEGORIES, CategoryFragment.this);
+                recyclerCategories.setAdapter(categoryAdapter);
 
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        manager.setOrientation(RecyclerView.VERTICAL);
+                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+                manager.setOrientation(RecyclerView.VERTICAL);
 
-        recyclerCategories.setLayoutManager(manager);
+                recyclerCategories.setLayoutManager(manager);
+            }
+
+            @Override
+            public void OnFailure() {
+                Toast.makeText(getActivity(), "Can not load categories", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_create_category);

@@ -1,87 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     tools:context=".fragments.ExamInfoFragment">
 
     <LinearLayout
-        android:id="@+id/ll1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        android:baselineAligned="false">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/ll1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Answered"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:padding="16dp"
-            android:layout_weight="1"
-            android:drawableTint="@color/design_default_color_primary"
-            android:drawableStart="@drawable/ic_circle"
-            />
+            android:orientation="vertical"
+            android:layout_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/answered"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:padding="16dp"
+                app:drawableStartCompat="@drawable/ic_circle"
+                android:drawablePadding="8dp"
+                app:drawableTint="@color/design_default_color_primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/not_visited"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:padding="16dp"
+                app:drawableStartCompat="@drawable/ic_circle"
+                android:drawablePadding="8dp"
+                app:drawableTint="@color/grey" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Unanswered"
-            android:gravity="center"
-            android:padding="16dp"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/unanswered"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="20sp"
+                android:drawablePadding="8dp"
+                app:drawableStartCompat="@drawable/ic_circle"
+                app:drawableTint="@color/red" />
 
-            android:textSize="20sp"
-            android:layout_weight="1"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/red"
-            android:drawableStart="@drawable/ic_circle"
-            />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/review"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textSize="20sp"
+                android:drawablePadding="8dp"
+                app:drawableStartCompat="@drawable/ic_circle"
+                app:drawableTint="@color/secondary_color" />
 
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not Visited"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:padding="16dp"
-            android:layout_weight="1"
-            android:drawableTint="@color/grey"
-            android:drawableStart="@drawable/ic_circle"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Review"
-            android:gravity="center"
-            android:padding="16dp"
-            android:textSize="20sp"
-            android:layout_weight="1"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/secondary_color"
-            android:drawableStart="@drawable/ic_circle"
-            />
-
+        </LinearLayout>
 
     </LinearLayout>
 
     <GridView
         android:id="@+id/gridQuestions"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_margin="8dp"
         android:layout_marginBottom="16dp"
         android:columnWidth="60dp"

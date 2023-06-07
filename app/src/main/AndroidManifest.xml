@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- https://www.figma.com/file/pn5pjWQP4oWQyX01WUkHVk/Untitled?type=whiteboard&node-id=1-111&t=a1ryhXjOK7QmMqWM-0 -->
 
@@ -25,9 +24,8 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/app_logo_large"
         android:supportsRtl="true"
-        android:theme="@style/Theme.EnglishApp"
-        tools:targetApi="28">
-        <!-- TODO change -->
+        android:theme="@style/Theme.EnglishApp">
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
@@ -36,16 +34,15 @@
             android:name=".activities.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.ExamActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Exam.FullScreen"/>
         <activity
             android:name=".activities.MainActivity"
             android:exported="false" />

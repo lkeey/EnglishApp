@@ -1,8 +1,8 @@
 package com.example.englishapp.adapters;
 
-import static com.example.englishapp.database.Constants.ANSWERED;
-import static com.example.englishapp.database.Constants.REVIEW;
-import static com.example.englishapp.database.Constants.UNANSWERED;
+import static com.example.englishapp.database.DataBaseExam.ANSWERED;
+import static com.example.englishapp.database.DataBaseExam.REVIEW;
+import static com.example.englishapp.database.DataBaseExam.UNANSWERED;
 
 import android.content.Context;
 import android.util.Log;
