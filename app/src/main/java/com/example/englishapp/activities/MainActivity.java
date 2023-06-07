@@ -1,6 +1,7 @@
 package com.example.englishapp.activities;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
@@ -103,13 +104,14 @@ public class MainActivity extends BaseActivity {
             Intent intent = getIntent();
 
             boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
+            boolean isShowMap = intent.getBooleanExtra(KEY_LOCATION, false);
+            boolean isWordExam = intent.getBooleanExtra(KEY_IS_WORDS, false);
             String userUID = intent.getStringExtra(KEY_USER_UID);
             long totalTime = intent.getLongExtra(KEY_TEST_TIME, -1);
-            boolean isShowMap = intent.getBooleanExtra(KEY_LOCATION, false);
 
             Log.i(TAG, "STATUS " + status);
             Log.i(TAG, "UserUID - " + userUID + " - " + LIST_OF_USERS.size());
-            Log.i(TAG, "totalTime - " + totalTime);
+            Log.i(TAG, "totalTime - " + totalTime + " - " + isWordExam);
 
             if (status) {
                 new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
@@ -134,6 +136,7 @@ public class MainActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
 
                 bundle.putLong(Constants.KEY_TEST_TIME, totalTime);
+                bundle.putBoolean(KEY_IS_WORDS, isWordExam);
 
                 fragment.setArguments(bundle);
 

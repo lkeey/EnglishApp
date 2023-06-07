@@ -2,6 +2,7 @@ package com.example.englishapp.models;
 
 import android.graphics.Bitmap;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -72,4 +73,7 @@ public class WordModel implements Serializable {
         this.image = image;
     }
 
+    public boolean equals(@Nullable WordModel wordModel) {
+        return this.getTextEn().equals(wordModel.getTextEn());
+    }
 }

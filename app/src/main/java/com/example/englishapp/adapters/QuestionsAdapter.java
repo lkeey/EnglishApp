@@ -1,10 +1,10 @@
 package com.example.englishapp.adapters;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,13 +20,12 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
     private static final String TAG = "AdapterQuestions";
     private List<QuestionModel> listQuestions;
-    private Context context;
-    private boolean isShowing;
+    private boolean isShowing, isWordExam;
 
-    public QuestionsAdapter(List<QuestionModel> listQuestions, Context context, boolean isShowing) {
+    public QuestionsAdapter(List<QuestionModel> listQuestions, boolean isShowing, boolean isWordExam) {
         this.listQuestions = listQuestions;
-        this.context = context;
         this.isShowing = isShowing;
+        this.isWordExam = isWordExam;
     }
 
     @NonNull
@@ -50,6 +49,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView questionName;
+        private ImageView img;
         private RecyclerView layoutOptions;
 
         public ViewHolder(@NonNull View itemView) {
@@ -57,6 +57,7 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
             questionName = itemView.findViewById(R.id.questionName);
             layoutOptions = itemView.findViewById(R.id.layoutOptions);
+            img = itemView.findViewById(R.id.imgQuestion);
 
         }
 
@@ -66,11 +67,22 @@ public class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.View
 
                 questionName.setText(questionModel.getQuestion());
 
+                if (isWordExam) {
+                    Log.i(TAG, "show img - " + questionModel.getBmp());
+
+                    img.setImageBitmap(questionModel.getBmp());
+
+                } else {
+                    Log.i(TAG, "hide image - " + isWordExam);
+
+                    img.setVisibility(View.GONE);
+                }
+
                 // set adapter for options
-                OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, context, isShowing);
+                OptionsAdapter optionsAdapter = new OptionsAdapter(questionModel.getOptionsList(), position, isShowing);
                 layoutOptions.setAdapter(optionsAdapter);
 
-                LinearLayoutManager manager = new LinearLayoutManager(context);
+                LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
                 manager.setOrientation(RecyclerView.VERTICAL);
                 layoutOptions.setLayoutManager(manager);
 

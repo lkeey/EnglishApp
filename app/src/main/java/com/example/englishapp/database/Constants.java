@@ -79,4 +79,5 @@ public class Constants {
     public static final String KEY_WORD_CARD_ID = "CARD_ID";
     public static String KEY_INSTABUG = "90431510fb778d8222a6eab9d08c4e3c";
     public static String KEY_ALREADY_LEARNING = "ALREADY_LEARNING";
+    public static String KEY_IS_WORDS = "IS_WORDS";
 }

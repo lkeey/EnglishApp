@@ -1,6 +1,10 @@
 package com.example.englishapp.fragments;
 
+import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
+
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +19,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.englishapp.R;
+import com.example.englishapp.activities.ExamActivity;
+import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.LearningWordsAdapter;
 import com.example.englishapp.database.DataBaseLearningWords;
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.models.OptionModel;
+import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.models.WordModel;
+import com.example.englishapp.repositories.WordsRepository;
+
+import java.util.ArrayList;
 
 public class LearningWordsFragment extends Fragment {
 
+    private static final String TAG = "FragmentLearningWords";
     private ProgressBar progressBar;
     private RecyclerView recyclerLearningWords;
     private Button btnExam;
@@ -41,12 +55,67 @@ public class LearningWordsFragment extends Fragment {
     }
 
     private void setListeners() {
-        btnExam.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                for(WordModel wordModel: DataBaseLearningWords.LIST_OF_LEARNING_WORDS) {
+        btnExam.setOnClickListener(v -> {
+            try {
+
+                WordsRepository wordsRepository = new WordsRepository();
+
+                DataBaseQuestions.LIST_OF_QUESTIONS.clear();
+
+                for (WordModel wordModel : DataBaseLearningWords.LIST_OF_LEARNING_WORDS) {
+
+                    QuestionModel questionModel = new QuestionModel();
+
+                    wordsRepository.translateString(wordModel.getTextEn(), DataBasePersonalData.USER_MODEL.getLanguageCode(), new CompleteListener() {
+                        @Override
+                        public void OnSuccess() {
+                            questionModel.setQuestion(WordsRepository.translatedText);
+                        }
+
+                        @Override
+                        public void OnFailure() {
+                            questionModel.setQuestion(wordModel.getTextEn());
+                        }
+                    });
+
+                    questionModel.setBookmarked(false);
+                    questionModel.setSelectedOption(-1);
+                    questionModel.setBmp(wordsRepository.stringToBitMap(getContext(), wordModel.getImage()));
+
+                    ArrayList<OptionModel> optionModelList = new ArrayList<>();
+
+                    for (int i=0; i < DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size(); i++) {
+
+                        WordModel word = DataBaseLearningWords.LIST_OF_LEARNING_WORDS.get(i);
+
+                        OptionModel optionModel = new OptionModel();
+
+                        optionModel.setOption(word.getTextEn());
+
+                        if (word.equals(wordModel)) {
+                            questionModel.setCorrectAnswer(i);
+                            optionModel.setCorrect(true);
+                        } else {
+                            optionModel.setCorrect(false);
+                        }
+
+                        optionModelList.add(optionModel);
+                    }
+
+                    questionModel.setOptionsList(optionModelList);
+
+                    DataBaseQuestions.LIST_OF_QUESTIONS.add(questionModel);
 
                 }
+
+                Intent intent = new Intent((MainActivity) requireActivity(), ExamActivity.class);
+
+                intent.putExtra(KEY_IS_WORDS, true);
+
+                startActivity(intent);
+
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
             }
         });
     }

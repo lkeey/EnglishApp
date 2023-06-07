@@ -1,5 +1,7 @@
 package com.example.englishapp.models;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -12,10 +14,11 @@ public class QuestionModel implements Serializable {
     private int selectedOption;
     private int status;
     private boolean isBookmarked;
+    private Bitmap bmp;
 
     public QuestionModel () {}
 
-    public QuestionModel(String id, String question, ArrayList<OptionModel> optionsList, int correctAnswer, int selectedOption, int status, boolean isBookmarked) {
+    public QuestionModel(String id, String question, ArrayList<OptionModel> optionsList, int correctAnswer, int selectedOption, int status, boolean isBookmarked, Bitmap bmp) {
         this.id = id;
         this.question = question;
         this.optionsList = optionsList;
@@ -23,6 +26,7 @@ public class QuestionModel implements Serializable {
         this.selectedOption = selectedOption;
         this.status = status;
         this.isBookmarked = isBookmarked;
+        this.bmp = bmp;
     }
 
     public String getId() {
@@ -83,5 +87,13 @@ public class QuestionModel implements Serializable {
 
     public boolean equals(QuestionModel obj) {
         return this.id.equals(obj.getId());
+    }
+
+    public Bitmap getBmp() {
+        return bmp;
+    }
+
+    public void setBmp(Bitmap bmp) {
+        this.bmp = bmp;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.englishapp.fragments;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_TEST;
+import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
@@ -38,27 +39,33 @@ public class ScoreFragment extends Fragment {
     private long timeLeft;
     private Dialog progressBar;
     private int finalScore;
+    private boolean isWordExam;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_score, container, false);
-        
-        init(view);
 
-        receiveData();
+        try {
+            init(view);
 
-        setListeners();
-        
-        setData();
+            receiveData();
 
-        updateBookmarksAndScore();
-        
+            setListeners();
+
+            setData();
+
+//            updateBookmarksAndScore();
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+        }
+
         return view;
     }
 
     private void updateBookmarksAndScore() {
-        new ScoreRepository().updateData(finalScore, new CompleteListener() {
+        new ScoreRepository().updateData(isWordExam, finalScore, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Toast.makeText(getActivity(), "Your score was successfully updated", Toast.LENGTH_SHORT).show();
@@ -78,6 +85,9 @@ public class ScoreFragment extends Fragment {
 
         if (bundle != null) {
             timeLeft = bundle.getLong(Constants.KEY_TEST_TIME, -1);
+            isWordExam = bundle.getBoolean(KEY_IS_WORDS, false);
+
+            Log.i(TAG, "time - " + timeLeft + " - word - " + isWordExam);
         }
     }
 
@@ -99,7 +109,6 @@ public class ScoreFragment extends Fragment {
             } else {
                 wrongQuestions++;
             }
-
         }
 
         // set amount questions

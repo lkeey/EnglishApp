@@ -65,7 +65,7 @@ public class TestInfoDialogFragment extends BottomSheetDialogFragment {
         btnDoTest.setOnClickListener(v -> {
 
             if (DataBaseQuestions.LIST_OF_QUESTIONS.size() >= 0) {
-                Intent intent = new Intent(((MainActivity) getActivity()), ExamActivity.class);
+                Intent intent = new Intent((MainActivity) getActivity(), ExamActivity.class);
                 startActivity(intent);
 
             } else {

@@ -13,33 +13,33 @@ public class ScoreRepository {
 
     private static final String TAG = "RepositoryScore";
 
-    public void updateData(int finalScore, CompleteListener listener) {
+    public void updateData(boolean isWordExam, int finalScore, CompleteListener listener) {
+        if (!isWordExam) {
+            // bookmarks
+            Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
-        // bookmarks
-        Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
+            for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
+                QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(i);
 
-        for (int i = 0; i < DataBaseQuestions.LIST_OF_QUESTIONS.size(); i++) {
-            QuestionModel questionModel = DataBaseQuestions.LIST_OF_QUESTIONS.get(i);
+                Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
 
-            Log.i(TAG, "question - " + questionModel.isBookmarked() + " - " + questionModel.getQuestion() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId()));
+                if (questionModel.isBookmarked() && !DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                    DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
 
-            if (questionModel.isBookmarked() && !DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.add(questionModel.getId());
+                    Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+                }
 
-                Log.i(TAG, "Added Bookmark - " + questionModel.getQuestion() + " - " + questionModel.getId());
+                if (!questionModel.isBookmarked() && DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
+                    DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
+
+                    Log.i(TAG, "Removed - " + questionModel.getQuestion());
+                }
             }
 
-            if (!questionModel.isBookmarked() && DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.contains(questionModel.getId())) {
-                DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.remove(questionModel.getId());
+            DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.size());
 
-                Log.i(TAG, "Removed - " + questionModel.getQuestion());
-            }
+            Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
         }
-
-        DataBasePersonalData.USER_MODEL.setBookmarksCount(DataBaseBookmarks.LIST_OF_BOOKMARK_IDS.size());
-
-        Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
-
         // score
         new DataBaseExam().saveResult(finalScore, new CompleteListener() {
             @Override

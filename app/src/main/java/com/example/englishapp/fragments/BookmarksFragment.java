@@ -141,7 +141,7 @@ public class BookmarksFragment extends Fragment {
 
         Log.i(TAG, "amount bookmarks - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
 
-        QuestionsAdapter adapter = new QuestionsAdapter(DataBaseBookmarks.LIST_OF_BOOKMARKS, getActivity(), true);
+        QuestionsAdapter adapter = new QuestionsAdapter(DataBaseBookmarks.LIST_OF_BOOKMARKS,true, false);
         bookmarkRecyclerView.setAdapter(adapter);
 
         progressBar.dismiss();

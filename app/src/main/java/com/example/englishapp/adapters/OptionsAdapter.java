@@ -4,7 +4,6 @@ import static com.example.englishapp.database.DataBaseExam.ANSWERED;
 import static com.example.englishapp.database.DataBaseExam.REVIEW;
 import static com.example.englishapp.database.DataBaseExam.UNANSWERED;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,15 +23,13 @@ import java.util.List;
 public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHolder>{
 
     private static final String TAG = "AdapterOptions";
-    private List<OptionModel> optionModels;
-    private int questionId;
-    private Context context;
-    private boolean isShowing;
+    private final List<OptionModel> optionModels;
+    private final int questionId;
+    private final boolean isShowing;
 
-    public OptionsAdapter(List<OptionModel> optionModels, int questionId, Context context, boolean isShowing) {
+    public OptionsAdapter(List<OptionModel> optionModels, int questionId, boolean isShowing) {
         this.optionModels = optionModels;
         this.questionId = questionId;
-        this.context = context;
         this.isShowing = isShowing;
     }
 
@@ -74,25 +71,24 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
             optionName.setText(optionModel.getOption());
 
-
             if (!isShowing) {
 
                 itemView.setOnClickListener(v -> setOption(optionName, position));
 
                 DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(position).setTv(optionName);
 
-            } else if (isShowing && optionModel.isCorrect()) {
+            } else if (optionModel.isCorrect()) {
 
                 optionName.setBackgroundResource(R.drawable.selected_btn);
-                optionName.setTextColor(ContextCompat.getColor(context, R.color.white));
+                optionName.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white));
             }
-
-
         }
 
         private void setOption(TextView tv, int optionNum) {
 
-            int selectedOption = DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption();
+            int selectedOption;
+
+            selectedOption = DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption();
 
             if (selectedOption != optionNum) {
 
@@ -100,14 +96,14 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
 
                 // select new text view
                 tv.setBackgroundResource(R.drawable.selected_btn);
-                tv.setTextColor(ContextCompat.getColor(context, R.color.white));
+                tv.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.white));
 
                 if (selectedOption != -1) {
                     // unselect old text view
                     TextView beforeChoice = DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getOptionsList().get(selectedOption).getTv();
 
                     beforeChoice.setBackgroundResource(R.drawable.round_view_with_stroke);
-                    beforeChoice.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
+                    beforeChoice.setTextColor(ContextCompat.getColor(itemView.getContext(), com.google.android.material.R.color.design_default_color_primary));
                 }
 
                 changeStatus(ANSWERED);
@@ -119,7 +115,7 @@ public class OptionsAdapter extends RecyclerView.Adapter<OptionsAdapter.ViewHold
                 Log.i(TAG, "unselected - " + optionNum + " - " + DataBaseQuestions.LIST_OF_QUESTIONS.get(questionId).getSelectedOption());
 
                 tv.setBackgroundResource(R.drawable.round_view_with_stroke);
-                tv.setTextColor(ContextCompat.getColor(context, com.google.android.material.R.color.design_default_color_primary));
+                tv.setTextColor(ContextCompat.getColor(itemView.getContext(), com.google.android.material.R.color.design_default_color_primary));
 
                 changeStatus(UNANSWERED);
 

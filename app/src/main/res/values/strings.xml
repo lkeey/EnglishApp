@@ -127,5 +127,6 @@
     <string name="choose_level_of_words">Choose level of words</string>
     <string name="add_word">Add Word</string>
     <string name="submit">Submit</string>
+    <string name="test">Test</string>
 
 </resources>
