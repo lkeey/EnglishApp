@@ -1,9 +1,13 @@
 package com.example.englishapp.models;
 
-public class GooglePage {
+import com.google.gson.annotations.SerializedName;
+
+public class GoogleItem {
+
+    @SerializedName("image")
     public ImageGoogle image;
 
-    public GooglePage(ImageGoogle image) {
+    public GoogleItem(ImageGoogle image) {
         this.image = image;
     }
 

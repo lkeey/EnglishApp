@@ -1,16 +1,22 @@
 package com.example.englishapp.models;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
 public class GoogleResults {
+    @SerializedName("items")
+    public List<GoogleItem> items;
 
-    public GooglePage[] pages;
-
-    public GoogleResults(GooglePage[] pages) {
-        this.pages = pages;
+    public GoogleResults(List<GoogleItem> items) {
+        this.items = items;
     }
 
-    public GooglePage[] getPages() {
-        return pages;
+    public List<GoogleItem> getItems() {
+        return items;
     }
 
-
+    public void setItems(List<GoogleItem> items) {
+        this.items = items;
+    }
 }

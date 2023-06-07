@@ -120,5 +120,12 @@
     <string name="check_your_place_in_leaderboard">Check Your Place In LeaderBoard</string>
     <string name="re_attempt">Re-Attempt</string>
     <string name="view_answers">View Answers</string>
+    <string name="search_in_google">Search In Google</string>
+    <string name="create_your_word_card">Create Your Word Card</string>
+    <string name="write_name_of_card">Write name of card</string>
+    <string name="write_what_topic_the_words_relate_to">Write what topic the words relate to</string>
+    <string name="choose_level_of_words">Choose level of words</string>
+    <string name="add_word">Add Word</string>
+    <string name="submit">Submit</string>
 
 </resources>

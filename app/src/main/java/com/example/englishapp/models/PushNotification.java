@@ -1,9 +1,9 @@
-package com.example.englishapp.messaging;
+package com.example.englishapp.models;
 
 import com.google.gson.annotations.SerializedName;
 
 public class PushNotification {
-    @SerializedName("to") //  "to" changed to token
+    @SerializedName("to")
     private String token;
 
     @SerializedName("data")

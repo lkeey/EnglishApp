@@ -1,4 +1,4 @@
-package com.example.englishapp.messaging;
+package com.example.englishapp.models;
 
 import static com.example.englishapp.database.Constants.REMOTE_MSG_DATA;
 import static com.example.englishapp.database.Constants.REMOTE_MSG_TITLE;
