@@ -47,7 +47,6 @@ public class DataBaseLearningWords {
 
         roomDao.deleteAll();
 
-
         DataBaseWords dataBaseWords = new DataBaseWords();
 
         dataBaseWords.loadWords(cardId, new CompleteListener() {

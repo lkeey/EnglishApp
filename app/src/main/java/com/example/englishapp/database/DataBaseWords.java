@@ -74,44 +74,46 @@ public class DataBaseWords {
     }
 
     public void loadWords(String cardId, CompleteListener listener) {
-        try {
-            Query data = DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS);
 
-            if (cardId != null) {
-                data = data.whereEqualTo(KEY_CARD_ID, cardId);
+        LIST_OF_WORDS.clear();
+
+        Query data = DATA_FIRESTORE.collection(KEY_COLLECTION_WORDS);
+
+        if (cardId != null) {
+            Log.i(TAG, "not null - " + cardId);
+
+            data = data.whereEqualTo(KEY_CARD_ID, cardId);
+        }
+
+        data.get().addOnSuccessListener(queryDocumentSnapshots -> {
+
+            for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                WordModel wordModel = new WordModel();
+
+                wordModel.setTextEn(documentSnapshot.getString(KEY_WORD_TEXT_EN));
+                wordModel.setImage(documentSnapshot.getString(KEY_WORD_IMG));
+                wordModel.setDescription(documentSnapshot.getString(KEY_WORD_DESCRIPTION));
+                wordModel.setLevel(documentSnapshot.getString(KEY_WORD_LEVEL));
+
+                LIST_OF_WORDS.add(wordModel);
+
+                Log.i(TAG, "added - " + wordModel.getTextEn());
+
             }
 
-            data.get().addOnSuccessListener(queryDocumentSnapshots -> {
+            Log.i(TAG, "size - " + LIST_OF_WORDS.size());
 
-                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    WordModel wordModel = new WordModel();
+            listener.OnSuccess();
 
-                    wordModel.setTextEn(documentSnapshot.getString(KEY_WORD_TEXT_EN));
-                    wordModel.setImage(documentSnapshot.getString(KEY_WORD_IMG));
-                    wordModel.setDescription(documentSnapshot.getString(KEY_WORD_DESCRIPTION));
-                    wordModel.setLevel(documentSnapshot.getString(KEY_WORD_LEVEL));
+            })
+            .addOnFailureListener(e -> {
 
-                    LIST_OF_WORDS.add(wordModel);
+                Log.i(TAG, "error words - " + e.getMessage());
 
-                    Log.i(TAG, "added - " + wordModel.getTextEn());
+                listener.OnFailure();
 
-                }
+            });
 
-                Log.i(TAG, "size - " + LIST_OF_WORDS.size());
-
-                listener.OnSuccess();
-
-                })
-                .addOnFailureListener(e -> {
-
-                    Log.i(TAG, "error words - " + e.getMessage());
-
-                    listener.OnFailure();
-
-                });
-        } catch (Exception e) {
-            Log.i(TAG, "error - " + e.getMessage());
-        }
     }
 
 }

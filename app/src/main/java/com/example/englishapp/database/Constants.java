@@ -15,8 +15,6 @@ public class Constants {
     public static final String PATH_PROFILE_IMG = "PROFILE_IMAGES";
     public static final String NAME_USER_PROFILE_IMG = "PROFILE_IMAGE";
     public static final String KEY_FCM_TOKEN = "FCM_TOKEN";
-    public static final String KEY_LATITUDE = "KEY_LATITUDE";
-    public static final String KEY_LONGITUDE = "KEY_LONGITUDE";
     public static final String KEY_LOCATION = "KEY_LOCATION";
     public static final String KEY_CHOSEN_USER_DATA = "USER_DATA";
     public static final String KEY_COLLECTION_CHAT = "CHAT";
@@ -35,17 +33,13 @@ public class Constants {
     public static final String REMOTE_MSG_TITLE = "TITLE";
     public static final String REMOTE_MSG_DATA = "MESSAGE";
     public static final String REMOTE_MSG_USER_SENDER = "SENDER";
-    public static String BASE_URL = "https://fcm.googleapis.com/fcm/send";
     public static final String SERVER_KEY = "AAAAruW7VZQ:APA91bEGsaX1nwXqifR3pJZOaCVMFv-ZeyiTuzSkhBlhtIR6KALDU1PqpDSX4GZIilVrPQVZlS_hr48F-OxgVBtN2k21fS-Ewgx-dAXZ4G7HQfayTC5pIb6LcYmi1xnG4ojprknOrqWN";
-    public static String LOCAL_BROADCAST_ACTION = "broadcast";
     public static final String KEY_COLLECTION_CATEGORIES = "CATEGORIES";
     public static final String KEY_CATEGORY_ID = "CATEGORY_ID";
     public static final String KEY_CATEGORY_NAME = "CATEGORY_NAME";
     public static final String KEY_CATEGORY_NUMBER_OF_TESTS = "CATEGORY_NUMBER_OF_TESTS";
     public static final String KEY_AMOUNT_CATEGORIES = "AMOUNT_CATEGORIES";
-    public static final String KEY_CHECK_LOCATION = "KEY_CHECK_LOCATION";
     public static final String KEY_SHOW_NOTIFICATION_WORD = "KEY_SHOW_NOTIFICATION_WORD";
-
     public static final String KEY_COLLECTION_TESTS = "TESTS";
     public static final String KEY_AMOUNT_TESTS = "AMOUNT_TESTS";
     public static final String KEY_TEST_ID = "TEST_ID";
@@ -84,5 +78,5 @@ public class Constants {
     public static final String MY_SHARED_PREFERENCES = "MY_SHARED_PREFERENCES";
     public static final String KEY_WORD_CARD_ID = "CARD_ID";
     public static String KEY_INSTABUG = "90431510fb778d8222a6eab9d08c4e3c";
-    public static String KEY_UPDATE_ADAPTER = "UPDATE_ADAPTER";
+    public static String KEY_ALREADY_LEARNING = "ALREADY_LEARNING";
 }

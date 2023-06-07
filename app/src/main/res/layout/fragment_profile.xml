@@ -164,8 +164,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingBottom="32dp">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/layoutUserInfo"
@@ -380,7 +379,7 @@
         </LinearLayout>
 
             <FrameLayout
-                android:id="@+id/frameLayout"
+                android:id="@+id/frameLayoutSpeech"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="8dp"
@@ -396,8 +395,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-        </LinearLayout>
+            <FrameLayout
+                android:id="@+id/frameLayoutLearningWords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="8dp"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/round_view"/>
 
+
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

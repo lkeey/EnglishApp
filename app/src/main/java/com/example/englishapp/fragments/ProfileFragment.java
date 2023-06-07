@@ -194,7 +194,7 @@ public class ProfileFragment extends Fragment {
 
         getParentFragmentManager()
                 .beginTransaction()
-                .replace(R.id.frameLayout, new SpeechFragment())
+                .replace(R.id.frameLayoutSpeech, new SpeechFragment())
                 .commit();
 
         TextView view1 = view.findViewById(R.id.learning);
@@ -206,7 +206,10 @@ public class ProfileFragment extends Fragment {
 
         view1.setText(" - " + count + " - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
 
-        Log.i(TAG, "beginning");
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayoutLearningWords, new LearningWordsFragment())
+                .commit();
 
     }
 
