@@ -52,7 +52,7 @@ public class DataBaseLearningWords {
         dataBaseWords.loadWords(cardId, new CompleteListener() {
             @Override
             public void OnSuccess() {
-                for (WordModel wordModel: dataBaseWords.LIST_OF_WORDS) {
+                for (WordModel wordModel: DataBaseWords.LIST_OF_WORDS) {
 
                     roomDao.insertWord(wordModel);
 
@@ -70,6 +70,25 @@ public class DataBaseLearningWords {
                 listener.OnFailure();
             }
         });
+
+    }
+
+    public void deleteLearningWords(Context context, CompleteListener listener) {
+
+        try {
+            LIST_OF_LEARNING_WORDS.clear();
+
+            RoomDataBase.getDatabase(context)
+                    .roomDao()
+                    .deleteAll();
+
+            listener.OnSuccess();
+
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
+
+            listener.OnFailure();
+        }
 
     }
 

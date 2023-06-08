@@ -177,9 +177,9 @@ public class DataBaseCards {
         }
     }
 
-    public static CardModel findCardById(String cardId) {
+    public void findCardById(String cardId) {
 
-        return LIST_OF_CARDS.stream().filter(card -> card.getId().equals(cardId)).findAny()
+        LIST_OF_CARDS.stream().filter(card -> card.getId().equals(cardId)).findAny()
                 .orElseThrow(() -> new RuntimeException("not found"));
     }
 

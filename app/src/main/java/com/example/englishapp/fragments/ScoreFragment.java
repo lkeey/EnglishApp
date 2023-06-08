@@ -1,10 +1,14 @@
 package com.example.englishapp.fragments;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.example.englishapp.database.Constants.KEY_CARD_ID;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_TEST;
 import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
+import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,6 +31,7 @@ import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.QuestionModel;
 import com.example.englishapp.repositories.ScoreRepository;
+import com.example.englishapp.repositories.WordsRepository;
 
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +60,7 @@ public class ScoreFragment extends Fragment {
 
             setData();
 
-//            updateBookmarksAndScore();
+            updateBookmarksAndScore();
 
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
@@ -65,11 +70,22 @@ public class ScoreFragment extends Fragment {
     }
 
     private void updateBookmarksAndScore() {
-        new ScoreRepository().updateData(isWordExam, finalScore, new CompleteListener() {
+
+        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
+
+        String cardId = sharedPreferences.getString(KEY_CARD_ID, null);
+
+        ScoreRepository scoreRepository = new ScoreRepository();
+
+        scoreRepository.updateData(isWordExam, cardId, finalScore, new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Toast.makeText(getActivity(), "Your score was successfully updated", Toast.LENGTH_SHORT).show();
                 progressBar.dismiss();
+
+                new WordsRepository().endLearningWords(getContext());
+
+                Toast.makeText(getActivity(), "You can choose other words to learn", Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
@@ -86,6 +102,10 @@ public class ScoreFragment extends Fragment {
         if (bundle != null) {
             timeLeft = bundle.getLong(Constants.KEY_TEST_TIME, -1);
             isWordExam = bundle.getBoolean(KEY_IS_WORDS, false);
+
+            if (isWordExam) {
+                btnReAttempt.setVisibility(View.GONE);
+            }
 
             Log.i(TAG, "time - " + timeLeft + " - word - " + isWordExam);
         }
@@ -162,7 +182,7 @@ public class ScoreFragment extends Fragment {
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarOpening);
 
-        ((MainActivity) requireActivity()).setTitle(R.string.nameResult);
+        requireActivity().setTitle(R.string.nameResult);
     }
 
     private void reAttempt() {
@@ -188,7 +208,7 @@ public class ScoreFragment extends Fragment {
             });
 
         } catch (Exception e) {
-            Log.i(TAG, "error to open TestInfoDialogFragment - " + e.getMessage());
+            Log.i(TAG, "error - " + e.getMessage());
 
             Toast.makeText(getActivity(), "Can not re-attempt the test... Please, try later", Toast.LENGTH_SHORT).show();
         }

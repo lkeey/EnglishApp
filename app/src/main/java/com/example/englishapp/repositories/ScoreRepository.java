@@ -13,7 +13,7 @@ public class ScoreRepository {
 
     private static final String TAG = "RepositoryScore";
 
-    public void updateData(boolean isWordExam, int finalScore, CompleteListener listener) {
+    public void updateData(boolean isWordExam, String cardId, int finalScore, CompleteListener listener) {
         if (!isWordExam) {
             // bookmarks
             Log.i(TAG, "was - " + DataBasePersonalData.USER_MODEL.getBookmarksCount() + " - " + DataBaseBookmarks.LIST_OF_BOOKMARKS.size());
@@ -40,8 +40,9 @@ public class ScoreRepository {
 
             Log.i(TAG, "become - " + DataBasePersonalData.USER_MODEL.getBookmarksCount());
         }
+
         // score
-        new DataBaseExam().saveResult(finalScore, new CompleteListener() {
+        new DataBaseExam().saveResult(isWordExam, cardId, finalScore, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 listener.OnSuccess();

@@ -80,4 +80,5 @@ public class Constants {
     public static String KEY_INSTABUG = "90431510fb778d8222a6eab9d08c4e3c";
     public static String KEY_ALREADY_LEARNING = "ALREADY_LEARNING";
     public static String KEY_IS_WORDS = "IS_WORDS";
+    public static String KEY_COMPLETED_CARDS = "COMPLETED_CARDS";
 }

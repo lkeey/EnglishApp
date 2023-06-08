@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -20,7 +21,6 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.englishapp.R;
 import com.example.englishapp.activities.ExamActivity;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.LearningWordsAdapter;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.DataBasePersonalData;
@@ -37,6 +37,7 @@ public class LearningWordsFragment extends Fragment {
 
     private static final String TAG = "FragmentLearningWords";
     private ProgressBar progressBar;
+    private TextView learningHelper;
     private RecyclerView recyclerLearningWords;
     private Button btnExam;
 
@@ -108,7 +109,7 @@ public class LearningWordsFragment extends Fragment {
 
                 }
 
-                Intent intent = new Intent((MainActivity) requireActivity(), ExamActivity.class);
+                Intent intent = new Intent(requireActivity(), ExamActivity.class);
 
                 intent.putExtra(KEY_IS_WORDS, true);
 
@@ -125,6 +126,7 @@ public class LearningWordsFragment extends Fragment {
         progressBar = view.findViewById(R.id.progressBar);
         recyclerLearningWords = view.findViewById(R.id.recyclerLearningWords);
         btnExam = view.findViewById(R.id.btnExam);
+        learningHelper = view.findViewById(R.id.textHelper);
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -139,6 +141,13 @@ public class LearningWordsFragment extends Fragment {
                 recyclerLearningWords.setLayoutManager(manager);
 
                 progressBar.setVisibility(View.GONE);
+
+                if (DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size() == 0) {
+                    recyclerLearningWords.setVisibility(View.GONE);
+                    btnExam.setVisibility(View.GONE);
+                    learningHelper.setVisibility(View.VISIBLE);
+                }
+
             }
 
             @Override

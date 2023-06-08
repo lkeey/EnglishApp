@@ -1,23 +1,11 @@
 package com.example.englishapp.fragments;
 
-import static android.content.Context.ALARM_SERVICE;
-import static android.content.Context.MODE_PRIVATE;
-import static com.example.englishapp.database.Constants.KEY_ALREADY_LEARNING;
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_CARD;
-import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
-import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
-import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
-import static com.example.englishapp.database.Constants.WORD_COUNTER;
 
-import android.app.AlarmManager;
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,22 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.database.DataBaseLearningWords;
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.LearningWordListener;
 import com.example.englishapp.models.CardModel;
-import com.example.englishapp.receivers.AlarmReceiver;
+import com.example.englishapp.repositories.BeginLearningRepository;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.mlkit.common.model.DownloadConditions;
-import com.google.mlkit.nl.translate.TranslateLanguage;
-import com.google.mlkit.nl.translate.Translation;
-import com.google.mlkit.nl.translate.Translator;
-import com.google.mlkit.nl.translate.TranslatorOptions;
 
 public class WordCardInfoFragment extends BottomSheetDialogFragment {
 
-    private static final String TAG = "FragmentWordCardInfo";
     private TextView nameCard, level, amountWords, description;
     private Button btnLearn;
     private CardModel receivedCard;
@@ -67,51 +46,40 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
 
             progressBar.show();
 
-            loadModel();
+            new BeginLearningRepository().loadModel(getContext(), receivedCard.getId(), new LearningWordListener() {
+                @Override
+                public void beginLearning() {
+                    Toast.makeText(getActivity(), "You will get notifications with chosen words", Toast.LENGTH_SHORT).show();
 
-        });
+                    progressBar.dismiss();
 
-    }
+                    WordCardInfoFragment.this.dismiss();
+                }
 
-    private void loadModel() {
-        TranslatorOptions options =
-                new TranslatorOptions.Builder()
-                        .setSourceLanguage(TranslateLanguage.ENGLISH)
-                        .setTargetLanguage(DataBasePersonalData.USER_MODEL.getLanguageCode())
-                        .build();
+                @Override
+                public void cancelLearning() {
+                    Toast.makeText(getActivity(), "You have already learned this words", Toast.LENGTH_SHORT).show();
 
-        final Translator translator =
-                Translation.getClient(options);
+                    progressBar.dismiss();
+                }
 
-        DownloadConditions conditions = new DownloadConditions.Builder()
-                .build();
+                @Override
+                public void otherLearning() {
+                    Toast.makeText(getActivity(), "You are learning other words", Toast.LENGTH_SHORT).show();
 
-        translator.downloadModelIfNeeded(conditions).addOnSuccessListener(unused -> {
+                    progressBar.dismiss();
+                }
 
-            Log.i(TAG, "loaded");
+                @Override
+                public void onFail() {
+                    progressBar.dismiss();
 
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
-
-            boolean isLearning = sharedPreferences.getBoolean(KEY_ALREADY_LEARNING, false);
-
-            Log.i(TAG, "isLearning - " + isLearning);
-
-            if (!isLearning) {
-
-                learnWords();
-
-            } else {
-                Toast.makeText(getActivity(), "You are learning other words", Toast.LENGTH_SHORT).show();
-
-                progressBar.dismiss();
-            }
-
-        }).addOnFailureListener(e -> {
-            progressBar.dismiss();
-
-            Log.i(TAG, "can not load");
+                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
+
 
     private void receiveData() {
         Bundle bundle = this.getArguments();
@@ -145,71 +113,6 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
 
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarOpening);
-
-    }
-
-    private void learnWords() {
-
-        Log.i(TAG, "learnWords - " + receivedCard.getAmountOfWords() + " - " + receivedCard.getId());
-
-        DataBaseLearningWords dataBaseLearningWords = new DataBaseLearningWords();
-        dataBaseLearningWords.uploadLearningWords(getContext(), receivedCard.getId(), new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-                try {
-
-                    SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
-                    SharedPreferences.Editor myEdit = sharedPreferences.edit();
-
-                    try {
-                        Log.i(TAG, "amount loaded words - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
-
-                        Log.i(TAG, "Successfully set");
-
-                        myEdit.putInt(WORD_COUNTER, 0);
-                        myEdit.putString(KEY_LANGUAGE_CODE, DataBasePersonalData.USER_MODEL.getLanguageCode());
-                        myEdit.putBoolean(KEY_ALREADY_LEARNING, true);
-                        myEdit.apply();
-
-                        // create periodic task
-                        AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(ALARM_SERVICE);
-
-                        Intent intent = new Intent(((MainActivity) getActivity()), AlarmReceiver.class);
-                        intent.putExtra(KEY_SHOW_NOTIFICATION_WORD, true);
-
-                        PendingIntent pendingIntent = PendingIntent.getBroadcast(((MainActivity) getActivity()), 1, intent, PendingIntent.FLAG_MUTABLE);
-
-                        // cancel previous
-                        alarmManager.cancel(pendingIntent);
-
-                        // every 5 minute
-                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 5 * 60 * 1000, 2 * 60 * 1000, pendingIntent);
-
-                        Toast.makeText(getActivity(), "You will get notifications with chosen words", Toast.LENGTH_SHORT).show();
-
-                        progressBar.dismiss();
-
-                        WordCardInfoFragment.this.dismiss();
-                    } catch (Exception e) {
-                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
-
-                        Log.i(TAG, "error - " + e.getMessage());
-                    }
-
-
-                } catch (Exception e) {
-
-                    Log.i(TAG, "err - " + e.getMessage());
-
-                    progressBar.dismiss();
-                }
-            }
-
-            @Override
-            public void OnFailure() {
-                Log.i(TAG, "can not load learning words");
-            }
-        });
 
     }
 
