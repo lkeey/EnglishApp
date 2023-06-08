@@ -3,6 +3,13 @@
 
     <!-- https://www.figma.com/file/pn5pjWQP4oWQyX01WUkHVk/Untitled?type=whiteboard&node-id=1-111&t=a1ryhXjOK7QmMqWM-0 -->
 
+
+<!--
+    phone models
+    samsung
+    apple
+-->
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.INTERNET" />

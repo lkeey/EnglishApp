@@ -130,7 +130,7 @@ public class SpeechFragment extends Fragment {
 
                 Log.i(TAG, "word - " + textWord.getText().toString() + " - " + result.get(0));
 
-                if (result.get(0).equals(textWord.getText().toString())) {
+                if (result.get(0).equalsIgnoreCase(textWord.getText().toString())) {
 
                     Toast.makeText(getActivity(), "Correct!", Toast.LENGTH_SHORT).show();
 

@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:textSize="32sp"
             android:layout_margin="16dp"
-            android:textColor="@color/secondary_color"
+            android:textColor="@color/design_default_color_primary"
             android:textStyle="bold"
             android:gravity="center"
             android:text="Word"
@@ -54,9 +54,9 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:layout_marginTop="16dp"
-            android:text="Pronounce"
+            android:text="Say"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/gradient_background_btn"
+            android:background="@drawable/round_layout_test"
             />
 
     </LinearLayout>

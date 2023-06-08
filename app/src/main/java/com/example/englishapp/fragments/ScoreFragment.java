@@ -82,10 +82,11 @@ public class ScoreFragment extends Fragment {
             public void OnSuccess() {
                 progressBar.dismiss();
 
-                new WordsRepository().endLearningWords(getContext());
+                if (isWordExam) {
+                    new WordsRepository().endLearningWords(getContext());
 
-                Toast.makeText(getActivity(), "You can choose other words to learn", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(getActivity(), "You can choose other words to learn", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override

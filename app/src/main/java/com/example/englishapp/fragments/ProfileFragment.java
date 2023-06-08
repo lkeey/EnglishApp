@@ -1,11 +1,14 @@
 package com.example.englishapp.fragments;
 
+import static android.content.Context.ALARM_SERVICE;
+import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,7 @@ import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.RoomDataBase;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.receivers.AlarmReceiver;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -57,7 +61,7 @@ public class ProfileFragment extends Fragment {
 
         init(view);
 
-        setImg(view);
+//        setImg(view);
 
         setListeners();
 
@@ -66,6 +70,8 @@ public class ProfileFragment extends Fragment {
 
     private void setImg(View view) {
         try {
+
+            appBarLayout = view.findViewById(R.id.app_bar_layout);
 
             if (!isCalculated) {
                 Log.i(TAG, "setImg: 01 - " + appBarLayout.getTotalScrollRange());
@@ -101,31 +107,31 @@ public class ProfileFragment extends Fragment {
     private void updateViews(View view, float offset) {
 
         /* Collapse avatar img*/
-        ImageView ivUserAvatar = view.findViewById(R.id.userImage);
-
-        if (offset > avatarAnimateStartPointY) {
-            float avatarCollapseAnimateOffset = (offset - avatarAnimateStartPointY) * avatarCollapseAnimationChangeWeight;
-            float avatarSize = 135 - (135 - 45) * avatarCollapseAnimateOffset;
-            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
-            layoutParams.height = Math.round(avatarSize);
-            layoutParams.width = Math.round(avatarSize);
-
-            TextView invisibleTextViewWorkAround = view.findViewById(R.id.tv_workaround);
-            invisibleTextViewWorkAround.setTextSize(TypedValue.COMPLEX_UNIT_PX, offset);
-
-            float translationX = ((appBarLayout.getWidth() - 24 - avatarSize) / 2) * avatarCollapseAnimateOffset;
-            float translationY = ((toolbar.getHeight()  - verticalToolbarAvatarMargin - avatarSize ) / 2) * avatarCollapseAnimateOffset;
-            ivUserAvatar.setTranslationX(translationX);
-            ivUserAvatar.setTranslationY(translationY);
-        } else {
-            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
-            if (layoutParams.height != 135) {
-                layoutParams.height = 135;
-                layoutParams.width = 135;
-                ivUserAvatar.setLayoutParams(layoutParams);
-            }
-            ivUserAvatar.setTranslationX(0f);
-        }
+//        ImageView ivUserAvatar = view.findViewById(R.id.userImage);
+//
+//        if (offset > avatarAnimateStartPointY) {
+//            float avatarCollapseAnimateOffset = (offset - avatarAnimateStartPointY) * avatarCollapseAnimationChangeWeight;
+//            float avatarSize = 135 - (135 - 45) * avatarCollapseAnimateOffset;
+//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
+//            layoutParams.height = Math.round(avatarSize);
+//            layoutParams.width = Math.round(avatarSize);
+//
+//            TextView invisibleTextViewWorkAround = view.findViewById(R.id.tv_workaround);
+//            invisibleTextViewWorkAround.setTextSize(TypedValue.COMPLEX_UNIT_PX, offset);
+//
+//            float translationX = ((appBarLayout.getWidth() - 24 - avatarSize) / 2) * avatarCollapseAnimateOffset;
+//            float translationY = ((toolbar.getHeight()  - verticalToolbarAvatarMargin - avatarSize ) / 2) * avatarCollapseAnimateOffset;
+//            ivUserAvatar.setTranslationX(translationX);
+//            ivUserAvatar.setTranslationY(translationY);
+//        } else {
+//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
+//            if (layoutParams.height != 135) {
+//                layoutParams.height = 135;
+//                layoutParams.width = 135;
+//                ivUserAvatar.setLayoutParams(layoutParams);
+//            }
+//            ivUserAvatar.setTranslationX(0f);
+//        }
     }
 
     private void setListeners() {
@@ -188,6 +194,17 @@ public class ProfileFragment extends Fragment {
             mClient.signOut().addOnCompleteListener(task -> {
 
                 if (task.isSuccessful()) {
+
+                    AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+
+                    Intent alarm = new Intent(getContext(), AlarmReceiver.class);
+                    alarm.putExtra(KEY_SHOW_NOTIFICATION_WORD, true);
+
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, alarm, PendingIntent.FLAG_MUTABLE);
+
+                    // cancel previous
+                    alarmManager.cancel(pendingIntent);
+
                     Toast.makeText(getActivity(), "You have successfully logout", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
@@ -220,7 +237,6 @@ public class ProfileFragment extends Fragment {
         layoutLeaderBord = view.findViewById(R.id.layoutLeaderBord);
         layoutProfile = view.findViewById(R.id.layoutProfile);
         layoutLogout = view.findViewById(R.id.layoutLogout);
-        appBarLayout = view.findViewById(R.id.app_bar_layout);
 
         Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
         ((MainActivity) requireActivity()).setSupportActionBar(toolbar);

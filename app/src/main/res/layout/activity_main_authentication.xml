@@ -10,7 +10,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         >
 
         <androidx.appcompat.widget.Toolbar
@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:src="@drawable/app_logo"
-                />
+                android:contentDescription="@string/app_name"/>
 
         </LinearLayout>
 
@@ -69,6 +69,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_marginStart="25dp"
+                android:contentDescription="@string/app_name"
                 android:background="@drawable/ic_check"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/design_default_color_primary"/>
@@ -76,8 +77,7 @@
             <TextView
                 android:id="@+id/userName"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignStart="@+id/imageName"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
                 android:layout_marginEnd="28dp"
                 android:textAlignment="center"
