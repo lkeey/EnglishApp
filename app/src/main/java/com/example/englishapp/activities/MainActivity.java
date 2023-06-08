@@ -2,12 +2,10 @@ package com.example.englishapp.activities;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
-import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
 import static com.example.englishapp.database.DataBase.findUserById;
-import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -34,8 +32,10 @@ import com.example.englishapp.fragments.MapUsersFragment;
 import com.example.englishapp.fragments.ProfileFragment;
 import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.fragments.ScoreFragment;
+import com.example.englishapp.interfaces.TasksChecking;
 import com.example.englishapp.managers.LocationManager;
 import com.example.englishapp.models.UserModel;
+import com.example.englishapp.repositories.TasksRepository;
 import com.example.englishapp.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -100,25 +100,23 @@ public class MainActivity extends BaseActivity {
 
 
     private void receiveData() {
-        try {
-            Intent intent = getIntent();
+        Intent intent = getIntent();
 
-            boolean status = intent.getBooleanExtra(SHOW_FRAGMENT_DIALOG, false);
-            boolean isShowMap = intent.getBooleanExtra(KEY_LOCATION, false);
-            boolean isWordExam = intent.getBooleanExtra(KEY_IS_WORDS, false);
-            String userUID = intent.getStringExtra(KEY_USER_UID);
-            long totalTime = intent.getLongExtra(KEY_TEST_TIME, -1);
-
-            Log.i(TAG, "STATUS " + status);
-            Log.i(TAG, "UserUID - " + userUID + " - " + LIST_OF_USERS.size());
-            Log.i(TAG, "totalTime - " + totalTime + " - " + isWordExam);
-
-            if (status) {
+        new TasksRepository().checkTasks(intent, new TasksChecking() {
+            @Override
+            public void showDialog() {
                 new ProfileInfoDialogFragment().show(getSupportFragmentManager(), SHOW_FRAGMENT_DIALOG);
+            }
 
-            } else if (userUID != null) {
+            @Override
+            public void showMap() {
+                MapUsersFragment fragment = new MapUsersFragment();
+                setFragment(fragment);
+            }
 
-                UserModel receivedUser = findUserById(userUID);
+            @Override
+            public void showDiscussion() {
+                UserModel receivedUser = findUserById(intent.getStringExtra(KEY_USER_UID));
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
@@ -126,33 +124,29 @@ public class MainActivity extends BaseActivity {
                 fragment.setArguments(bundle);
 
                 setFragment(fragment);
+            }
 
-            } else if (totalTime != -1L) {
+            @Override
+            public void showProfile() {
+                ProfileFragment fragment = new ProfileFragment();
+                setFragment(fragment);
+            }
 
-                Log.i(TAG, "show ScoreFragment");
-
+            @Override
+            public void checkingExam() {
                 ScoreFragment fragment = new ScoreFragment();
 
                 Bundle bundle = new Bundle();
 
-                bundle.putLong(Constants.KEY_TEST_TIME, totalTime);
-                bundle.putBoolean(KEY_IS_WORDS, isWordExam);
+                bundle.putLong(Constants.KEY_TEST_TIME, intent.getLongExtra(KEY_TEST_TIME, -1));
+                bundle.putBoolean(KEY_IS_WORDS, intent.getBooleanExtra(KEY_IS_WORDS, false));
 
                 fragment.setArguments(bundle);
 
                 setFragment(fragment);
-
-            } else if (isShowMap) {
-                Log.i(TAG, "show Map Fragment");
-
-                MapUsersFragment fragment = new MapUsersFragment();
-
-                setFragment(fragment);
             }
+        });
 
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
     }
 
     private void init() {

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.ProfileFragment">
 
@@ -46,7 +47,7 @@
 <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/abl_main"
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

@@ -2,8 +2,9 @@ package com.example.englishapp.receivers;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
-import static com.example.englishapp.database.Constants.KEY_LOCATION;
+import static com.example.englishapp.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
+import static com.example.englishapp.database.Constants.KEY_WORD_TEXT_EN;
 import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.WORD_COUNTER;
 
@@ -11,6 +12,7 @@ import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -66,7 +68,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 // change wallpaper
                 Intent intent = new Intent(context, WallpaperService.class);
-                intent.putExtra("picture", currentWord);
+                intent.putExtra(KEY_WORD_TEXT_EN, currentWord);
                 context.startService(intent);
             }
 
@@ -165,9 +167,11 @@ public class AlarmReceiver extends BroadcastReceiver {
         // what to open after click on notification
         Intent notificationIntent = new Intent(context, SplashActivity.class);
 
-        notificationIntent.putExtra(KEY_LOCATION, true);
+        notificationIntent.putExtra(KEY_PROFILE, true);
 
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
         Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
@@ -178,6 +182,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .setStyle(new NotificationCompat.BigPictureStyle()
                         .bigPicture(bmp)
                         .bigLargeIcon(null))
+                .setContentIntent(contentIntent)
                 .build();
 
         return notification;

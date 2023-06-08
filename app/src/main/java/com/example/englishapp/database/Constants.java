@@ -81,4 +81,6 @@ public class Constants {
     public static String KEY_ALREADY_LEARNING = "ALREADY_LEARNING";
     public static String KEY_IS_WORDS = "IS_WORDS";
     public static String KEY_COMPLETED_CARDS = "COMPLETED_CARDS";
+    public static String KEY_PROFILE = "PROFILE";
+
 }

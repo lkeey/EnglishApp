@@ -1,9 +1,10 @@
 package com.example.englishapp.activities;
 
-import static com.example.englishapp.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
+import static com.example.englishapp.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.REMOTE_MSG_USER_SENDER;
+import static com.example.englishapp.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,11 +20,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.repositories.PermissionRepository;
 import com.example.englishapp.R;
 import com.example.englishapp.database.DataBase;
+import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.OpeningListener;
+import com.example.englishapp.repositories.OpenRepository;
+import com.example.englishapp.repositories.PermissionRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -47,10 +50,8 @@ public class SplashActivity extends AppCompatActivity {
 
         dataBase = new DataBase();
 
-        DataBasePersonalData dataBasePersonalData = new DataBasePersonalData();
-
         // Access a Cloud Firestore instance from your Activity
-        dataBasePersonalData.DATA_FIRESTORE = FirebaseFirestore.getInstance();
+        DataBasePersonalData.DATA_FIRESTORE = FirebaseFirestore.getInstance();
 
         new Thread(() -> {
             try {
@@ -80,60 +81,45 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void receiveData() {
-        try {
-            Intent data = getIntent();
 
-            String userUID = data.getStringExtra(REMOTE_MSG_USER_SENDER);
-            boolean isShowMap = data.getBooleanExtra(KEY_LOCATION, false);
+        Intent data = getIntent();
 
-            Log.i(TAG, "send uid - " + userUID);
+        new OpenRepository().open(data, new OpeningListener() {
+            @Override
+            public void showMap() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
-            if (userUID != null) {
-                dataBase.loadData(new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                intent.putExtra(KEY_LOCATION, true);
 
-                        intent.putExtra(KEY_USER_UID, userUID);
+                startActivity(intent);
 
-                        startActivity(intent);
+                SplashActivity.this.finish();
+            }
 
-                        SplashActivity.this.finish();
+            @Override
+            public void showDiscussion() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
-                        Log.i(TAG, "work");
+                intent.putExtra(KEY_USER_UID, data.getStringExtra(REMOTE_MSG_USER_SENDER));
 
-                    }
+                startActivity(intent);
 
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "Can not load data");
-                    }
-                });
-            } else if (isShowMap) {
-                dataBase.loadData(new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-                        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                SplashActivity.this.finish();
+            }
 
-                        intent.putExtra(KEY_LOCATION, true);
+            @Override
+            public void showProfile() {
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
 
-                        startActivity(intent);
+                intent.putExtra(KEY_PROFILE, true);
 
-                        SplashActivity.this.finish();
+                startActivity(intent);
 
-                        Log.i(TAG, "work");
+                SplashActivity.this.finish();
+            }
 
-                    }
-
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "Can not load data");
-                    }
-                });
-            } else {
-
-//                checkPermissions();
-
+            @Override
+            public void startWorking() {
                 PermissionRepository repository = new PermissionRepository(SplashActivity.this);
                 List<String> permissions = repository.checkPermissions();
 
@@ -141,7 +127,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     Log.i(TAG, "Show dialog");
 
-                    ActivityCompat.requestPermissions(this, permissions.toArray(
+                    ActivityCompat.requestPermissions(SplashActivity.this, permissions.toArray(
                             new String[0]), REQUEST_ID_MULTIPLE_PERMISSIONS
                     );
 
@@ -151,12 +137,14 @@ public class SplashActivity extends AppCompatActivity {
 
                     beginWork();
                 }
-
             }
 
-        } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
-        }
+            @Override
+            public void onFail() {
+                Log.i(TAG, "Can not load data");
+            }
+        });
+
     }
 
     private void beginWork() {
