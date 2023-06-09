@@ -112,7 +112,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
-        dialogText.setText(R.string.progressBarOpening);
+        dialogText.setText(R.string.progressBarLoadingModel);
 
     }
 

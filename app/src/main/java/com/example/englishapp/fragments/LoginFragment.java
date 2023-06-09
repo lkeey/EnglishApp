@@ -1,6 +1,7 @@
 package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
+import static com.example.englishapp.database.Constants.KEY_GOOGLE_WEB_CLIENT_ID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -38,10 +38,9 @@ public class LoginFragment extends Fragment {
 
     private static final String TAG = "LoginUser";
     private EditText userEmail, userPassword;
-    private Button btnLogin;
     private TextView forgotPassword, signUp;
     private Dialog progressBar;
-    private RelativeLayout signGoogle, signPhone;
+    private RelativeLayout signGoogle, signPhone, layoutLogin;
     private SignInClient oneTapClient;
     private BeginSignInRequest signInRequest;
     private ActivityResultLauncher<IntentSenderRequest> activityResultLauncher;
@@ -64,11 +63,34 @@ public class LoginFragment extends Fragment {
 
     }
 
+
+    private void init(View view) {
+        userEmail = view.findViewById(R.id.editTextEmail);
+        userPassword = view.findViewById(R.id.editTextPassword);
+        layoutLogin = view.findViewById(R.id.layoutLogin);
+        forgotPassword = view.findViewById(R.id.labelForgot);
+        signUp = view.findViewById(R.id.labelAccount);
+        signGoogle = view.findViewById(R.id.signGoogle);
+        signPhone = view.findViewById(R.id.signPhone);
+
+        forgotPassword = view.findViewById(R.id.labelForgot);
+
+        progressBar = new Dialog(getActivity());
+        progressBar.setContentView(R.layout.dialog_layout);
+        progressBar.setCancelable(false);
+        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
+        dialogText.setText(R.string.progressBarLogging);
+
+    }
+
     private void setListeners() {
 
         signUp.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new SignUpFragment()));
 
-        btnLogin.setOnClickListener(v -> {
+        layoutLogin.setOnClickListener(v -> {
             if (validateData()) {
                 Log.i(TAG, "begin logging");
 
@@ -82,12 +104,15 @@ public class LoginFragment extends Fragment {
 
         forgotPassword.setOnClickListener(v -> ((MainAuthenticationActivity) requireActivity()).setFragment(new ForgotPasswordFragment()));
 
+        Log.i(TAG, "default_web_client_id - " + KEY_GOOGLE_WEB_CLIENT_ID);
+
         // for google authentication
         oneTapClient = Identity.getSignInClient(requireActivity());
         signInRequest = BeginSignInRequest.builder()
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
-                        .setServerClientId(getString(R.string.default_web_client_id))
+//                        .setServerClientId(getString(R.string.default_web_client_id))
+                        .setServerClientId(KEY_GOOGLE_WEB_CLIENT_ID)
                         .setFilterByAuthorizedAccounts(false)
                         .build())
                 .build();
@@ -111,43 +136,22 @@ public class LoginFragment extends Fragment {
                     progressBar.dismiss();
                     Log.i(TAG, "api - " + e.getMessage());
 
-//                    Toast.makeText(getActivity(), "API: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "API: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+
                 } catch (Exception e) {
                     progressBar.dismiss();
-                    Log.i(TAG, "exception - " + e.getMessage());
+                    Log.i(TAG, "Exception - " + e.getMessage());
 
                     Toast.makeText(getActivity(), "Something went wrong with getting data", Toast.LENGTH_SHORT).show();
                 }
 
             } else {
                 Toast.makeText(getActivity(), "Something went wrong. Try later", Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "fail - result not ok");
+                Log.i(TAG, "fail - result not ok - " + result.getData());
             }
         });
-
     }
 
-    private void init(View view) {
-        userEmail = view.findViewById(R.id.editTextEmail);
-        userPassword = view.findViewById(R.id.editTextPassword);
-        btnLogin = view.findViewById(R.id.btnLogin);
-        forgotPassword = view.findViewById(R.id.labelForgot);
-        signUp = view.findViewById(R.id.labelAccount);
-        signGoogle = view.findViewById(R.id.signGoogle);
-        signPhone = view.findViewById(R.id.signPhone);
-
-        forgotPassword = view.findViewById(R.id.labelForgot);
-
-        progressBar = new Dialog(getActivity());
-        progressBar.setContentView(R.layout.dialog_layout);
-        progressBar.setCancelable(false);
-        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        TextView dialogText = progressBar.findViewById(R.id.dialogText);
-        dialogText.setText(R.string.progressBarLogging);
-
-    }
 
     private void googleSignIn() {
 
@@ -171,7 +175,7 @@ public class LoginFragment extends Fragment {
                 }
             })
             .addOnFailureListener(requireActivity(), e -> {
-                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "fail - " + e.getMessage());
             });
     }

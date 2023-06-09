@@ -1,12 +1,16 @@
 package com.example.englishapp.fragments;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.MODE_PRIVATE;
 import static com.example.englishapp.database.Constants.KEY_ADD_SCORE;
+import static com.example.englishapp.database.Constants.KEY_IS_CHANGING_WALLPAPER;
+import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -40,6 +44,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.repositories.UpdateProfileRepository;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 
 import java.io.FileNotFoundException;
@@ -63,6 +68,7 @@ public class ProfileInfoFragment extends Fragment {
     private Uri imgUri;
     private String languageCode;
     private boolean isAddingScore;
+    private SwitchMaterial switcherWallpaper;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -74,7 +80,7 @@ public class ProfileInfoFragment extends Fragment {
         setPreviousData(view);
 
         try {
-            requireActivity().setTitle(R.string.nameLogin);
+            requireActivity().setTitle(R.string.nameProfileInfo);
         } catch (Exception e) {
             Log.i(TAG, "e - " + e.getMessage());
         }
@@ -103,6 +109,7 @@ public class ProfileInfoFragment extends Fragment {
         radioGroupGender = view.findViewById(R.id.groupGender);
         profileImg = view.findViewById(R.id.imageUser);
         spinnerLanguage = view.findViewById(R.id.spinnerLanguage);
+        switcherWallpaper = view.findViewById(R.id.switcherWallpaper);
 
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
@@ -184,6 +191,11 @@ public class ProfileInfoFragment extends Fragment {
                 }
             }
 
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
+            boolean isShowing = sharedPreferences.getBoolean(KEY_IS_CHANGING_WALLPAPER, false);
+
+            switcherWallpaper.setChecked(isShowing);
+
         } catch (Exception e) {
             Log.i(TAG, e.getMessage());
         }
@@ -229,14 +241,6 @@ public class ProfileInfoFragment extends Fragment {
                     Log.i(TAG, "Data Checked");
 
                     progressBar.show();
-
-//                    updateUser(
-//                            userEmail.getText().toString(),
-//                            userName.getText().toString(),
-//                            userDOB,
-//                            radioBtnGender.getText().toString(),
-//                            languageCode
-//                    );
 
                     new UpdateProfileRepository().updateUser(
                             userEmail.getText().toString(),
@@ -292,6 +296,14 @@ public class ProfileInfoFragment extends Fragment {
             }
         });
 
+        switcherWallpaper.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            SharedPreferences sharedPreferences = getContext().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+            myEdit.putBoolean(KEY_IS_CHANGING_WALLPAPER, isChecked);
+
+            myEdit.apply();
+        });
     }
 
     private boolean checkData(View view) {

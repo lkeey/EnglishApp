@@ -47,7 +47,8 @@
                 android:text="@string/number"
                 android:textColor="@color/white"
                 android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:ignore="TextSizeCheck" />
 
         </LinearLayout>
 
@@ -86,7 +87,7 @@
                     android:layout_weight="1"
                     android:textAlignment="center"
                     android:gravity="center"
-                    android:text="@string/_5_minutes"
+                    android:text="@string/number"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -249,18 +250,18 @@
                 android:layout_width="120dp"
                 android:layout_height="160dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/white"
                 app:cardCornerRadius="5dp"
                 app:cardElevation="5dp"
                 app:cardUseCompatPadding="true"
-                android:backgroundTint="@color/white"
-                >
+                tools:ignore="TextSizeCheck">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:layout_margin="8dp"
                     android:gravity="center"
-                    android:layout_gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
@@ -270,31 +271,29 @@
                         android:layout_marginBottom="8dp"
                         android:background="@drawable/ic_question"
                         android:backgroundTint="@color/grey"
-                        android:contentDescription="@string/app_name"/>
+                        android:contentDescription="@string/app_name" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textAlignment="center"
                         android:text="@string/un_attempted"
+                        android:textAlignment="center"
                         android:textColor="@color/secondary_color"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/amountUnAttempted"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
                         android:layout_weight="1"
                         android:gravity="bottom"
-                        android:layout_marginTop="8dp"
                         android:text="@string/number"
                         android:textColor="@color/grey"
                         android:textSize="18sp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -322,7 +321,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">

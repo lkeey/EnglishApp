@@ -86,5 +86,13 @@ public class DataBaseUsers {
             })
             .addOnFailureListener(e -> listener.OnFailure());
     }
+    public UserModel findUserById(String userUID) {
+
+        Log.i(TAG, "Amount users - " + LIST_OF_USERS.size());
+
+        return LIST_OF_USERS.stream().filter(user -> user.getUid().equals(userUID)).findAny()
+                .orElseThrow(() -> new RuntimeException("not found"));
+    }
+
 
 }

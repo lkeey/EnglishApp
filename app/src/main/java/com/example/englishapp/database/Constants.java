@@ -82,5 +82,6 @@ public class Constants {
     public static String KEY_IS_WORDS = "IS_WORDS";
     public static String KEY_COMPLETED_CARDS = "COMPLETED_CARDS";
     public static String KEY_PROFILE = "PROFILE";
-
+    public static String KEY_GOOGLE_WEB_CLIENT_ID = "751178569108-314gisf2llpf72q1k4jpkpq7cag96s0g.apps.googleusercontent.com";
+    public static String KEY_IS_CHANGING_WALLPAPER = "CHANGING_WALLPAPER";
 }

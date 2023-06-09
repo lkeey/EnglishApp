@@ -1,10 +1,11 @@
 package com.example.englishapp.receivers;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.englishapp.database.Constants.KEY_IS_CHANGING_WALLPAPER;
 import static com.example.englishapp.database.Constants.KEY_LANGUAGE_CODE;
 import static com.example.englishapp.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
-import static com.example.englishapp.database.Constants.KEY_WORD_TEXT_EN;
+import static com.example.englishapp.database.Constants.KEY_WORD_IMG;
 import static com.example.englishapp.database.Constants.MY_SHARED_PREFERENCES;
 import static com.example.englishapp.database.Constants.WORD_COUNTER;
 
@@ -39,7 +40,9 @@ import java.util.Random;
 public class AlarmReceiver extends BroadcastReceiver {
     private final static String TAG = "ReceiverAlarm";
     private final static String CHANNEL_ID = "word_notifications";
-    private String description, currentWord, languageCode;
+    private String languageCode;
+    private WordModel currentWord;
+    private boolean isChangingWallpaper;
     private Bitmap bmp;
 
     @Override
@@ -56,20 +59,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private void beginWorking(Context context) {
 
-        new WordsRepository().translateString(currentWord, languageCode, new CompleteListener() {
+        new WordsRepository().translateString(currentWord.getTextEn(), languageCode, new CompleteListener() {
             @Override
             public void OnSuccess() {
 
                 Log.i(TAG, "Successfully translated");
 
-                String title = currentWord + " - " + WordsRepository.translatedText;
+                String title = currentWord.getTextEn() + " - " + WordsRepository.translatedText;
 
                 sendNotification(title, context);
-
-                // change wallpaper
-                Intent intent = new Intent(context, WallpaperService.class);
-                intent.putExtra(KEY_WORD_TEXT_EN, currentWord);
-                context.startService(intent);
             }
 
             @Override
@@ -77,14 +75,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 Log.i(TAG, "fail");
 
-                sendNotification(currentWord, context);
-
-                // change wallpaper
-                Intent intent = new Intent(context, WallpaperService.class);
-                intent.putExtra("picture", currentWord);
-                context.startService(intent);
+                sendNotification(currentWord.getTextEn(), context);
             }
         });
+        if (isChangingWallpaper) {
+            // change wallpaper
+            Intent intent = new Intent(context, WallpaperService.class);
+            intent.putExtra(KEY_WORD_IMG, currentWord.getImage());
+            context.startService(intent);
+        }
     }
 
     private void sendNotification(String title, Context context) {
@@ -96,7 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         Notification notification = createNotification(
                 context,
                 title,
-                description,
+                currentWord.getDescription(),
                 bmp
         );
 
@@ -116,6 +115,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // translated language
         languageCode = sh.getString(KEY_LANGUAGE_CODE, "ru");
+        isChangingWallpaper = sh.getBoolean(KEY_IS_CHANGING_WALLPAPER, false);
 
         new DataBaseLearningWords().loadLearningWords(context, new CompleteListener() {
             @Override
@@ -123,13 +123,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
                 Log.i(TAG, "Successfully read learning words");
 
-                WordModel wordModel = DataBaseLearningWords.LIST_OF_LEARNING_WORDS.get(counter);
+                currentWord = DataBaseLearningWords.LIST_OF_LEARNING_WORDS.get(counter);
 
-                currentWord = wordModel.getTextEn();
-
-                description = wordModel.getDescription();
-
-                bmp = new WordsRepository().stringToBitMap(context, wordModel.getImage());
+                bmp = new WordsRepository().stringToBitMap(context, currentWord.getImage());
 
                 SharedPreferences sharedPreferences = context.getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
@@ -173,7 +169,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         PendingIntent contentIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), notificationIntent, PendingIntent.FLAG_IMMUTABLE);
 
-        Notification notification = new NotificationCompat.Builder(context, CHANNEL_ID)
+        return new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setContentTitle(title)
                 .setTicker(title)
                 .setContentText(description)
@@ -184,8 +180,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                         .bigLargeIcon(null))
                 .setContentIntent(contentIntent)
                 .build();
-
-        return notification;
 
     }
 }

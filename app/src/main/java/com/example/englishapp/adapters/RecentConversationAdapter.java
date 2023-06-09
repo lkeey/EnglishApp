@@ -12,12 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.models.UserModel;
 import com.example.englishapp.R;
+import com.example.englishapp.database.DataBasePersonalData;
+import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.interfaces.ConversationListener;
 import com.example.englishapp.models.ChatMessage;
+import com.example.englishapp.models.UserModel;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
 
                 Log.i(TAG, "uid - " + textUID);
 
-                UserModel userModel = DataBase.findUserById(textUID);
+                UserModel userModel = new DataBaseUsers().findUserById(textUID);
 
                 userName.setText(userModel.getName());
                 Glide.with(context).load(userModel.getPathToImage()).into(profileImg);

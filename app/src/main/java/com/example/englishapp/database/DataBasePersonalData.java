@@ -40,7 +40,6 @@ public class DataBasePersonalData {
     public static FirebaseFirestore DATA_FIRESTORE;
     public static UserModel USER_MODEL = new UserModel();
     public static FirebaseAuth DATA_AUTH;
-    public static FirebaseMessaging DATA_FIREBASE_MESSAGING;
 
     public void getUserData(CompleteListener listener) {
         DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
@@ -139,12 +138,8 @@ public class DataBasePersonalData {
         batch.update(reference, profileMap);
 
         batch.commit()
-                .addOnSuccessListener(unused -> {
-                    listener.OnSuccess();
-                })
-                .addOnFailureListener(e -> {
-                    listener.OnFailure();
-                });
+                .addOnSuccessListener(unused -> listener.OnSuccess())
+                .addOnFailureListener(e -> listener.OnFailure());
     }
 
     public void updateImage(String path, CompleteListener listener) {
@@ -171,6 +166,49 @@ public class DataBasePersonalData {
         }
     }
 
+    public void updateToken(String token, CompleteListener listener) {
 
+        DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                .document(USER_MODEL.getUid());
+
+        reference.update(KEY_FCM_TOKEN, token)
+                .addOnSuccessListener(unused -> listener.OnSuccess())
+                .addOnFailureListener(e -> listener.OnFailure());
+    }
+
+    public void updateUserGeoPosition(double latitude, double longitude, CompleteListener listener) {
+
+        if (latitude != USER_MODEL.getLatitude() && longitude != USER_MODEL.getLongitude()) {
+
+            Log.i(TAG, "new geo - " + USER_MODEL.getUid());
+
+            DocumentReference reference = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS)
+                    .document(USER_MODEL.getUid());
+
+            USER_MODEL.setLongitude(longitude);
+            USER_MODEL.setLatitude(latitude);
+
+            reference.update(KEY_LOCATION, new GeoPoint(latitude, longitude))
+                    .addOnSuccessListener(unused -> {
+
+                        Log.i(TAG, "updated");
+
+                        listener.OnSuccess();
+
+                    }).addOnFailureListener(e -> {
+
+                        Log.i(TAG, "can not update user geo position - " + e.getMessage());
+
+                        listener.OnFailure();
+
+                    });
+
+        } else {
+
+            Log.i(TAG, "the same geo - " + latitude + " - " + USER_MODEL.getLatitude());
+
+            listener.OnFailure();
+        }
+    }
 
 }

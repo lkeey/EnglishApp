@@ -4,7 +4,6 @@ import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_NAME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
-import static com.example.englishapp.database.DataBase.findUserById;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBaseUsers.LIST_OF_USERS;
 
@@ -107,7 +106,7 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
         googleMap.setOnMarkerClickListener(marker -> {
             try {
 
-                UserModel user = findUserById(marker.getSnippet());
+                UserModel user = new DataBaseUsers().findUserById(marker.getSnippet());
 
                 listener.onUserClicked(user);
 

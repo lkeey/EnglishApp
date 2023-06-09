@@ -32,23 +32,15 @@ import com.example.englishapp.receivers.AlarmReceiver;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
-
-// https://stackoverflow.com/questions/41276361/expanding-and-collapsing-toolbar-in-android
 
 public class ProfileFragment extends Fragment {
     private static final String TAG = "FragmentProfile";
     private Toolbar toolbar;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
     private DataBaseLearningWords dataBaseLearningWords;
-    private float avatarAnimateStartPointY = 0F;
-    private float avatarCollapseAnimationChangeWeight = 0F;
-    private boolean isCalculated = false;
-    private float verticalToolbarAvatarMargin = 0F;
-    private AppBarLayout appBarLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,77 +53,9 @@ public class ProfileFragment extends Fragment {
 
         init(view);
 
-//        setImg(view);
-
         setListeners();
 
         return view;
-    }
-
-    private void setImg(View view) {
-        try {
-
-            appBarLayout = view.findViewById(R.id.app_bar_layout);
-
-            if (!isCalculated) {
-                Log.i(TAG, "setImg: 01 - " + appBarLayout.getTotalScrollRange());
-
-                avatarAnimateStartPointY = Math.abs((appBarLayout.getHeight() - (135 + 24)) / appBarLayout.getTotalScrollRange());
-                Log.i(TAG, "setImg: 02");
-
-                avatarCollapseAnimationChangeWeight = 1 / (1 - avatarAnimateStartPointY);
-                Log.i(TAG, "setImg: 03");
-
-                verticalToolbarAvatarMargin = (toolbar.getHeight() - 45) * 2;
-                isCalculated = true;
-
-                Log.i(TAG, "setImg: 04");
-
-            }
-
-            appBarLayout.addOnOffsetChangedListener((AppBarLayout.BaseOnOffsetChangedListener) (appBarLayout1, verticalOffset) -> {
-
-                Log.i(TAG, "setImg: 1 - " + appBarLayout1.getTotalScrollRange());
-
-                float offset = Math.abs(verticalOffset / appBarLayout1.getTotalScrollRange());
-
-
-                updateViews(view, offset);
-            });
-
-        } catch (Exception e) {
-            Log.i(TAG, "er - " + e.getMessage());
-        }
-    }
-
-    private void updateViews(View view, float offset) {
-
-        /* Collapse avatar img*/
-//        ImageView ivUserAvatar = view.findViewById(R.id.userImage);
-//
-//        if (offset > avatarAnimateStartPointY) {
-//            float avatarCollapseAnimateOffset = (offset - avatarAnimateStartPointY) * avatarCollapseAnimationChangeWeight;
-//            float avatarSize = 135 - (135 - 45) * avatarCollapseAnimateOffset;
-//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
-//            layoutParams.height = Math.round(avatarSize);
-//            layoutParams.width = Math.round(avatarSize);
-//
-//            TextView invisibleTextViewWorkAround = view.findViewById(R.id.tv_workaround);
-//            invisibleTextViewWorkAround.setTextSize(TypedValue.COMPLEX_UNIT_PX, offset);
-//
-//            float translationX = ((appBarLayout.getWidth() - 24 - avatarSize) / 2) * avatarCollapseAnimateOffset;
-//            float translationY = ((toolbar.getHeight()  - verticalToolbarAvatarMargin - avatarSize ) / 2) * avatarCollapseAnimateOffset;
-//            ivUserAvatar.setTranslationX(translationX);
-//            ivUserAvatar.setTranslationY(translationY);
-//        } else {
-//            ViewGroup.LayoutParams layoutParams = ivUserAvatar.getLayoutParams();
-//            if (layoutParams.height != 135) {
-//                layoutParams.height = 135;
-//                layoutParams.width = 135;
-//                ivUserAvatar.setLayoutParams(layoutParams);
-//            }
-//            ivUserAvatar.setTranslationX(0f);
-//        }
     }
 
     private void setListeners() {
@@ -195,7 +119,7 @@ public class ProfileFragment extends Fragment {
 
                 if (task.isSuccessful()) {
 
-                    AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(ALARM_SERVICE);
+                    AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(ALARM_SERVICE);
 
                     Intent alarm = new Intent(getContext(), AlarmReceiver.class);
                     alarm.putExtra(KEY_SHOW_NOTIFICATION_WORD, true);
@@ -241,9 +165,6 @@ public class ProfileFragment extends Fragment {
         Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
         ((MainActivity) requireActivity()).setSupportActionBar(toolbar);
         Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(true);
-        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setHomeAsUpIndicator(R.drawable.ic_btn_back);
-        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setHomeButtonEnabled(true);
 
         // set user's data
         requireActivity().setTitle(USER_MODEL.getName());

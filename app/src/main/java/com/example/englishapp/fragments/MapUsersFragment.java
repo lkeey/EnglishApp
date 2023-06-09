@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.interfaces.UserListener;
 import com.example.englishapp.models.UserModel;
 import com.example.englishapp.services.MapService;
@@ -22,7 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class MapUsersFragment extends Fragment implements UserListener {
 
     private static final String TAG = "MapUsersFragment";
-    private FloatingActionButton fab;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,7 +35,9 @@ public class MapUsersFragment extends Fragment implements UserListener {
             SupportMapFragment mapFragment = (SupportMapFragment)
                     getChildFragmentManager().findFragmentById(R.id.google_map);
 
-            mapFragment.getMapAsync(new MapService(MapUsersFragment.this, getContext()));
+            if (mapFragment != null) {
+                mapFragment.getMapAsync(new MapService(MapUsersFragment.this, getContext()));
+            }
 
 
         } catch (Exception e) {
@@ -48,8 +48,8 @@ public class MapUsersFragment extends Fragment implements UserListener {
 
     private void init(View view) {
 
-        ((MainActivity) getActivity()).setTitle("Map");
-        fab = view.findViewById(R.id.fab);
+        requireActivity().setTitle("Map");
+        FloatingActionButton fab = view.findViewById(R.id.fab);
 
         fab.setOnClickListener(v -> new UsersFragment().show(getChildFragmentManager(), "UsersFragment"));
 

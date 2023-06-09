@@ -39,7 +39,8 @@ public class MainAuthenticationActivity extends AppCompatActivity {
     }
 
     public void setFragment(Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(mainFrame.getId(), fragment)
                 .addToBackStack(String.valueOf(fragment.getId()))
                 .commit();
@@ -50,8 +51,6 @@ public class MainAuthenticationActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        Log.i(TAG, "CLICKED");
 
         if (item.getItemId() == android.R.id.home) {
 

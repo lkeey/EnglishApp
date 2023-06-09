@@ -23,7 +23,7 @@
             android:backgroundTint="@color/purple_200"
             android:contentDescription="@string/add_image"
             app:riv_oval="true"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="48dp"
             android:elevation="3dp"
             android:scaleType="center"
             app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +81,6 @@
             android:layout_marginTop="16dp"
             android:layout_marginEnd="32dp"
             android:autofillHints="emailAddress"
-            android:drawableStart="@drawable/ic_cake"
             android:drawablePadding="16dp"
             android:drawableTint="@color/secondary_color"
             android:ems="10"
@@ -92,7 +91,8 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editTextEmail" />
+            app:layout_constraintTop_toBottomOf="@id/editTextEmail"
+            app:drawableStartCompat="@drawable/ic_cake" />
 
         <TextView
             android:id="@+id/registerGender"
@@ -179,6 +179,30 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/layoutWallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutLanguage"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp">
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switcherWallpaper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:textSize="20sp"
+                android:padding="8dp"
+                android:textColor="@color/secondary_color"
+                android:theme="@style/Switcher"
+                app:switchPadding="8dp"
+                android:text="@string/change_wallpaper"/>
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnSignUp"
             android:layout_width="0dp"
@@ -192,7 +216,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layoutLanguage" />
+            app:layout_constraintTop_toBottomOf="@id/layoutWallpaper" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

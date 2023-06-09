@@ -22,139 +22,41 @@
             app:contentScrim="@color/design_default_color_primary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/userImage"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
-                android:contentDescription="@string/add_image"
-                app:riv_oval="true"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/app_logo"
-                app:layout_collapseMode="parallax"/>
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/toolbar"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_collapseMode="parallax"
-                app:title="Username"
-                />
+                android:layout_height="wrap_content">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/userImage"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
+                    android:contentDescription="@string/add_image"
+                    app:riv_oval="true"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:fitsSystemWindows="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/app_logo"
+                    app:layout_collapseMode="parallax"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:title="Username"
+                    app:titleCentered="true"
+                    app:layout_collapseMode="pin"
+                    app:layout_constraintTop_toBottomOf="@id/userImage"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:id="@+id/app_bar_layout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content">-->
-
-<!--        <com.google.android.material.appbar.CollapsingToolbarLayout-->
-<!--            android:id="@+id/collapsing_toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="220dp"-->
-<!--            android:background="@color/white"-->
-<!--            app:contentScrim="?attr/colorPrimary"-->
-<!--            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">-->
-
-<!--            <FrameLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                app:layout_collapseMode="parallax">-->
-
-<!--                <ImageView-->
-<!--                    android:id="@+id/main.imageview.placeholder"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="160dp"-->
-<!--                    android:src="@drawable/app_logo_large" />-->
-
-<!--                <FrameLayout-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="match_parent"-->
-<!--                    android:background="@color/design_default_color_primary" />-->
-
-<!--            </FrameLayout>-->
-
-
-<!--            <FrameLayout-->
-<!--                android:id="@+id/fl_background"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent"-->
-<!--                android:fitsSystemWindows="true"-->
-<!--                />-->
-
-<!--            <com.google.android.material.appbar.MaterialToolbar-->
-<!--                android:id="@+id/toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                app:layout_collapseMode="pin"-->
-<!--                android:visibility="invisible"-->
-<!--                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
-
-<!--            <androidx.appcompat.widget.AppCompatTextView-->
-<!--                android:id="@+id/tv_profile_name_single"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:ellipsize="end"-->
-<!--                android:fontFamily="monospace"-->
-<!--                android:gravity="center"-->
-<!--                android:scrollHorizontally="true"-->
-<!--                android:singleLine="true"-->
-<!--                android:text="TEEXT"-->
-<!--                android:textAllCaps="true"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="17sp"-->
-<!--                android:textStyle="bold"-->
-<!--                android:visibility="invisible"-->
-<!--                app:layout_collapseMode="pin"-->
-<!--                tools:visibility="visible" />-->
-
-<!--            <androidx.appcompat.widget.AppCompatTextView-->
-<!--                android:id="@+id/tv_workaround"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:ellipsize="end"-->
-<!--                android:gravity="center"-->
-<!--                android:scrollHorizontally="true"-->
-<!--                android:singleLine="true"-->
-<!--                android:text="TEEXT2"-->
-<!--                android:textAllCaps="true"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="17sp"-->
-<!--                android:visibility="invisible"-->
-<!--                app:layout_collapseMode="pin"-->
-<!--                tools:visibility="invisible" />-->
-
-<!--            <androidx.appcompat.widget.AppCompatTextView-->
-<!--                android:id="@+id/tv_profile_name"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:layout_margin="24dp"-->
-<!--                android:ellipsize="marquee"-->
-<!--                android:fontFamily="monospace"-->
-<!--                android:gravity="center"-->
-<!--                android:maxLines="2"-->
-<!--                android:scrollHorizontally="true"-->
-<!--                android:text="TEEXT3"-->
-<!--                android:textAllCaps="true"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="24sp"-->
-<!--                tools:visibility="visible" />-->
-
-<!--            <com.makeramen.roundedimageview.RoundedImageView-->
-<!--                android:id="@+id/userImage"-->
-<!--                android:layout_width="135dp"-->
-<!--                android:layout_height="135dp"-->
-<!--                android:layout_gravity="bottom|center_horizontal"-->
-<!--                android:src="@drawable/app_logo_large" />-->
-
-<!--        </com.google.android.material.appbar.CollapsingToolbarLayout>-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -192,10 +94,9 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center"
                         android:padding="8dp"
-                        android:text="Place"
+                        android:text="@string/place"
                         android:textColor="@color/secondary_color"
                         android:textSize="20sp" />
 
@@ -204,9 +105,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:layout_weight="1"
                         android:gravity="bottom"
-                        android:text="NUMBER"
+                        android:text="@string/number"
                         android:textColor="@color/design_default_color_primary"
                         android:textSize="22sp" />
 
@@ -224,8 +124,7 @@
                         android:layout_height="wrap_content"
                         android:padding="8dp"
                         android:gravity="center"
-                        android:layout_weight="1"
-                        android:text="Score"
+                        android:text="@string/score"
                         android:textSize="20sp"
                         android:textColor="@color/secondary_color"/>
 
@@ -234,8 +133,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:text="NUMBER"
+                        android:text="@string/number"
                         android:gravity="bottom"
                         android:textSize="22sp"
                         android:textColor="@color/design_default_color_primary"/>
@@ -260,7 +158,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal"
-                >
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:id="@+id/layoutBookmark"
@@ -274,13 +172,14 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_bookmark"
-                        app:tint="@color/teal_200" />
+                        app:tint="@color/teal_200"
+                        android:contentDescription="@string/app_name"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Bookmarks"
+                        android:text="@string/bookmarks"
                         android:textSize="16sp"
                         android:textColor="@color/black"/>
 
@@ -298,13 +197,14 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_leader"
-                        app:tint="@color/yellow" />
+                        app:tint="@color/yellow"
+                        android:contentDescription="@string/app_name"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="LeaderBord"
+                        android:text="@string/leaderbord"
                         android:textSize="16sp"
                         android:textColor="@color/black"/>
 
@@ -325,7 +225,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginBottom="8dp"
-                >
+                android:baselineAligned="false">
 
                 <LinearLayout
                     android:id="@+id/layoutProfile"
@@ -338,14 +238,15 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:src="@drawable/ic_account"
-                        app:tint="@color/design_default_color_primary" />
+                        android:src="@drawable/ic_user_settings"
+                        app:tint="@color/design_default_color_primary"
+                        android:contentDescription="@string/app_name"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Profile"
+                        android:text="@string/profile"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -363,13 +264,14 @@
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:src="@drawable/ic_logout"
-                        app:tint="@color/red" />
+                        app:tint="@color/red"
+                        android:contentDescription="@string/app_name"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Logout"
+                        android:text="@string/logout"
                         android:textSize="16sp"
                         android:textColor="@color/black"/>
 
@@ -390,7 +292,7 @@
 
             <TextView
                 android:id="@+id/learning"
-                android:text="learning - "
+                android:text="@string/learning"
                 android:textSize="16sp"
                 android:visibility="gone"
                 android:gravity="center"

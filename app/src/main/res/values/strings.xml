@@ -8,7 +8,7 @@
     <string name="nameLogin">Login</string>
     <string name="nameSignUp">Sign Up</string>
     <string name="nameForgot">Forgot Password</string>
-    <string name="nameProfileInfo">Profile Info</string>
+    <string name="nameProfileInfo">Edit Profile</string>
     <string name="nameTests">Tests</string>
     <string name="nameCreateTest">Create Test</string>
     <string name="nameChats">Chats</string>
@@ -42,6 +42,7 @@
     <string name="progressBarSaving">Saving...</string>
     <string name="progressBarUpdating">Updating...</string>
     <string name="progressBarLoading">Loading...</string>
+    <string name="progressBarLoadingModel">Please wait. The model for translation is being downloaded...</string>
 
     <string name="failExist">User does not exist</string>
 
@@ -62,10 +63,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="add_image">Add Image</string>
     <string name="add_score_text">If you complete the full registration, you will get score</string>
-    <string name="nameFeed">Feed\n</string>
+    <string name="nameFeed">Study Categories</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="author">Author</string>
     <string name="title">Title</string>
     <string name="numberofquestions">numberOfQuestions</string>
@@ -111,7 +111,6 @@
     <string name="review">Review</string>
     <string name="your_score_is">Your Score Is</string>
     <string name="time_taken">Time Taken</string>
-    <string name="_5_minutes">5 minutes</string>
     <string name="total_questions">Total Questions</string>
     <string name="correct">Correct</string>
     <string name="wrong">Wrong</string>
@@ -128,5 +127,24 @@
     <string name="add_word">Add Word</string>
     <string name="submit">Submit</string>
     <string name="test">Test</string>
+    <string name="chats">Chats</string>
+    <string name="map">Map</string>
+    <string name="place">Place</string>
+    <string name="score">Score</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="leaderbord">LeaderBord</string>
+    <string name="profile">Profile</string>
+    <string name="logout">Logout</string>
+    <string name="learning">learning</string>
+    <string name="status">Status</string>
+    <string name="write_a_message">Write a message</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="foreground_service_location">Foreground Service Location</string>
+    <string name="change_wallpaper">Change Wallpaper</string>
+    <string name="amount_of_users_number">Amount Of Users: Number</string>
+    <string name="you">You</string>
+    <string name="score_0">Score: 0</string>
+    <string name="place_0">Place: 0</string>
 
 </resources>

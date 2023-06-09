@@ -21,16 +21,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.englishapp.R;
+import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.adapters.RecentConversationAdapter;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.models.UserModel;
-import com.example.englishapp.R;
 import com.example.englishapp.interfaces.ConversationListener;
-import com.example.englishapp.adapters.RecentConversationAdapter;
 import com.example.englishapp.models.ChatMessage;
+import com.example.englishapp.models.UserModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -39,7 +38,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 
 public class ChatFragment extends Fragment implements ConversationListener {
@@ -87,7 +85,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
     }
 
     private void init(View view) {
-        ((MainActivity) requireActivity()).setTitle(R.string.nameChats);
+        requireActivity().setTitle(R.string.nameChats);
 
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
         fab = view.findViewById(R.id.fab);
@@ -120,7 +118,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
     private void getToken(CompleteListener listener) {
 
         FirebaseMessaging.getInstance().getToken()
-            .addOnSuccessListener(s -> DataBase.updateToken(s, new CompleteListener() {
+            .addOnSuccessListener(s -> new DataBasePersonalData().updateToken(s, new CompleteListener() {
                 @Override
                 public void OnSuccess() {
                     listener.OnSuccess();
@@ -183,7 +181,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
                     }
 
 //                Collections.sort(recentChats, ChatMessage::compareTo);
-                Collections.sort(recentChats, (Comparator<ChatMessage>) (o1, o2) -> o2.dateTime.compareTo(o1.dateTime));
+                recentChats.sort((Comparator<ChatMessage>) (o1, o2) -> o2.dateTime.compareTo(o1.dateTime));
 
                     conversationAdapter.notifyDataSetChanged();
                     recyclerRecentlyChats.smoothScrollToPosition(0);

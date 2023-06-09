@@ -5,7 +5,6 @@ import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
-import static com.example.englishapp.database.DataBase.findUserById;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -14,16 +13,19 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
 import com.example.englishapp.database.Constants;
+import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.fragments.CategoryFragment;
 import com.example.englishapp.fragments.ChatFragment;
 import com.example.englishapp.fragments.DiscussFragment;
@@ -33,12 +35,11 @@ import com.example.englishapp.fragments.ProfileFragment;
 import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.fragments.ScoreFragment;
 import com.example.englishapp.interfaces.TasksChecking;
-import com.example.englishapp.managers.LocationManager;
+import com.example.englishapp.repositories.LocationManager;
 import com.example.englishapp.models.UserModel;
 import com.example.englishapp.repositories.TasksRepository;
 import com.example.englishapp.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.Objects;
 
@@ -64,8 +65,6 @@ public class MainActivity extends BaseActivity {
         setFragment(new CategoryFragment());
 
         receiveData();
-
-//        startCheckingPosition();
 
         startLocationService();
 
@@ -116,7 +115,7 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void showDiscussion() {
-                UserModel receivedUser = findUserById(intent.getStringExtra(KEY_USER_UID));
+                UserModel receivedUser = new DataBaseUsers().findUserById(intent.getStringExtra(KEY_USER_UID));
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable(KEY_CHOSEN_USER_DATA, receivedUser);
@@ -171,38 +170,30 @@ public class MainActivity extends BaseActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
 
-        NavigationBarView.OnItemSelectedListener onNavigationItemSelectedListener = item -> {
+        bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            switch (item.getItemId()) {
-                case R.id.nav_home_menu -> {
-                    setFragment(new CategoryFragment());
-                    return true;
-                }
-                case R.id.nav_chat_menu -> {
-                    setFragment(new ChatFragment());
-                    return true;
-                }
-                case R.id.nav_leader_menu -> {
-                    setFragment(new LeaderBordFragment());
-                    return true;
-                }
-                case R.id.nav_account_menu -> {
-                    setFragment(new ProfileFragment());
-                    return true;
-                }
+            if (item.getItemId() == R.id.nav_home_menu) {
+                setFragment(new CategoryFragment());
+                return true;
+            } else if (item.getItemId() == R.id.nav_chat_menu) {
+                setFragment(new ChatFragment());
+                return true;
+            } else if (item.getItemId() == R.id.nav_leader_menu) {
+                setFragment(new LeaderBordFragment());
+                return true;
+            } else if (item.getItemId() == R.id.nav_account_menu) {
+                setFragment(new ProfileFragment());
+                return true;
             }
-            return false;
-        };
 
-        bottomNavigationView.setOnItemSelectedListener(onNavigationItemSelectedListener);
+            return false;
+        });
 
     }
 
     public void setFragment(Fragment fragment) {
 
         setSupportActionBar(toolbar);
-
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         Objects.requireNonNull(getSupportActionBar()).show();
 
@@ -222,16 +213,24 @@ public class MainActivity extends BaseActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
     }
 
-    @Override
-    public void onBackPressed() {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        setSupportActionBar(toolbar);
+        if (item.getItemId() == android.R.id.home) {
 
-        Objects.requireNonNull(getSupportActionBar()).show();
+            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-//        Toast.makeText(MainActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-        Log.i(TAG, "clicked");
+            if (getSupportFragmentManager().getBackStackEntryCount() > 1){
 
-        super.onBackPressed();
+                getSupportFragmentManager().popBackStackImmediate();
+
+            } else {
+
+                MainActivity.this.finish();
+            }
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
+
 }

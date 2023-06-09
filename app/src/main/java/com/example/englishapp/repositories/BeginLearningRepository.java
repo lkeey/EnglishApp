@@ -111,8 +111,8 @@ public class BeginLearningRepository {
                         // cancel previous
                         alarmManager.cancel(pendingIntent);
 
-                        // every 5 minute
-                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, 5 * 60 * 1000, 2 * 60 * 1000, pendingIntent);
+                        // every minute
+                        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 60 * 1000, pendingIntent);
 
                         listener.beginLearning();
 
