@@ -84,4 +84,5 @@ public class Constants {
     public static String KEY_PROFILE = "PROFILE";
     public static String KEY_GOOGLE_WEB_CLIENT_ID = "751178569108-314gisf2llpf72q1k4jpkpq7cag96s0g.apps.googleusercontent.com";
     public static String KEY_IS_CHANGING_WALLPAPER = "CHANGING_WALLPAPER";
+    public static String KEY_DEFAULT_IMAGE = "https://firebasestorage.googleapis.com/v0/b/englishapp-341d3.appspot.com/o/PROFILE_IMAGES%2Fno-image.jpg?alt=media&token=eaa4fa62-9cc9-4dbd-b300-96a61a3955a6";
 }

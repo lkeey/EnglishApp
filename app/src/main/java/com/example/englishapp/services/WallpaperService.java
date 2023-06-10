@@ -38,6 +38,8 @@ public class WallpaperService extends Service {
             Log.i(TAG, "error - " + e.getMessage());
         }
 
+        stopSelf();
+
         return START_NOT_STICKY;
     }
 

@@ -46,11 +46,11 @@ import java.util.Objects;
 public class MainActivity extends BaseActivity {
     private static final String TAG = "ActivityMain";
     private FrameLayout mainFrame;
-
     private Toolbar toolbar;
     private TextView textClose;
     private Button btnOpenSettings;
     private Dialog progressLocation;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,7 +167,7 @@ public class MainActivity extends BaseActivity {
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavBar);
+        bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
@@ -189,6 +189,10 @@ public class MainActivity extends BaseActivity {
             return false;
         });
 
+    }
+
+    public void setCheckedNavigationIcon(int number) {
+        bottomNavigationView.getMenu().getItem(number).setChecked(true);
     }
 
     public void setFragment(Fragment fragment) {

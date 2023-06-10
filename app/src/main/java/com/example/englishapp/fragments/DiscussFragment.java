@@ -11,6 +11,7 @@ import static com.example.englishapp.database.Constants.KEY_SENDER_ID;
 import static com.example.englishapp.database.Constants.KEY_TIME_STAMP;
 import static com.example.englishapp.database.DataBaseDiscussion.CURRENT_CONVERSATION_ID;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
 import static com.example.englishapp.repositories.MessageRepository.chatMessages;
 import static com.example.englishapp.repositories.MessageRepository.receivedUser;
 
@@ -76,6 +77,9 @@ public class DiscussFragment extends Fragment {
         layoutSend = view.findViewById(R.id.layoutSend);
         inputMessage = view.findViewById(R.id.inputMessage);
         textStatus = view.findViewById(R.id.statusText);
+        TextView fcm = view.findViewById(R.id.fcm);
+
+        fcm.setText(USER_MODEL.getFcmToken() + "\n - " + receivedUser.getFcmToken());
 
         requireActivity().setTitle(receivedUser.getName());
 

@@ -13,7 +13,8 @@
         android:orientation="vertical"
         android:layout_marginTop="8dp"
         android:background="@drawable/round_view"
-        android:padding="8dp"
+        android:elevation="3dp"
+        android:padding="12dp"
         android:layout_margin="16dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -24,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/amount_of_users_number"
-            android:textColor="@color/secondary_color"
+            android:textColor="@color/design_default_color_primary"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_marginStart="24dp"
@@ -33,6 +34,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:visibility="gone"
             android:layout_marginTop="4dp"
             android:background="@color/design_default_color_primary"/>
 
@@ -68,14 +70,14 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:contentDescription="@string/add_image"
-            app:riv_oval="true"
-            android:visibility="gone"
+            android:layout_marginStart="16dp"
+            app:riv_corner_radius="8dp"
             android:src="@drawable/app_logo"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_marginStart="16dp"
             android:orientation="vertical">
 
             <TextView
@@ -105,9 +107,9 @@
             android:id="@+id/userRank"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:gravity="bottom|center"
             android:text="@string/place_0"
+            android:layout_marginStart="20dp"
             android:textSize="16sp"
             android:paddingBottom="4dp"
             android:textColor="@color/white"/>

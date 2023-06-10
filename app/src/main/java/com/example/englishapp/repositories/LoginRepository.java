@@ -10,6 +10,7 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Objects;
 
@@ -17,8 +18,6 @@ public class LoginRepository {
     private static final String TAG = "AuthenticationRepository";
     private DataBase dataBase;
     private FirebaseAuth mAuth;
-
-    public LoginRepository() {}
 
     public void firebaseAuthWithGoogle(String idToken, AuthenticationListener googleAuthentication) {
 
@@ -93,7 +92,19 @@ public class LoginRepository {
                     dataBase.loadData(new CompleteListener() {
                         @Override
                         public void OnSuccess() {
-                            listener.logInAccount();
+                            getToken(new CompleteListener() {
+                                @Override
+                                public void OnSuccess() {
+                                    Log.i(TAG, "token updated");
+
+                                    listener.logInAccount();
+                                }
+
+                                @Override
+                                public void OnFailure() {
+                                    listener.onFailure();
+                                }
+                            });
                         }
 
                         @Override
@@ -106,6 +117,24 @@ public class LoginRepository {
                     listener.onFailure();
                 }
             });
+    }
+
+    public void getToken(CompleteListener listener) {
+
+        FirebaseMessaging.getInstance().getToken()
+            .addOnSuccessListener(s -> new DataBasePersonalData().updateToken(s, new CompleteListener() {
+                @Override
+                public void OnSuccess() {
+                    listener.OnSuccess();
+                    Log.i(TAG, "Token for - " + DataBasePersonalData.USER_MODEL.getUid());
+                }
+
+                @Override
+                public void OnFailure() {
+                    listener.OnFailure();
+                }
+            }))
+            .addOnFailureListener(e -> listener.OnFailure());
     }
 
 }

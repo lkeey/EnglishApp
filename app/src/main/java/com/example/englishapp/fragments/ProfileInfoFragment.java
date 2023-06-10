@@ -261,6 +261,8 @@ public class ProfileInfoFragment extends Fragment {
                                     progressBar.dismiss();
 
                                     ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
+                                    ((MainActivity) requireActivity()).setCheckedNavigationIcon(3);
+
                                 }
 
                                 @Override

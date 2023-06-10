@@ -3,6 +3,7 @@ package com.example.englishapp.database;
 import static com.example.englishapp.database.Constants.KEY_BOOKMARKS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_STATISTICS;
 import static com.example.englishapp.database.Constants.KEY_COLLECTION_USERS;
+import static com.example.englishapp.database.Constants.KEY_DEFAULT_IMAGE;
 import static com.example.englishapp.database.Constants.KEY_DOB;
 import static com.example.englishapp.database.Constants.KEY_EMAIL;
 import static com.example.englishapp.database.Constants.KEY_FCM_TOKEN;
@@ -97,9 +98,7 @@ public class DataBasePersonalData {
         userData.put(KEY_LOCATION, new GeoPoint(0, 0));
 
         // set default image
-        userData.put(KEY_PROFILE_IMG, "https://firebasestorage.googleapis.com/v0/b/englishapp-341d3.appspot.com/o/PROFILE_IMAGES%2Fno-image.jpg?alt=media&token=eaa4fa62-9cc9-4dbd-b300-96a61a3955a6");
-
-
+        userData.put(KEY_PROFILE_IMG, KEY_DEFAULT_IMAGE);
 
         DocumentReference userDoc = DATA_FIRESTORE
                 .collection(KEY_COLLECTION_USERS)

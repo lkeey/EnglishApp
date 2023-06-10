@@ -1,5 +1,7 @@
 package com.example.englishapp.repositories;
 
+import android.util.Log;
+
 import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.AuthenticationListener;
@@ -8,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class SignupRepository {
 
+    private static final String TAG = "RepositorySignUp";
     private FirebaseAuth mAuth;
     private DataBase dataBase;
     private DataBasePersonalData dataBasePersonalData;
@@ -23,6 +26,7 @@ public class SignupRepository {
         mAuth.createUserWithEmailAndPassword(textEmail, textPassword)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        Log.i(TAG, "Sign up successfully");
                         dataBasePersonalData.createUserData(textEmail, null, null, null, null, null, new CompleteListener() {
                             @Override
                             public void OnSuccess() {
@@ -40,10 +44,12 @@ public class SignupRepository {
                             }
                             @Override
                             public void OnFailure() {
+                                Log.i(TAG, "can not create user data");
                                 listener.onFailure();
                             }
                         });
                     } else {
+                        Log.i(TAG, "fail - " + task.getException());
                         listener.onFailure();
                     }
                 });

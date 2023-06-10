@@ -24,18 +24,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.englishapp.R;
 import com.example.englishapp.activities.MainActivity;
 import com.example.englishapp.adapters.RecentConversationAdapter;
-import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.database.DataBaseUsers;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.ConversationListener;
 import com.example.englishapp.models.ChatMessage;
 import com.example.englishapp.models.UserModel;
+import com.example.englishapp.repositories.LoginRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -60,7 +59,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
         setListeners();
 
-        getToken(new CompleteListener() {
+        new LoginRepository().getToken(new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "Token successfully got " + USER_MODEL.getFcmToken());
@@ -72,8 +71,6 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
             }
         });
-
-//        new UsersFragment().show(getChildFragmentManager(), "UsersFragment");
 
         listenConversations();
 
@@ -112,25 +109,6 @@ public class ChatFragment extends Fragment implements ConversationListener {
                 Log.i(TAG, "can not load users list");
             }
         });
-
-    }
-
-    private void getToken(CompleteListener listener) {
-
-        FirebaseMessaging.getInstance().getToken()
-            .addOnSuccessListener(s -> new DataBasePersonalData().updateToken(s, new CompleteListener() {
-                @Override
-                public void OnSuccess() {
-                    listener.OnSuccess();
-                    Log.i(TAG, "Token for - " + DataBasePersonalData.USER_MODEL.getUid());
-                }
-
-                @Override
-                public void OnFailure() {
-                    listener.OnFailure();
-                }
-            }))
-            .addOnFailureListener(e -> listener.OnFailure());
 
     }
 
