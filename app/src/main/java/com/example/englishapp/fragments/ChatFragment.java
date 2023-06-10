@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -22,13 +23,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.adapters.RecentConversationAdapter;
-import com.example.englishapp.database.DataBaseUsers;
+import com.example.englishapp.presentation.adapters.RecentConversationAdapter;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.ConversationListener;
 import com.example.englishapp.models.ChatMessage;
 import com.example.englishapp.models.UserModel;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.repositories.LoginRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
@@ -44,20 +44,41 @@ public class ChatFragment extends Fragment implements ConversationListener {
     private static final String TAG = "FragmentChat";
     private RecyclerView recyclerRecentlyChats;
     private RecentConversationAdapter conversationAdapter;
-    private ArrayList recentChats;
+    private ArrayList recentChats = new ArrayList<>();
     private FloatingActionButton fab;
-    private DataBaseUsers dataBaseUsers;
+    private TextView noChats;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        dataBaseUsers = new DataBaseUsers();
-
         init(view);
 
         setListeners();
+
+        listenConversations();
+
+        return view;
+    }
+
+    private void init(View view) {
+        requireActivity().setTitle(R.string.nameChats);
+
+        recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
+        fab = view.findViewById(R.id.fab);
+        noChats = view.findViewById(R.id.noChats);
+
+        conversationAdapter = new RecentConversationAdapter(
+                recentChats,
+                ChatFragment.this
+        );
+
+        recyclerRecentlyChats.setAdapter(conversationAdapter);
+
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(RecyclerView.VERTICAL);
+        recyclerRecentlyChats.setLayoutManager(manager);
 
         new LoginRepository().getToken(new CompleteListener() {
             @Override
@@ -71,47 +92,11 @@ public class ChatFragment extends Fragment implements ConversationListener {
 
             }
         });
-
-        listenConversations();
-
-        return view;
     }
 
     private void setListeners() {
         fab.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new MapUsersFragment()));
     }
-
-    private void init(View view) {
-        requireActivity().setTitle(R.string.nameChats);
-
-        recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
-        fab = view.findViewById(R.id.fab);
-
-        recentChats = new ArrayList<>();
-        dataBaseUsers.getListOfUsers(new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-                conversationAdapter = new RecentConversationAdapter(
-                        getContext(),
-                        recentChats,
-                        ChatFragment.this
-                );
-
-                recyclerRecentlyChats.setAdapter(conversationAdapter);
-
-                LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-                manager.setOrientation(RecyclerView.VERTICAL);
-                recyclerRecentlyChats.setLayoutManager(manager);
-            }
-
-            @Override
-            public void OnFailure() {
-                Log.i(TAG, "can not load users list");
-            }
-        });
-
-    }
-
 
     private void listenConversations() {
         DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
@@ -129,7 +114,7 @@ public class ChatFragment extends Fragment implements ConversationListener {
         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
             try {
 
-                if(error != null) {
+                if (error != null) {
                     Log.i(TAG, "Error is - " + error.getMessage());
                 }
 
@@ -137,11 +122,13 @@ public class ChatFragment extends Fragment implements ConversationListener {
                     for (DocumentChange document : value.getDocumentChanges()) {
                         if (document.getType() == DocumentChange.Type.ADDED) {
                             ChatMessage chatMessage = new ChatMessage(
-                                    document.getDocument().getString(KEY_SENDER_ID),
-                                    document.getDocument().getString(KEY_RECEIVER_ID),
-                                    document.getDocument().getString(KEY_LAST_MESSAGE),
-                                    document.getDocument().getDate(KEY_TIME_STAMP)
+                                document.getDocument().getString(KEY_SENDER_ID),
+                                document.getDocument().getString(KEY_RECEIVER_ID),
+                                document.getDocument().getString(KEY_LAST_MESSAGE),
+                                document.getDocument().getDate(KEY_TIME_STAMP)
                             );
+
+                            noChats.setVisibility(View.GONE);
 
                             recentChats.add(chatMessage);
 
@@ -190,4 +177,5 @@ public class ChatFragment extends Fragment implements ConversationListener {
             Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
         }
     }
+
 }

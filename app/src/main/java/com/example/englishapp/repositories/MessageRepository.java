@@ -19,6 +19,7 @@ import com.example.englishapp.database.DataBaseDiscussion;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.interfaces.NotificationService;
+import com.example.englishapp.models.ChatMessage;
 import com.example.englishapp.models.DataModel;
 import com.example.englishapp.models.PushNotification;
 import com.example.englishapp.models.UserModel;
@@ -31,6 +32,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -40,7 +42,7 @@ import retrofit2.Response;
 public class MessageRepository {
 
     private static final String TAG = "RepositoryMessage";
-    public static ArrayList chatMessages;
+    public static List<ChatMessage> CHAT_MESSAGES = new ArrayList<>();
     public static UserModel receivedUser;
 
     public void sendMessage(EditText inputMessage) {
@@ -149,7 +151,7 @@ public class MessageRepository {
 
             Log.i(TAG, "User - " + USER_MODEL.getUid() + " - Receiver - " + receivedUser.getUid());
 
-            if (chatMessages.size() != 0) {
+            if (CHAT_MESSAGES.size() != 0) {
                 checkForConversationRemotely(
                         USER_MODEL.getUid(),
                         receivedUser.getUid()

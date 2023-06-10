@@ -1,4 +1,4 @@
-package com.example.englishapp.activities;
+package com.example.englishapp.presentation.activities;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
@@ -22,11 +22,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.englishapp.R;
 import com.example.englishapp.database.Constants;
+import com.example.englishapp.database.DataBase;
 import com.example.englishapp.database.DataBaseUsers;
-import com.example.englishapp.fragments.CategoryFragment;
 import com.example.englishapp.fragments.ChatFragment;
 import com.example.englishapp.fragments.DiscussFragment;
 import com.example.englishapp.fragments.LeaderBordFragment;
@@ -34,14 +35,19 @@ import com.example.englishapp.fragments.MapUsersFragment;
 import com.example.englishapp.fragments.ProfileFragment;
 import com.example.englishapp.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.fragments.ScoreFragment;
+import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.RefreshListener;
 import com.example.englishapp.interfaces.TasksChecking;
-import com.example.englishapp.repositories.LocationManager;
 import com.example.englishapp.models.UserModel;
+import com.example.englishapp.presentation.fragments.CategoryFragment;
+import com.example.englishapp.repositories.LocationManager;
 import com.example.englishapp.repositories.TasksRepository;
 import com.example.englishapp.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = "ActivityMain";
@@ -51,6 +57,8 @@ public class MainActivity extends BaseActivity {
     private Button btnOpenSettings;
     private Dialog progressLocation;
     private BottomNavigationView bottomNavigationView;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private final Set<RefreshListener> refreshListeners = new HashSet<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,9 +102,25 @@ public class MainActivity extends BaseActivity {
             progressLocation.dismiss();
         });
 
-        toolbar.setNavigationOnClickListener(v -> onBackPressed());
-    }
+        swipeRefreshLayout.setOnRefreshListener(() -> new DataBase().loadData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
 
+                Log.i(TAG, "amount of listeners - " + refreshListeners.size());
+
+                for (RefreshListener listener: refreshListeners) {
+                    listener.onRefresh();
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void OnFailure() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        }));
+    }
 
     private void receiveData() {
         Intent intent = getIntent();
@@ -169,6 +193,7 @@ public class MainActivity extends BaseActivity {
 
         bottomNavigationView = findViewById(R.id.bottomNavBar);
         mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
 
@@ -212,6 +237,14 @@ public class MainActivity extends BaseActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle(getString(strId));
     }
 
+    public void addListener(RefreshListener listener) {
+        refreshListeners.add(listener);
+    }
+
+    public void removeListener(RefreshListener listener) {
+        refreshListeners.remove(listener);
+    }
+
     @Override
     public void setTitle(CharSequence title) {
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
@@ -236,5 +269,4 @@ public class MainActivity extends BaseActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

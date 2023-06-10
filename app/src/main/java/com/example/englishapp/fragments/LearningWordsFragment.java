@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.ExamActivity;
-import com.example.englishapp.adapters.LearningWordsAdapter;
+import com.example.englishapp.presentation.activities.ExamActivity;
+import com.example.englishapp.presentation.adapters.LearningWordsAdapter;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.database.DataBaseQuestions;

@@ -23,7 +23,7 @@ import androidx.fragment.app.Fragment;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.database.DataBase;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.R;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;

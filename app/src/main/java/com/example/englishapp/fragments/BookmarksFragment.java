@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.adapters.QuestionsAdapter;
 import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.interfaces.CompleteListener;

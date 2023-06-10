@@ -19,7 +19,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.example.englishapp.activities.SplashActivity;
+import com.example.englishapp.presentation.activities.SplashActivity;
 import com.example.englishapp.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

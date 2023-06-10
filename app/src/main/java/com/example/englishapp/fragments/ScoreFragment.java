@@ -23,7 +23,7 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.database.Constants;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.database.DataBaseScores;

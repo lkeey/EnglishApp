@@ -1,4 +1,4 @@
-package com.example.englishapp.fragments;
+package com.example.englishapp.presentation.fragments;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_CATEGORY;
 
@@ -18,20 +18,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.adapters.CategoryAdapter;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.adapters.CategoryAdapter;
 import com.example.englishapp.database.DataBaseCategories;
 import com.example.englishapp.interfaces.CategoryClickedListener;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.CategoryModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class CategoryFragment extends Fragment implements CategoryClickedListener {
+public class CategoryFragment extends BaseFragment implements CategoryClickedListener {
 
     private static final String TAG = "CategoryFragment";
     private CategoryAdapter categoryAdapter;
@@ -56,72 +55,6 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         setListeners();
 
         return view;
-    }
-
-    private void setListeners() {
-
-        fab.setOnClickListener(v -> {
-
-            // show dialog
-            inputNameCategory.setText(null);
-            progressCategory.setVisibility(View.GONE);
-            progressBar.show();
-
-        });
-
-        textClose.setOnClickListener(v -> progressBar.dismiss());
-
-        btnCreateCategory.setOnClickListener(v -> {
-            String nameCategory = inputNameCategory.getText().toString().trim();
-
-            if (nameCategory.isEmpty()) {
-                Toast.makeText(getActivity(), "Name must be not null", Toast.LENGTH_SHORT).show();
-            } else {
-                progressCategory.setVisibility(View.VISIBLE);
-
-                dataBaseCategories.createCategory(nameCategory, new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-                        Log.i(TAG, "Category was created");
-                        Toast.makeText(getContext(), "Category was created", Toast.LENGTH_SHORT).show();
-
-                        // refresh adapter
-                        categoryAdapter.notifyDataSetChanged();
-
-                        progressBar.dismiss();
-
-                    }
-
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "Can not create category");
-                        Toast.makeText(getContext(), "Can not create category", Toast.LENGTH_SHORT).show();
-
-                        progressBar.dismiss();
-                    }
-                });
-            }
-        });
-
-        inputSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                categoryAdapter.cancelTimer();
-            }
-
-            @Override
-            public void afterTextChanged(Editable key) {
-                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
-                    categoryAdapter.searchCategories(key.toString());
-                }
-            }
-        });
-
     }
 
     private void init(View view) {
@@ -169,6 +102,69 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
 
     }
 
+    private void setListeners() {
+
+        fab.setOnClickListener(v -> {
+
+            // show dialog
+            inputNameCategory.setText(null);
+            progressCategory.setVisibility(View.GONE);
+            progressBar.show();
+
+        });
+
+        textClose.setOnClickListener(v -> progressBar.dismiss());
+
+        btnCreateCategory.setOnClickListener(v -> {
+            String nameCategory = inputNameCategory.getText().toString().trim();
+
+            if (nameCategory.isEmpty()) {
+                Toast.makeText(getActivity(), "Name must be not null", Toast.LENGTH_SHORT).show();
+            } else {
+                progressCategory.setVisibility(View.VISIBLE);
+
+                dataBaseCategories.createCategory(nameCategory, new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        Log.i(TAG, "Category was created");
+                        Toast.makeText(getContext(), "Category was created", Toast.LENGTH_SHORT).show();
+
+                        progressBar.dismiss();
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not create category");
+                        Toast.makeText(getContext(), "Can not create category", Toast.LENGTH_SHORT).show();
+
+                        progressBar.dismiss();
+                    }
+                });
+            }
+        });
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                categoryAdapter.cancelTimer();
+            }
+
+            @Override
+            public void afterTextChanged(Editable key) {
+                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
+                    categoryAdapter.searchCategories(key.toString());
+                }
+            }
+        });
+
+    }
+
+
     @Override
     public void onCategoryClicked(CategoryModel category) {
         Log.i(TAG, "Category - " + category.getName());
@@ -181,5 +177,20 @@ public class CategoryFragment extends Fragment implements CategoryClickedListene
         fragment.setArguments(bundle);
 
         ((MainActivity) requireActivity()).setFragment(fragment);
+    }
+
+    @Override
+    public void onRefresh() {
+        new DataBaseCategories().getListOfCategories(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
+            }
+
+            @Override
+            public void OnFailure() {
+                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

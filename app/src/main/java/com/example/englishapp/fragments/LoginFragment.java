@@ -24,8 +24,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.interfaces.AuthenticationListener;
 import com.example.englishapp.repositories.LoginRepository;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;

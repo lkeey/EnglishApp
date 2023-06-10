@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.adapters.PlaceAdapter;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.database.DataBaseUsers;

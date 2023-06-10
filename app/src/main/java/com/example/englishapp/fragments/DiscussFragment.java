@@ -12,7 +12,7 @@ import static com.example.englishapp.database.Constants.KEY_TIME_STAMP;
 import static com.example.englishapp.database.DataBaseDiscussion.CURRENT_CONVERSATION_ID;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
-import static com.example.englishapp.repositories.MessageRepository.chatMessages;
+import static com.example.englishapp.repositories.MessageRepository.CHAT_MESSAGES;
 import static com.example.englishapp.repositories.MessageRepository.receivedUser;
 
 import android.os.Build;
@@ -31,17 +31,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.adapters.MessageAdapter;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.models.ChatMessage;
 import com.example.englishapp.models.UserModel;
+import com.example.englishapp.presentation.adapters.MessageAdapter;
 import com.example.englishapp.repositories.MessageRepository;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 // https://github.com/ThaminduChankana/TrashCoinApp/tree/648db2e90091ecd39c8ae9502b92cf9c8b21b950
 
@@ -51,7 +48,7 @@ public class DiscussFragment extends Fragment {
     private MessageAdapter messageAdapter;
     private FrameLayout layoutSend;
     private EditText inputMessage;
-    private TextView textStatus;
+    private TextView textStatus, noMessages;
     private static Boolean isReceiverAvailable = false;
     private MessageRepository messageRepository;
 
@@ -78,18 +75,17 @@ public class DiscussFragment extends Fragment {
         inputMessage = view.findViewById(R.id.inputMessage);
         textStatus = view.findViewById(R.id.statusText);
         TextView fcm = view.findViewById(R.id.fcm);
+        noMessages = view.findViewById(R.id.noMessages);
 
         fcm.setText(USER_MODEL.getFcmToken() + "\n - " + receivedUser.getFcmToken());
 
         requireActivity().setTitle(receivedUser.getName());
 
-        chatMessages = new ArrayList<>();
-
         messageAdapter = new MessageAdapter(
-                getContext(),
-                chatMessages,
+                CHAT_MESSAGES,
                 receivedUser
         );
+
 
         recyclerMessages.setAdapter(messageAdapter);
 
@@ -177,7 +173,7 @@ public class DiscussFragment extends Fragment {
                 Log.i(TAG, "Error - " + error.getMessage());
             }
             if (value != null) {
-                int count = chatMessages.size();
+                int count = CHAT_MESSAGES.size();
                 for (DocumentChange documentChange : value.getDocumentChanges()) {
                     if (documentChange.getType() == DocumentChange.Type.ADDED) {
                         ChatMessage chatMessage = new ChatMessage(
@@ -187,24 +183,25 @@ public class DiscussFragment extends Fragment {
                                 documentChange.getDocument().getDate(KEY_TIME_STAMP)
                         );
 
-                        chatMessages.add(chatMessage);
+                        noMessages.setVisibility(View.GONE);
+
+                        CHAT_MESSAGES.add(chatMessage);
                         Log.i(TAG, "Message added - " + chatMessage.getMessage());
                     }
                 }
 
-                Collections.sort(chatMessages, ChatMessage::compareTo);
+                CHAT_MESSAGES.sort(ChatMessage::compareTo);
 
                 if (count == 0) {
                     messageAdapter.notifyDataSetChanged();
                 } else {
-                    messageAdapter.notifyItemRangeInserted(chatMessages.size(), chatMessages.size());
-                    recyclerMessages.smoothScrollToPosition(chatMessages.size() - 1);
+                    messageAdapter.notifyItemRangeInserted(CHAT_MESSAGES.size(), CHAT_MESSAGES.size());
+                    recyclerMessages.smoothScrollToPosition(CHAT_MESSAGES.size() - 1);
                 }
             }
 
             if (CURRENT_CONVERSATION_ID == null) {
                 Log.i(TAG, "Conversation is null");
-
                 messageRepository.checkForConversation();
 
             } else {

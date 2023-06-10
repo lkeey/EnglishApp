@@ -1,4 +1,4 @@
-package com.example.englishapp.fragments;
+package com.example.englishapp.presentation.fragments;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_TEST;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
@@ -22,19 +22,22 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.adapters.TestAdapter;
 import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBaseCategories;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.database.DataBaseScores;
 import com.example.englishapp.database.DataBaseTests;
+import com.example.englishapp.fragments.CreateTestFragment;
+import com.example.englishapp.fragments.TestInfoDialogFragment;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.RefreshListener;
 import com.example.englishapp.interfaces.TestClickedListener;
 import com.example.englishapp.models.TestModel;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.adapters.TestAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class TestsFragment extends Fragment implements TestClickedListener {
+public class TestsFragment extends Fragment implements TestClickedListener, RefreshListener {
 
     private static final String TAG = "TestsFragment";
     private RecyclerView testRecycler;
@@ -42,7 +45,6 @@ public class TestsFragment extends Fragment implements TestClickedListener {
     private FloatingActionButton fab;
     private EditText inputSearch;
     private Dialog progressBar;
-    private DataBaseTests dataBaseTests;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -50,13 +52,63 @@ public class TestsFragment extends Fragment implements TestClickedListener {
 
         View view = inflater.inflate(R.layout.fragment_tests, container, false);
 
-        dataBaseTests = new DataBaseTests();
-
         init(view);
 
         setListeners();
 
         return view;
+    }
+
+    private void init(View view) {
+        DataBaseTests dataBaseTests = new DataBaseTests();
+
+        requireActivity().setTitle(R.string.nameTests);
+
+        testRecycler = view.findViewById(R.id.testRecyclerView);
+        fab = view.findViewById(R.id.fab);
+        inputSearch = view.findViewById(R.id.inputSearch);
+
+        progressBar = new Dialog(getActivity());
+        progressBar.setContentView(R.layout.dialog_layout);
+        progressBar.setCancelable(false);
+        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        TextView dialogText = progressBar.findViewById(R.id.dialogText);
+
+        dialogText.setText(R.string.progressBarOpening);
+
+        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
+        manager.setOrientation(RecyclerView.VERTICAL);
+        testRecycler.setLayoutManager(manager);
+
+        progressBar.show();
+
+        dataBaseTests.loadTestsData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                new DataBaseScores().loadMyScores(new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+                        testAdapter = new TestAdapter(DataBaseTests.LIST_OF_TESTS, TestsFragment.this);
+                        testRecycler.setAdapter(testAdapter);
+
+                        Log.i(TAG, "Successfully loaded");
+                        progressBar.dismiss();
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Log.i(TAG, "Can not load scores");
+                        progressBar.dismiss();
+                    }
+                });
+            }
+            @Override
+            public void OnFailure() {
+                Log.i(TAG, "Can not load tests");
+                progressBar.dismiss();
+            }
+        });
     }
 
     private void setListeners() {
@@ -85,56 +137,6 @@ public class TestsFragment extends Fragment implements TestClickedListener {
                 if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
                     testAdapter.searchTests(key.toString());
                 }
-            }
-        });
-    }
-
-    private void init(View view) {
-        requireActivity().setTitle(R.string.nameTests);
-
-        testRecycler = view.findViewById(R.id.testRecyclerView);
-        fab = view.findViewById(R.id.fab);
-        inputSearch = view.findViewById(R.id.inputSearch);
-
-        progressBar = new Dialog(getActivity());
-        progressBar.setContentView(R.layout.dialog_layout);
-        progressBar.setCancelable(false);
-        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        TextView dialogText = progressBar.findViewById(R.id.dialogText);
-
-        dialogText.setText(R.string.progressBarOpening);
-
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity());
-        manager.setOrientation(RecyclerView.VERTICAL);
-        testRecycler.setLayoutManager(manager);
-
-        progressBar.show();
-
-        dataBaseTests.loadTestsData(new CompleteListener() {
-            @Override
-            public void OnSuccess() {
-                new DataBaseScores().loadMyScores(new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-                        testAdapter = new TestAdapter(DataBaseTests.LIST_OF_TESTS, TestsFragment.this, getContext());
-                        testRecycler.setAdapter(testAdapter);
-
-                        Log.i(TAG, "Successfully loaded");
-                        progressBar.dismiss();
-                    }
-
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "Can not load scores");
-                        progressBar.dismiss();
-                    }
-                });
-            }
-            @Override
-            public void OnFailure() {
-                Log.i(TAG, "Can not load tests");
-                progressBar.dismiss();
             }
         });
     }
@@ -182,6 +184,29 @@ public class TestsFragment extends Fragment implements TestClickedListener {
             @Override
             public void OnFailure() {
                 Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    @Override
+    public void onRefresh() {
+        progressBar.show();
+
+        new DataBaseTests().loadTestsData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                testAdapter = new TestAdapter(DataBaseTests.LIST_OF_TESTS, TestsFragment.this);
+                testRecycler.setAdapter(testAdapter);
+
+                Log.i(TAG, "Successfully loaded");
+                progressBar.dismiss();
+
+            }
+
+            @Override
+            public void OnFailure() {
+                progressBar.dismiss();
+                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
             }
         });
     }

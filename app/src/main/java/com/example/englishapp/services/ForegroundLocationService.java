@@ -22,7 +22,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.SplashActivity;
+import com.example.englishapp.presentation.activities.SplashActivity;
 import com.example.englishapp.database.DataBasePersonalData;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.google.android.gms.common.api.ResolvableApiException;

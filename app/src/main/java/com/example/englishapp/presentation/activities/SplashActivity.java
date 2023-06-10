@@ -1,4 +1,4 @@
-package com.example.englishapp.activities;
+package com.example.englishapp.presentation.activities;
 
 import static com.example.englishapp.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.database.Constants.KEY_PROFILE;

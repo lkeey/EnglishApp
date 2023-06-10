@@ -1,6 +1,5 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
-import android.content.Context;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.models.TestModel;
 import com.example.englishapp.interfaces.TestClickedListener;
+import com.example.englishapp.models.TestModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +26,11 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
     private List<TestModel> testModelList;
     private List<TestModel> allTests;
     private TestClickedListener listener;
-    private Context context;
     private Timer timer;
 
-    public TestAdapter(List<TestModel> testModelList, TestClickedListener listener, Context context) {
+    public TestAdapter(List<TestModel> testModelList, TestClickedListener listener) {
         this.testModelList = testModelList;
         this.listener = listener;
-        this.context = context;
         allTests = testModelList;
     }
 

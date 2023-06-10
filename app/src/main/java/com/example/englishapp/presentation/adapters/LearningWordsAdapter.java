@@ -1,4 +1,4 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,8 +21,8 @@ import java.util.List;
 public class LearningWordsAdapter extends RecyclerView.Adapter<LearningWordsAdapter.ViewHolder>  {
 
     private static final String TAG = "AdapterWords";
-    private List<WordModel> listWords;
-    private WordsRepository wordsRepository;
+    private final List<WordModel> listWords;
+    private final WordsRepository wordsRepository;
 
     public LearningWordsAdapter(List<WordModel> listWords) {
         this.listWords = listWords;
@@ -49,8 +49,8 @@ public class LearningWordsAdapter extends RecyclerView.Adapter<LearningWordsAdap
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView wordName, wordDescription;
-        private ImageView wordImg;
+        private final TextView wordName, wordDescription;
+        private final ImageView wordImg;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

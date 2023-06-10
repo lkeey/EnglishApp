@@ -1,4 +1,4 @@
-package com.example.englishapp.activities;
+package com.example.englishapp.presentation.activities;
 
 import android.os.Bundle;
 import android.util.Log;

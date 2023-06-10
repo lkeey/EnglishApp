@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.ExamActivity;
-import com.example.englishapp.adapters.InfoQuestionsAdapter;
+import com.example.englishapp.presentation.activities.ExamActivity;
+import com.example.englishapp.presentation.adapters.InfoQuestionsAdapter;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.interfaces.QuestionListener;
 import com.example.englishapp.models.QuestionModel;

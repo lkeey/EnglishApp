@@ -1,4 +1,4 @@
-package com.example.englishapp.activities;
+package com.example.englishapp.presentation.activities;
 
 import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
 import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -268,7 +267,7 @@ public class ExamActivity extends BaseActivity {
             @Override
             public void onFinish() {
                 try {
-                    Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
 
                     Log.i(TAG, "totalTime - " + totalTime + " - timeCounter - " + timeCounter);
 

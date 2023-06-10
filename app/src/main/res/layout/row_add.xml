@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -23,31 +24,35 @@
             <EditText
                 android:id="@+id/editText"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="8dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="8dp"
+                android:importantForAutofill="no"
                 android:padding="8dp"
-                android:paddingLeft="12dp"
-                android:hint="Write Question"
+                android:inputType="textMultiLine"
+                android:paddingStart="12dp"
+                android:hint="@string/write_question"
                 android:textSize="20sp"
                 android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toLeftOf="@id/imageRemove"/>
+                app:layout_constraintRight_toLeftOf="@id/imageRemove"
+                tools:ignore="RtlSymmetry" />
 
             <ImageView
                 android:id="@+id/imageRemove"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_close"
                 app:tint="@color/red"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="parent"/>
+                app:layout_constraintRight_toRightOf="parent"
+                android:contentDescription="@string/app_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -64,14 +69,14 @@
             android:id="@+id/btnAddOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Option"
+            android:text="@string/add_option"
             android:textSize="16sp"
             android:layout_marginTop="12dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
             android:layout_marginBottom="8dp"
             android:textColor="@color/white"
             android:textAllCaps="true"
-            android:drawableLeft="@drawable/ic_add"
+            android:drawableStart="@drawable/ic_add"
             android:drawablePadding="8dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"

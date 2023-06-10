@@ -31,7 +31,7 @@
             android:value="AIzaSyAr3STcIZQx3DkgHZB3JVSUIBToWODhk1c" />
 
         <activity
-            android:name=".activities.SplashActivity"
+            android:name=".presentation.activities.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
@@ -40,14 +40,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.ExamActivity"
+            android:name=".presentation.activities.ExamActivity"
             android:exported="false"
             android:theme="@style/Theme.Exam.FullScreen"/>
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".presentation.activities.MainActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.MainAuthenticationActivity"
+            android:name=".presentation.activities.MainAuthenticationActivity"
             android:exported="false" />
 
         <service

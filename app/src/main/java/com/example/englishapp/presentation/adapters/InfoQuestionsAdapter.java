@@ -1,4 +1,4 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
 import static com.example.englishapp.database.DataBaseExam.ANSWERED;
 import static com.example.englishapp.database.DataBaseExam.REVIEW;
@@ -23,8 +23,8 @@ import java.util.List;
 public class InfoQuestionsAdapter extends BaseAdapter {
 
     private static final String TAG = "InfoQuestionsAdapter";
-    private List<QuestionModel> listOfQuestions;
-    private QuestionListener listener;
+    private final List<QuestionModel> listOfQuestions;
+    private final QuestionListener listener;
 
     public InfoQuestionsAdapter(List<QuestionModel> listOfQuestions, QuestionListener listener) {
         this.listOfQuestions = listOfQuestions;
@@ -68,22 +68,14 @@ public class InfoQuestionsAdapter extends BaseAdapter {
         questionNumber.setText("" + (position + 1));
 
         switch (questionModel.getStatus()) {
-
-            case UNANSWERED:
-                questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.red)));
-                break;
-
-            case ANSWERED:
-                questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), com.instabug.bug.R.color.design_default_color_primary)));
-                break;
-
-            case REVIEW:
-                questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.secondary_color)));
-                break;
-
-            default:
-                questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.grey)));
-                break;
+            case UNANSWERED ->
+                    questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.red)));
+            case ANSWERED ->
+                    questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), com.instabug.bug.R.color.design_default_color_primary)));
+            case REVIEW ->
+                    questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.secondary_color)));
+            default ->
+                    questionNumber.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(myView.getContext(), R.color.grey)));
         }
 
         return myView;

@@ -13,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.ExamActivity;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.ExamActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.database.DataBaseQuestions;
 import com.example.englishapp.models.TestModel;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;

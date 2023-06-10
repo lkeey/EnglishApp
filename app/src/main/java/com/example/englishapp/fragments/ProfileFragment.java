@@ -22,8 +22,8 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.database.DataBaseBookmarks;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.database.RoomDataBase;

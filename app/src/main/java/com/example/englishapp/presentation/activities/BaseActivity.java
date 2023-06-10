@@ -1,4 +1,4 @@
-package com.example.englishapp.activities;
+package com.example.englishapp.presentation.activities;
 
 import static com.example.englishapp.database.Constants.KEY_INSTABUG;
 import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;

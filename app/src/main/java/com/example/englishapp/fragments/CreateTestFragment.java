@@ -30,9 +30,10 @@ import androidx.appcompat.widget.AppCompatSpinner;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.database.DataBaseTests;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.presentation.fragments.CategoryFragment;
 import com.example.englishapp.repositories.CreateTestRepository;
 
 import java.util.ArrayList;
@@ -171,7 +172,6 @@ public class CreateTestFragment extends Fragment {
             return true;
         }
     }
-
     private void addView() {
         View view = getLayoutInflater().inflate(R.layout.row_add, null, false);
 

@@ -1,6 +1,5 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
-import android.content.Context;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,9 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.englishapp.models.CardModel;
 import com.example.englishapp.R;
 import com.example.englishapp.interfaces.CardClickedListener;
+import com.example.englishapp.models.CardModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +23,12 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
     private List<CardModel> cardModelList;
     private final List<CardModel> allCards;
     private final CardClickedListener listener;
-    private final Context context;
     private Timer timer;
 
-    public CardWordAdapter(List<CardModel> cardModelList, CardClickedListener listener, Context context) {
+    public CardWordAdapter(List<CardModel> cardModelList, CardClickedListener listener) {
 
         this.cardModelList = cardModelList;
         this.listener = listener;
-        this.context = context;
         allCards = cardModelList;
 
     }
@@ -115,17 +112,11 @@ public class CardWordAdapter extends RecyclerView.Adapter<CardWordAdapter.ViewHo
             level.setText(cardModel.getLevel());
 
             if (cardModel.getLevel().equals("A1") || cardModel.equals("A2") || cardModel.getLevel().equals("А1") || cardModel.getLevel().equals("А2")) {
-
-                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_easy));
-
+                itemView.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.gradient_background_card_easy));
             } else if (cardModel.getLevel().equals("B1") || cardModel.getLevel().equals("B2")){
-
-                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_medium));
-
+                itemView.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.gradient_background_card_medium));
             } else {
-
-                itemView.setBackground(ContextCompat.getDrawable(context, R.drawable.gradient_background_card_hard));
-
+                itemView.setBackground(ContextCompat.getDrawable(itemView.getContext(), R.drawable.gradient_background_card_hard));
             }
 
             itemView.setOnClickListener(v -> listener.onCardClicked(cardModel));

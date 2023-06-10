@@ -19,7 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.activities.MainAuthenticationActivity;
+import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.CategoryFragment">
+    tools:context=".presentation.fragments.CategoryFragment">
 
     <LinearLayout
         android:id="@+id/layoutSearch"
@@ -24,12 +24,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:padding="16dp"
+            android:importantForAutofill="no"
             android:background="@drawable/round_view_grey"
             android:drawableStart="@drawable/ic_magnifier"
             android:drawablePadding="16dp"
             android:drawableTint="#616161"
             android:ems="10"
-            android:hint="What are you looking for?"
+            android:hint="@string/what_are_you_looking_for"
             android:inputType="text"
             android:paddingHorizontal="8dp"
             android:textColor="#616161"
@@ -37,13 +38,13 @@
 
     </LinearLayout>
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerCategories"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
         android:padding="16dp"
+        app:layout_goneMarginTop="8dp"
         android:numColumns="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -57,6 +58,7 @@
         android:backgroundTint="@color/design_default_color_primary"
         android:src="@drawable/ic_add_without_circle"
         android:layout_gravity="end|bottom"
+        android:contentDescription="@string/app_name"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="16dp"/>

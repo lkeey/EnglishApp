@@ -1,4 +1,4 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
 import android.os.Looper;
 import android.util.Log;

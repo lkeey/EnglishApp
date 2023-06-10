@@ -28,7 +28,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.SplashActivity;
+import com.example.englishapp.presentation.activities.SplashActivity;
 import com.example.englishapp.database.DataBaseLearningWords;
 import com.example.englishapp.interfaces.CompleteListener;
 import com.example.englishapp.models.WordModel;

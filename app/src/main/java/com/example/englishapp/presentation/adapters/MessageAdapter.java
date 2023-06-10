@@ -1,6 +1,5 @@
-package com.example.englishapp.adapters;
+package com.example.englishapp.presentation.adapters;
 
-import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,16 +23,15 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final String TAG = "AdapterMessages";
     private static final int VIEW_TYPE_SENT = 0;
     private static final int VIEW_TYPE_RECEIVED = 1;
-    private static Context context = null;
     private final List<ChatMessage> messages;
-    private static UserModel sender = null;
+    private final UserModel sender;
 
-    public MessageAdapter(Context context, List<ChatMessage> messages, UserModel sender) {
-        this.context = context;
+    public MessageAdapter(List<ChatMessage> messages, UserModel sender) {
         this.messages = messages;
         this.sender = sender;
     }
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
@@ -84,9 +82,9 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    static class SentMessageViewHolder extends RecyclerView.ViewHolder {
+     static class SentMessageViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textMessage, textDateTime;
+        private final TextView textMessage, textDateTime;
 
         SentMessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,10 +105,10 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    static class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
+     class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textMessage, textDateTime;
-        private ImageView imgProfile;
+        private final TextView textMessage, textDateTime;
+        private final ImageView imgProfile;
 
         ReceivedMessageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,7 +124,7 @@ public class MessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             textMessage.setText(message.getMessage());
             textDateTime.setText(message.getBeautyDateTime());
-            Glide.with(context).load(sender.getPathToImage()).into(imgProfile);
+            Glide.with(itemView.getContext()).load(sender.getPathToImage()).into(imgProfile);
         }
     }
 

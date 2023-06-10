@@ -1,4 +1,4 @@
-package com.example.englishapp.fragments;
+package com.example.englishapp.presentation.fragments;
 
 import static com.example.englishapp.database.Constants.KEY_CHOSEN_CARD;
 import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
@@ -22,15 +22,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.activities.MainActivity;
-import com.example.englishapp.adapters.CardWordAdapter;
 import com.example.englishapp.database.DataBaseCards;
+import com.example.englishapp.fragments.CreateWordCardFragment;
+import com.example.englishapp.fragments.WordCardInfoFragment;
 import com.example.englishapp.interfaces.CardClickedListener;
 import com.example.englishapp.interfaces.CompleteListener;
+import com.example.englishapp.interfaces.RefreshListener;
 import com.example.englishapp.models.CardModel;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.adapters.CardWordAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class WordsFragment extends Fragment implements CardClickedListener {
+public class WordsFragment extends Fragment implements CardClickedListener, RefreshListener {
 
     private static final String TAG = "WordsFragment";
     private RecyclerView cardRecycler;
@@ -81,7 +84,7 @@ public class WordsFragment extends Fragment implements CardClickedListener {
             @Override
             public void OnSuccess() {
 
-                cardAdapter = new CardWordAdapter(DataBaseCards.LIST_OF_CARDS, WordsFragment.this, getActivity());
+                cardAdapter = new CardWordAdapter(DataBaseCards.LIST_OF_CARDS, WordsFragment.this);
 
                 cardRecycler.setAdapter(cardAdapter);
 
@@ -138,6 +141,32 @@ public class WordsFragment extends Fragment implements CardClickedListener {
 
         fragment.show(getParentFragmentManager(), SHOW_FRAGMENT_DIALOG);
 
+    }
+
+    @Override
+    public void onRefresh() {
+        progressBar.show();
+
+        new DataBaseCards().loadWordCardsData(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+
+                cardAdapter = new CardWordAdapter(DataBaseCards.LIST_OF_CARDS, WordsFragment.this);
+
+                cardRecycler.setAdapter(cardAdapter);
+
+                Log.i(TAG, "Cards were successfully loaded - " + DataBaseCards.LIST_OF_CARDS.size());
+
+                progressBar.dismiss();
+            }
+
+            @Override
+            public void OnFailure() {
+                progressBar.dismiss();
+
+                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }

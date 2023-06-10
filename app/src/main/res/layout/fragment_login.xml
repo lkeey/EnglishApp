@@ -139,7 +139,7 @@
             android:id="@+id/labelAccount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="18dp"
             android:text="@string/do_not_have_an_account"
             android:textColor="@color/purple_500"
             android:textSize="18sp"

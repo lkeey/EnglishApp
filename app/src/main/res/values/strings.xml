@@ -146,5 +146,9 @@
     <string name="you">You</string>
     <string name="score_0">Score: 0</string>
     <string name="place_0">Place: 0</string>
+    <string name="write_question">Write Question</string>
+    <string name="add_option">Add Option</string>
+    <string name="what_are_you_looking_for">What are you looking for?</string>
+    <string name="there_s_nothing_here_yet">There\'s nothing here yet</string>
 
 </resources>

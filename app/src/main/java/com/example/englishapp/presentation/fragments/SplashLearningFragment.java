@@ -1,4 +1,4 @@
-package com.example.englishapp.fragments;
+package com.example.englishapp.presentation.fragments;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -6,20 +6,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.englishapp.R;
-import com.example.englishapp.adapters.LearningPagerAdapter;
+import com.example.englishapp.presentation.adapters.LearningPagerAdapter;
+import com.example.englishapp.presentation.fragments.BaseFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;
 
-public class SplashLearningFragment extends Fragment {
+public class SplashLearningFragment extends BaseFragment {
 
     private static final String TAG = "SplashLearningFragment";
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
+    private LearningPagerAdapter viewAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,7 +37,7 @@ public class SplashLearningFragment extends Fragment {
         tabLayout = view.findViewById(R.id.tabLayout);
         viewPager = view.findViewById(R.id.viewPager);
 
-        LearningPagerAdapter viewAdapter = new LearningPagerAdapter(requireActivity());
+        viewAdapter = new LearningPagerAdapter(requireActivity());
         viewPager.setAdapter(viewAdapter);
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -46,14 +47,10 @@ public class SplashLearningFragment extends Fragment {
 
                 viewPager.setCurrentItem(tab.getPosition());
 
-                switch (tab.getPosition()) {
-                    case 1:
-                        requireActivity().setTitle(R.string.nameCardWords);
-                        break;
-
-                    default:
-                        requireActivity().setTitle(R.string.nameTests);
-                        break;
+                if (tab.getPosition() == 1) {
+                    requireActivity().setTitle(R.string.nameCardWords);
+                } else {
+                    requireActivity().setTitle(R.string.nameTests);
                 }
             }
 
@@ -77,5 +74,10 @@ public class SplashLearningFragment extends Fragment {
                 Objects.requireNonNull(tabLayout.getTabAt(position)).select();
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        viewAdapter.refreshFragment(viewPager.getCurrentItem());
     }
 }
