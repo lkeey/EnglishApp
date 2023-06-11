@@ -180,6 +180,8 @@ public class MainActivity extends BaseActivity {
             public void showMap() {
                 MapUsersFragment fragment = new MapUsersFragment();
                 setFragment(fragment, false);
+
+                setCheckedNavigationIcon(2);
             }
 
             @Override
@@ -192,12 +194,16 @@ public class MainActivity extends BaseActivity {
                 fragment.setArguments(bundle);
 
                 setFragment(fragment, false);
+
+                setCheckedNavigationIcon(1);
             }
 
             @Override
             public void showProfile() {
                 ProfileFragment fragment = new ProfileFragment();
                 setFragment(fragment);
+
+                setCheckedNavigationIcon(3);
             }
 
             @Override
@@ -212,6 +218,8 @@ public class MainActivity extends BaseActivity {
                 fragment.setArguments(bundle);
 
                 setFragment(fragment, false);
+
+                setCheckedNavigationIcon(2);
             }
         });
 
