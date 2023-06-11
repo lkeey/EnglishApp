@@ -18,17 +18,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.presentation.activities.MainActivity;
-import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.data.database.DataBaseBookmarks;
 import com.example.englishapp.data.database.DataBaseLearningWords;
 import com.example.englishapp.data.database.RoomDataBase;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.receivers.AlarmReceiver;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -36,7 +35,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment {
     private static final String TAG = "FragmentProfile";
     private Toolbar toolbar;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
@@ -104,7 +103,7 @@ public class ProfileFragment extends Fragment {
 
         layoutLeaderBord.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment()));
 
-        layoutProfile.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new ProfileInfoFragment()));
+        layoutProfile.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new ProfileInfoFragment(), false));
 
         layoutLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
@@ -211,6 +210,8 @@ public class ProfileFragment extends Fragment {
 
     }
 
-
-
+    @Override
+    public void onRefresh() {
+        ((MainActivity) requireActivity()).setFragment(new ProfileFragment(), true);
+    }
 }

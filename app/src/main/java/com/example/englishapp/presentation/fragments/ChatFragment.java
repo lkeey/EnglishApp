@@ -18,18 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.presentation.adapters.RecentConversationAdapter;
-import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.interfaces.ConversationListener;
 import com.example.englishapp.data.models.ChatMessage;
 import com.example.englishapp.data.models.UserModel;
-import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.ConversationListener;
 import com.example.englishapp.domain.repositories.LoginRepository;
+import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.adapters.RecentConversationAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -39,7 +38,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class ChatFragment extends Fragment implements ConversationListener {
+public class ChatFragment extends BaseFragment implements ConversationListener {
 
     private static final String TAG = "FragmentChat";
     private RecyclerView recyclerRecentlyChats;
@@ -178,4 +177,8 @@ public class ChatFragment extends Fragment implements ConversationListener {
         }
     }
 
+    @Override
+    public void onRefresh() {
+        ((MainActivity) requireActivity()).setFragment(new ChatFragment(), true);
+    }
 }

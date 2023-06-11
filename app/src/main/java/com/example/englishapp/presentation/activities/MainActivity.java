@@ -13,13 +13,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -28,6 +26,14 @@ import com.example.englishapp.R;
 import com.example.englishapp.data.database.Constants;
 import com.example.englishapp.data.database.DataBase;
 import com.example.englishapp.data.database.DataBaseUsers;
+import com.example.englishapp.data.models.UserModel;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
+import com.example.englishapp.domain.interfaces.TasksChecking;
+import com.example.englishapp.domain.repositories.LocationManager;
+import com.example.englishapp.domain.repositories.TasksRepository;
+import com.example.englishapp.domain.services.ForegroundLocationService;
+import com.example.englishapp.presentation.fragments.CategoryFragment;
 import com.example.englishapp.presentation.fragments.ChatFragment;
 import com.example.englishapp.presentation.fragments.DiscussFragment;
 import com.example.englishapp.presentation.fragments.LeaderBordFragment;
@@ -35,14 +41,6 @@ import com.example.englishapp.presentation.fragments.MapUsersFragment;
 import com.example.englishapp.presentation.fragments.ProfileFragment;
 import com.example.englishapp.presentation.fragments.ProfileInfoDialogFragment;
 import com.example.englishapp.presentation.fragments.ScoreFragment;
-import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.interfaces.RefreshListener;
-import com.example.englishapp.domain.interfaces.TasksChecking;
-import com.example.englishapp.data.models.UserModel;
-import com.example.englishapp.presentation.fragments.CategoryFragment;
-import com.example.englishapp.domain.repositories.LocationManager;
-import com.example.englishapp.domain.repositories.TasksRepository;
-import com.example.englishapp.domain.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashSet;
@@ -268,23 +266,14 @@ public class MainActivity extends BaseActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
     }
 
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-        if (item.getItemId() == android.R.id.home) {
-
-            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
-
-            if (getSupportFragmentManager().getBackStackEntryCount() > 1){
-
-                getSupportFragmentManager().popBackStackImmediate();
-
-            } else {
-
-                MainActivity.this.finish();
-            }
-
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1){
+            getSupportFragmentManager().popBackStackImmediate();
+        } else {
+            MainActivity.this.finish();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }

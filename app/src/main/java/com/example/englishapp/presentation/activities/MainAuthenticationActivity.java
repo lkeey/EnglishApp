@@ -2,10 +2,8 @@ package com.example.englishapp.presentation.activities;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -29,8 +27,6 @@ public class MainAuthenticationActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mainFrame = findViewById(R.id.mainFrame);
 
@@ -40,34 +36,26 @@ public class MainAuthenticationActivity extends AppCompatActivity {
 
     public void setFragment(Fragment fragment) {
         getSupportFragmentManager()
-                .beginTransaction()
-                .replace(mainFrame.getId(), fragment)
-                .addToBackStack(String.valueOf(fragment.getId()))
-                .commit();
+            .beginTransaction()
+            .replace(mainFrame.getId(), fragment)
+            .addToBackStack(String.valueOf(fragment.getId()))
+            .commit();
     }
 
     public void setTitle(String title) {
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
     }
 
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    @Override
+    public void onBackPressed() {
+        Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
 
-        if (item.getItemId() == android.R.id.home) {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 1){
 
-            Log.i(TAG, "Stack of Fragments - " + getSupportFragmentManager().getBackStackEntryCount());
+            getSupportFragmentManager().popBackStackImmediate();
 
-            if (getSupportFragmentManager().getBackStackEntryCount() > 1){
-
-                getSupportFragmentManager().popBackStackImmediate();
-
-            } else {
-
-                MainAuthenticationActivity.this.finish();
-            }
-
+        } else {
+            MainAuthenticationActivity.this.finish();
         }
-
-        return super.onOptionsItemSelected(item);
     }
-
 }

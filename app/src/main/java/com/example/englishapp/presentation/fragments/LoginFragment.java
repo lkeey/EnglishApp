@@ -60,9 +60,7 @@ public class LoginFragment extends Fragment {
         setListeners();
 
         return view;
-
     }
-
 
     private void init(View view) {
         userEmail = view.findViewById(R.id.editTextEmail);
