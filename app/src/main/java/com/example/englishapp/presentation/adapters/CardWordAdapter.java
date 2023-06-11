@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.interfaces.CardClickedListener;
-import com.example.englishapp.models.CardModel;
+import com.example.englishapp.domain.interfaces.CardClickedListener;
+import com.example.englishapp.data.models.CardModel;
 
 import java.util.ArrayList;
 import java.util.List;

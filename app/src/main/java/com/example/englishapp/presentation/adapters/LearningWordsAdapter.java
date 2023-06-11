@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.models.WordModel;
-import com.example.englishapp.repositories.WordsRepository;
+import com.example.englishapp.data.database.DataBasePersonalData;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.data.models.WordModel;
+import com.example.englishapp.domain.repositories.WordsRepository;
 
 import java.util.List;
 

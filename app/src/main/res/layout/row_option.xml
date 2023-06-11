@@ -15,13 +15,14 @@
         <EditText
             android:id="@+id/editTextOption"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:hint="Option"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:hint="@string/option"
+            android:importantForAutofill="no"
+            android:inputType="text"
             android:textSize="16sp"
-            android:paddingLeft="10dp"
+            android:padding="16dp"
+            android:paddingStart="8dp"
             android:background="@drawable/round_view"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -32,7 +33,7 @@
             android:id="@+id/frameLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:background="@drawable/round_view"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -40,8 +41,9 @@
 
             <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/spinnerOptions"
+                android:padding="8dp"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp" />
+                android:layout_height="wrap_content" />
 
         </FrameLayout>
 
@@ -49,10 +51,11 @@
             android:id="@+id/imageRemoveOption"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginEnd="4dp"
             android:layout_gravity="center"
             android:src="@drawable/ic_close"
             app:tint="@color/red"
+            android:contentDescription="@string/app_name"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"

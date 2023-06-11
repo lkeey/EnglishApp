@@ -4,52 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.CreateTestFragment">
+    tools:context=".presentation.fragments.CreateTestFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create Your Test"
+            android:text="@string/create_your_test"
             android:textStyle="bold"
-            android:layout_gravity="center"
+            android:gravity="center"
             android:textSize="24sp"
-            android:layout_margin="15dp"
+            android:layout_marginVertical="8dp"
             android:textColor="@color/secondary_color" />
 
         <EditText
             android:id="@+id/testName"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="12dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:hint="Write Name Of Test"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:hint="@string/write_name_of_test"
             android:textColor="@color/secondary_color"
             android:textColorHint="@color/secondary_color"
             android:textSize="20sp"
-            android:paddingLeft="10dp"
+            android:inputType="text"
+            android:padding="16dp"
             android:layout_marginBottom="12dp"
-            />
+            android:importantForAutofill="no" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_weight="1"
-            android:hint="Choose Time Of Doing Your Test (minutes)"
+            android:layout_marginHorizontal="20dp"
+            android:hint="@string/choose_time_of_doing_your_test_minutes"
             android:textColorHint="@color/design_default_color_primary"
             android:textSize="20sp"
-            android:paddingLeft="10dp"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="12dp" />
 
         <NumberPicker
             android:id="@+id/numberPicker"
-            android:layout_marginHorizontal="12dp"
+            android:layout_marginHorizontal="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -65,35 +62,30 @@
         <Button
             android:id="@+id/btnAddQuestion"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="Add Question"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
+            android:layout_height="wrap_content"
+            android:text="@string/add_question"
+            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
+            android:paddingHorizontal="8dp"
             android:textColor="@color/white"
-            android:textAllCaps="true"
             android:padding="8dp"
-            android:textSize="16sp"
-            android:drawableLeft="@drawable/ic_add"
+            android:textSize="20sp"
+            android:drawableStart="@drawable/ic_add"
             android:drawablePadding="8dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:background="@drawable/round_primary"/>
 
         <Button
             android:id="@+id/btnSubmit"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:text="Submit"
+            android:layout_height="wrap_content"
+            android:text="@string/submit"
             android:padding="8dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
+            android:layout_marginVertical="12dp"
+            android:layout_marginHorizontal="20dp"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textAllCaps="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:textSize="20sp"
             android:background="@drawable/round_primary"/>
+
     </LinearLayout>
 
 </ScrollView>

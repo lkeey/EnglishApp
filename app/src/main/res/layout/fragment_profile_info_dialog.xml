@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.ProfileInfoDialogFragment">
+    tools:context=".presentation.fragments.ProfileInfoDialogFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,28 +17,27 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginEnd="32dp"
-            android:drawableStart="@drawable/ic_btn_back"
             android:drawablePadding="16dp"
-            android:drawableTint="@color/design_default_color_primary"
-            android:hint="Close"
+            android:hint="@string/close"
             android:inputType="textEmailAddress"
             android:textSize="20sp"
             android:textColorHint="@color/design_default_color_primary"
             android:paddingTop="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+            app:layout_constraintTop_toTopOf="parent"
+            app:drawableStartCompat="@drawable/ic_btn_back"
+            app:drawableTint="@color/design_default_color_primary" />
 
         <ImageView
             android:id="@+id/imgLogo"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:src="@drawable/app_logo"
+            android:contentDescription="@string/app_name"
             app:layout_constraintTop_toBottomOf="@id/textClose"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
-
 
         <TextView
             android:id="@+id/textHelper"
@@ -55,16 +54,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
 
-
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/textAgree"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:paddingLeft="32dp"
-            android:paddingRight="32dp"
-            android:layout_marginBottom="32dp"
-            android:text="Let's do it"
+            android:layout_marginVertical="32dp"
+            android:layout_marginHorizontal="12dp"
+            android:text="@string/let_s_do_it"
             android:gravity="center"
             android:textSize="20sp"
             android:textColor="@color/white"
@@ -72,7 +68,6 @@
             app:layout_constraintTop_toBottomOf="@id/textHelper"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

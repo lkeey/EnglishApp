@@ -1,6 +1,6 @@
 package com.example.englishapp.presentation.fragments;
 
-import static com.example.englishapp.database.Constants.KEY_CHOSEN_CATEGORY;
+import static com.example.englishapp.data.database.Constants.KEY_CHOSEN_CATEGORY;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -24,10 +24,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.englishapp.R;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.adapters.CategoryAdapter;
-import com.example.englishapp.database.DataBaseCategories;
-import com.example.englishapp.interfaces.CategoryClickedListener;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.models.CategoryModel;
+import com.example.englishapp.data.database.DataBaseCategories;
+import com.example.englishapp.domain.interfaces.CategoryClickedListener;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.data.models.CategoryModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class CategoryFragment extends BaseFragment implements CategoryClickedListener {
@@ -92,13 +92,10 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
         progressBar.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        TextView dialogText = progressBar.findViewById(R.id.dialogText);
         textClose = progressBar.findViewById(R.id.textCancel);
         btnCreateCategory = progressBar.findViewById(R.id.btnCreateCategory);
         inputNameCategory = progressBar.findViewById(R.id.inputSearch);
         progressCategory = progressBar.findViewById(R.id.progressBar);
-
-        dialogText.setText(R.string.progressBarCreating);
 
     }
 
@@ -164,7 +161,6 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
 
     }
 
-
     @Override
     public void onCategoryClicked(CategoryModel category) {
         Log.i(TAG, "Category - " + category.getName());
@@ -176,7 +172,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
         SplashLearningFragment fragment = new SplashLearningFragment();
         fragment.setArguments(bundle);
 
-        ((MainActivity) requireActivity()).setFragment(fragment);
+        ((MainActivity) requireActivity()).setFragment(fragment, true);
     }
 
     @Override
@@ -184,7 +180,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
         new DataBaseCategories().getListOfCategories(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
+                ((MainActivity) requireActivity()).setFragment(new CategoryFragment(), true);
             }
 
             @Override

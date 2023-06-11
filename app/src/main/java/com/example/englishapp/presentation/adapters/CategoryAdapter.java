@@ -11,8 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.interfaces.CategoryClickedListener;
-import com.example.englishapp.models.CategoryModel;
+import com.example.englishapp.domain.interfaces.CategoryClickedListener;
+import com.example.englishapp.data.models.CategoryModel;
 
 import java.util.ArrayList;
 import java.util.List;

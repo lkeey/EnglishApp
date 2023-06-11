@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.models.ChatMessage;
-import com.example.englishapp.models.UserModel;
+import com.example.englishapp.data.database.DataBasePersonalData;
+import com.example.englishapp.data.models.ChatMessage;
+import com.example.englishapp.data.models.UserModel;
 
 import java.util.List;
 

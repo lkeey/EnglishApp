@@ -5,7 +5,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".fragments.ExamInfoFragment">
+    tools:context=".presentation.fragments.ExamInfoFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.SpeechFragment">
+    tools:context=".presentation.fragments.SpeechFragment">
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -21,8 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp"
-        >
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/textHelper"
@@ -32,7 +31,7 @@
             android:gravity="center"
             android:paddingHorizontal="8dp"
             android:textColor="@color/design_default_color_primary"
-            android:text="If you pronounce the word correctly, You will get score" />
+            android:text="@string/if_you_pronounce_the_word_correctly_you_will_get_score" />
 
         <TextView
             android:id="@+id/textWord"
@@ -43,8 +42,7 @@
             android:textColor="@color/design_default_color_primary"
             android:textStyle="bold"
             android:gravity="center"
-            android:text="Word"
-            />
+            android:text="@string/word" />
 
         <Button
             android:id="@+id/btnPronounce"
@@ -54,7 +52,7 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             android:layout_marginTop="16dp"
-            android:text="Say"
+            android:text="@string/say"
             android:layout_marginBottom="8dp"
             android:background="@drawable/round_layout_test"
             />

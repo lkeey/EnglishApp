@@ -11,7 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
-import com.example.englishapp.fragments.LoginFragment;
+import com.example.englishapp.presentation.fragments.LoginFragment;
 
 import java.util.Objects;
 

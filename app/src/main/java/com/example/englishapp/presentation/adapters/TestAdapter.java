@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.interfaces.TestClickedListener;
-import com.example.englishapp.models.TestModel;
+import com.example.englishapp.domain.interfaces.TestClickedListener;
+import com.example.englishapp.data.models.TestModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +24,8 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
 
     private static final String TAG = "AdapterTest";
     private List<TestModel> testModelList;
-    private List<TestModel> allTests;
-    private TestClickedListener listener;
+    private final List<TestModel> allTests;
+    private final TestClickedListener listener;
     private Timer timer;
 
     public TestAdapter(List<TestModel> testModelList, TestClickedListener listener) {
@@ -34,6 +34,7 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
         allTests = testModelList;
     }
 
+    @NonNull
     @Override
     public TestHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.i(TAG, "createView");
@@ -94,8 +95,8 @@ public class TestAdapter extends RecyclerView.Adapter<TestAdapter.TestHolder> {
 
 
     public class TestHolder extends RecyclerView.ViewHolder {
-        private TextView title, numberOfQuestions, time, percent, author;
-        private ProgressBar progressBar;
+        private final TextView title, numberOfQuestions, time, percent, author;
+        private final ProgressBar progressBar;
 
         public TestHolder(@NonNull View itemView) {
             super(itemView);

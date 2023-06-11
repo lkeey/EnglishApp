@@ -6,7 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.interfaces.RefreshListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
 import com.example.englishapp.presentation.activities.MainActivity;
 
 public class BaseFragment extends Fragment implements RefreshListener {

@@ -6,14 +6,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.englishapp.presentation.fragments.WordsFragment;
-import com.example.englishapp.interfaces.RefreshListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
 import com.example.englishapp.presentation.fragments.TestsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LearningPagerAdapter extends FragmentStateAdapter {
-    private List<Fragment> fragments = new ArrayList<>();
+    private final List<Fragment> fragments = new ArrayList<>();
 
     public LearningPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);

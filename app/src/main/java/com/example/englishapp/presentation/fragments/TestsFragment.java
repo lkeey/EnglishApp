@@ -1,7 +1,7 @@
 package com.example.englishapp.presentation.fragments;
 
-import static com.example.englishapp.database.Constants.KEY_CHOSEN_TEST;
-import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.data.database.Constants.KEY_CHOSEN_TEST;
+import static com.example.englishapp.data.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -22,17 +22,15 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.database.DataBaseBookmarks;
-import com.example.englishapp.database.DataBaseCategories;
-import com.example.englishapp.database.DataBaseQuestions;
-import com.example.englishapp.database.DataBaseScores;
-import com.example.englishapp.database.DataBaseTests;
-import com.example.englishapp.fragments.CreateTestFragment;
-import com.example.englishapp.fragments.TestInfoDialogFragment;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.interfaces.RefreshListener;
-import com.example.englishapp.interfaces.TestClickedListener;
-import com.example.englishapp.models.TestModel;
+import com.example.englishapp.data.database.DataBaseBookmarks;
+import com.example.englishapp.data.database.DataBaseCategories;
+import com.example.englishapp.data.database.DataBaseQuestions;
+import com.example.englishapp.data.database.DataBaseScores;
+import com.example.englishapp.data.database.DataBaseTests;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
+import com.example.englishapp.domain.interfaces.TestClickedListener;
+import com.example.englishapp.data.models.TestModel;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.adapters.TestAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -114,11 +112,10 @@ public class TestsFragment extends Fragment implements TestClickedListener, Refr
     private void setListeners() {
         fab.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-//            bundle.putSerializable(KEY_CHOSEN_CATEGORY, category);
             CreateTestFragment fragment = new CreateTestFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) requireActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment, false);
         });
 
         inputSearch.addTextChangedListener(new TextWatcher() {

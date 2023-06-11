@@ -1,10 +1,10 @@
 package com.example.englishapp.presentation.activities;
 
-import static com.example.englishapp.database.Constants.KEY_CHOSEN_USER_DATA;
-import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
-import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
-import static com.example.englishapp.database.Constants.KEY_USER_UID;
-import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.data.database.Constants.KEY_CHOSEN_USER_DATA;
+import static com.example.englishapp.data.database.Constants.KEY_IS_WORDS;
+import static com.example.englishapp.data.database.Constants.KEY_TEST_TIME;
+import static com.example.englishapp.data.database.Constants.KEY_USER_UID;
+import static com.example.englishapp.data.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -25,24 +25,24 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.englishapp.R;
-import com.example.englishapp.database.Constants;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.database.DataBaseUsers;
-import com.example.englishapp.fragments.ChatFragment;
-import com.example.englishapp.fragments.DiscussFragment;
-import com.example.englishapp.fragments.LeaderBordFragment;
-import com.example.englishapp.fragments.MapUsersFragment;
-import com.example.englishapp.fragments.ProfileFragment;
-import com.example.englishapp.fragments.ProfileInfoDialogFragment;
-import com.example.englishapp.fragments.ScoreFragment;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.interfaces.RefreshListener;
-import com.example.englishapp.interfaces.TasksChecking;
-import com.example.englishapp.models.UserModel;
+import com.example.englishapp.data.database.Constants;
+import com.example.englishapp.data.database.DataBase;
+import com.example.englishapp.data.database.DataBaseUsers;
+import com.example.englishapp.presentation.fragments.ChatFragment;
+import com.example.englishapp.presentation.fragments.DiscussFragment;
+import com.example.englishapp.presentation.fragments.LeaderBordFragment;
+import com.example.englishapp.presentation.fragments.MapUsersFragment;
+import com.example.englishapp.presentation.fragments.ProfileFragment;
+import com.example.englishapp.presentation.fragments.ProfileInfoDialogFragment;
+import com.example.englishapp.presentation.fragments.ScoreFragment;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
+import com.example.englishapp.domain.interfaces.TasksChecking;
+import com.example.englishapp.data.models.UserModel;
 import com.example.englishapp.presentation.fragments.CategoryFragment;
-import com.example.englishapp.repositories.LocationManager;
-import com.example.englishapp.repositories.TasksRepository;
-import com.example.englishapp.services.ForegroundLocationService;
+import com.example.englishapp.domain.repositories.LocationManager;
+import com.example.englishapp.domain.repositories.TasksRepository;
+import com.example.englishapp.domain.services.ForegroundLocationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.HashSet;
@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity {
         setListeners();
 
         // start CategoryFragment at first
-        setFragment(new CategoryFragment());
+        setFragment(new CategoryFragment(), true);
 
         receiveData();
 
@@ -78,17 +78,44 @@ public class MainActivity extends BaseActivity {
 
     }
 
-    private void startLocationService() {
-        if(!LocationManager.getInstance(this).isLocationEnabled()) {
-            progressLocation.show();
-        }
+    private void init() {
 
+        progressLocation = new Dialog(this);
+        progressLocation.setContentView(R.layout.dialog_check_location);
+        progressLocation.setCancelable(false);
+        progressLocation.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressLocation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Intent intent = new Intent(MainActivity.this, ForegroundLocationService.class);
+        textClose = progressLocation.findViewById(R.id.textCancel);
+        btnOpenSettings = progressLocation.findViewById(R.id.btnOpenSettings);
 
-            startForegroundService(intent);
-        }
+        toolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(true);
+
+        bottomNavigationView = findViewById(R.id.bottomNavBar);
+        mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+
+            if (item.getItemId() == R.id.nav_home_menu) {
+                setFragment(new CategoryFragment(), true);
+                return true;
+            } else if (item.getItemId() == R.id.nav_chat_menu) {
+                setFragment(new ChatFragment(), true);
+                return true;
+            } else if (item.getItemId() == R.id.nav_leader_menu) {
+                setFragment(new LeaderBordFragment(), true);
+                return true;
+            } else if (item.getItemId() == R.id.nav_account_menu) {
+                setFragment(new ProfileFragment(), true);
+                return true;
+            }
+
+            return false;
+        });
 
     }
 
@@ -120,6 +147,26 @@ public class MainActivity extends BaseActivity {
                 swipeRefreshLayout.setRefreshing(true);
             }
         }));
+
+        int color1 = getResources().getColor(com.google.android.material.R.color.design_default_color_primary);
+        int color2 = getResources().getColor(R.color.secondary_color);
+        int color3 = getResources().getColor(R.color.red);
+
+        swipeRefreshLayout.setColorSchemeColors(color1, color2, color3);
+    }
+
+    private void startLocationService() {
+        if(!LocationManager.getInstance(this).isLocationEnabled()) {
+            progressLocation.show();
+        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Intent intent = new Intent(MainActivity.this, ForegroundLocationService.class);
+
+            startForegroundService(intent);
+        }
+
     }
 
     private void receiveData() {
@@ -134,7 +181,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void showMap() {
                 MapUsersFragment fragment = new MapUsersFragment();
-                setFragment(fragment);
+                setFragment(fragment, false);
             }
 
             @Override
@@ -146,7 +193,7 @@ public class MainActivity extends BaseActivity {
                 DiscussFragment fragment = new DiscussFragment();
                 fragment.setArguments(bundle);
 
-                setFragment(fragment);
+                setFragment(fragment, false);
             }
 
             @Override
@@ -166,52 +213,8 @@ public class MainActivity extends BaseActivity {
 
                 fragment.setArguments(bundle);
 
-                setFragment(fragment);
+                setFragment(fragment, false);
             }
-        });
-
-    }
-
-    private void init() {
-
-        progressLocation = new Dialog(this);
-        progressLocation.setContentView(R.layout.dialog_check_location);
-        progressLocation.setCancelable(false);
-        progressLocation.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        progressLocation.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        textClose = progressLocation.findViewById(R.id.textCancel);
-        btnOpenSettings = progressLocation.findViewById(R.id.btnOpenSettings);
-
-        toolbar = findViewById(R.id.toolbar);
-
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_btn_back);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
-        bottomNavigationView = findViewById(R.id.bottomNavBar);
-        mainFrame = findViewById(R.id.nav_host_fragment_content_feed);
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-
-            if (item.getItemId() == R.id.nav_home_menu) {
-                setFragment(new CategoryFragment());
-                return true;
-            } else if (item.getItemId() == R.id.nav_chat_menu) {
-                setFragment(new ChatFragment());
-                return true;
-            } else if (item.getItemId() == R.id.nav_leader_menu) {
-                setFragment(new LeaderBordFragment());
-                return true;
-            } else if (item.getItemId() == R.id.nav_account_menu) {
-                setFragment(new ProfileFragment());
-                return true;
-            }
-
-            return false;
         });
 
     }
@@ -231,6 +234,21 @@ public class MainActivity extends BaseActivity {
                 .replace(mainFrame.getId(), fragment)
                 .addToBackStack(String.valueOf(fragment.getId()))
                 .commit();
+    }
+
+    public void setFragment(Fragment fragment, boolean isRefreshing) {
+
+        setSupportActionBar(toolbar);
+
+        Objects.requireNonNull(getSupportActionBar()).show();
+
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(mainFrame.getId(), fragment)
+                .addToBackStack(String.valueOf(fragment.getId()))
+                .commit();
+
+        swipeRefreshLayout.setEnabled(isRefreshing);
     }
 
     public void setTitle(int strId) {

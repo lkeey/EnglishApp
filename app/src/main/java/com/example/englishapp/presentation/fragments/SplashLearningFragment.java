@@ -10,7 +10,6 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.englishapp.R;
 import com.example.englishapp.presentation.adapters.LearningPagerAdapter;
-import com.example.englishapp.presentation.fragments.BaseFragment;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.Objects;

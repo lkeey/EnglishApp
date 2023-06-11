@@ -1,10 +1,10 @@
 package com.example.englishapp.presentation.activities;
 
-import static com.example.englishapp.database.Constants.KEY_IS_WORDS;
-import static com.example.englishapp.database.Constants.KEY_TEST_TIME;
-import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
-import static com.example.englishapp.database.DataBaseExam.NOT_VISITED;
-import static com.example.englishapp.database.DataBaseExam.UNANSWERED;
+import static com.example.englishapp.data.database.Constants.KEY_IS_WORDS;
+import static com.example.englishapp.data.database.Constants.KEY_TEST_TIME;
+import static com.example.englishapp.data.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.data.database.DataBaseExam.NOT_VISITED;
+import static com.example.englishapp.data.database.DataBaseExam.UNANSWERED;
 
 import android.app.Dialog;
 import android.content.Intent;
@@ -28,13 +28,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
 import com.example.englishapp.R;
-import com.example.englishapp.adapters.QuestionsAdapter;
-import com.example.englishapp.database.DataBaseQuestions;
-import com.example.englishapp.database.DataBaseTests;
-import com.example.englishapp.fragments.ExamInfoFragment;
-import com.example.englishapp.models.QuestionModel;
-import com.example.englishapp.models.TestModel;
-import com.example.englishapp.repositories.ExamRepository;
+import com.example.englishapp.presentation.adapters.QuestionsAdapter;
+import com.example.englishapp.data.database.DataBaseQuestions;
+import com.example.englishapp.data.database.DataBaseTests;
+import com.example.englishapp.presentation.fragments.ExamInfoFragment;
+import com.example.englishapp.data.models.QuestionModel;
+import com.example.englishapp.data.models.TestModel;
+import com.example.englishapp.domain.repositories.ExamRepository;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

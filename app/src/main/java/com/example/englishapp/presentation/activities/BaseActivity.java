@@ -1,15 +1,15 @@
 package com.example.englishapp.presentation.activities;
 
-import static com.example.englishapp.database.Constants.KEY_INSTABUG;
-import static com.example.englishapp.database.DataBasePersonalData.DATA_FIRESTORE;
-import static com.example.englishapp.database.DataBasePersonalData.USER_MODEL;
+import static com.example.englishapp.data.database.Constants.KEY_INSTABUG;
+import static com.example.englishapp.data.database.DataBasePersonalData.DATA_FIRESTORE;
+import static com.example.englishapp.data.database.DataBasePersonalData.USER_MODEL;
 
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.englishapp.database.Constants;
+import com.example.englishapp.data.database.Constants;
 import com.google.firebase.firestore.DocumentReference;
 import com.instabug.library.Instabug;
 import com.instabug.library.invocation.InstabugInvocationEvent;

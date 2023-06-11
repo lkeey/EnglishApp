@@ -51,11 +51,11 @@
             android:exported="false" />
 
         <service
-            android:name=".services.WallpaperService"
+            android:name=".domain.services.WallpaperService"
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".services.MessageService"
+            android:name=".domain.services.MessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -63,13 +63,13 @@
             </intent-filter>
         </service>
         <service
-            android:name=".services.ForegroundLocationService"
+            android:name=".domain.services.ForegroundLocationService"
             android:enabled="true"
             android:exported="false" />
 
-        <receiver android:name=".receivers.AlarmReceiver" />
+        <receiver android:name=".domain.receivers.AlarmReceiver" />
         <receiver
-            android:name=".receivers.LocationBroadcastReceiver"
+            android:name=".domain.receivers.LocationBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,7 +1,7 @@
 package com.example.englishapp.presentation.fragments;
 
-import static com.example.englishapp.database.Constants.KEY_CHOSEN_CARD;
-import static com.example.englishapp.database.Constants.SHOW_FRAGMENT_DIALOG;
+import static com.example.englishapp.data.database.Constants.KEY_CHOSEN_CARD;
+import static com.example.englishapp.data.database.Constants.SHOW_FRAGMENT_DIALOG;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -22,13 +22,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.englishapp.R;
-import com.example.englishapp.database.DataBaseCards;
-import com.example.englishapp.fragments.CreateWordCardFragment;
-import com.example.englishapp.fragments.WordCardInfoFragment;
-import com.example.englishapp.interfaces.CardClickedListener;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.interfaces.RefreshListener;
-import com.example.englishapp.models.CardModel;
+import com.example.englishapp.data.database.DataBaseCards;
+import com.example.englishapp.domain.interfaces.CardClickedListener;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.RefreshListener;
+import com.example.englishapp.data.models.CardModel;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.adapters.CardWordAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -105,7 +103,7 @@ public class WordsFragment extends Fragment implements CardClickedListener, Refr
     }
 
     private void setListeners() {
-        fab.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new CreateWordCardFragment()));
+        fab.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new CreateWordCardFragment(), false));
 
         inputSearch.addTextChangedListener(new TextWatcher() {
             @Override

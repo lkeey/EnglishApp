@@ -1,10 +1,10 @@
 package com.example.englishapp.presentation.activities;
 
-import static com.example.englishapp.database.Constants.KEY_LOCATION;
-import static com.example.englishapp.database.Constants.KEY_PROFILE;
-import static com.example.englishapp.database.Constants.KEY_USER_UID;
-import static com.example.englishapp.database.Constants.REMOTE_MSG_USER_SENDER;
-import static com.example.englishapp.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.example.englishapp.data.database.Constants.KEY_LOCATION;
+import static com.example.englishapp.data.database.Constants.KEY_PROFILE;
+import static com.example.englishapp.data.database.Constants.KEY_USER_UID;
+import static com.example.englishapp.data.database.Constants.REMOTE_MSG_USER_SENDER;
+import static com.example.englishapp.domain.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,12 +21,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.example.englishapp.R;
-import com.example.englishapp.database.DataBase;
-import com.example.englishapp.database.DataBasePersonalData;
-import com.example.englishapp.interfaces.CompleteListener;
-import com.example.englishapp.interfaces.OpeningListener;
-import com.example.englishapp.repositories.OpenRepository;
-import com.example.englishapp.repositories.PermissionRepository;
+import com.example.englishapp.data.database.DataBase;
+import com.example.englishapp.data.database.DataBasePersonalData;
+import com.example.englishapp.domain.interfaces.CompleteListener;
+import com.example.englishapp.domain.interfaces.OpeningListener;
+import com.example.englishapp.domain.repositories.OpenRepository;
+import com.example.englishapp.domain.repositories.PermissionRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 

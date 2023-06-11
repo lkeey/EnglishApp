@@ -11,11 +11,12 @@
     <string name="nameProfileInfo">Edit Profile</string>
     <string name="nameTests">Tests</string>
     <string name="nameCreateTest">Create Test</string>
-    <string name="nameChats">Chats</string>
+    <string name="nameChats">Your Chats</string>
     <string name="nameResult">Result</string>
     <string name="nameLeaderBord">Leader Board</string>
-    <string name="nameCardWords">Words</string>
+    <string name="nameCardWords">Cards Of Words</string>
     <string name="nameCreateCardWord">Create Card</string>
+    <string name="nameMap">Map</string>
 
     <string name="errorName">Please enter your name</string>
     <string name="errorEmail">Please enter your email</string>
@@ -150,5 +151,19 @@
     <string name="add_option">Add Option</string>
     <string name="what_are_you_looking_for">What are you looking for?</string>
     <string name="there_s_nothing_here_yet">There\'s nothing here yet</string>
+    <string name="if_you_pronounce_the_word_correctly_you_will_get_score">If you pronounce the word correctly, you will get score</string>
+    <string name="word">Word</string>
+    <string name="say">Say</string>
+    <string name="close">Close</string>
+    <string name="let_s_do_it">Let\'s do it</string>
+    <string name="create_new_category">Create New Category</string>
+    <string name="write_name_of_category">Write Name Of Category</string>
+    <string name="create">Create</string>
+    <string name="add_question">Add Question</string>
+    <string name="create_your_test">Create Your Test</string>
+    <string name="write_name_of_test">Write Name Of Test</string>
+    <string name="choose_time_of_doing_your_test_minutes">Choose Time Of Doing Your Test (minutes)</string>
+    <string name="option">Option</string>
+    <string name="name">Name</string>
 
 </resources>
