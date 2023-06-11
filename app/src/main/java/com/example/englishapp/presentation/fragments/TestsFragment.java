@@ -126,12 +126,15 @@ public class TestsFragment extends Fragment implements TestClickedListener, Refr
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                testAdapter.cancelTimer();
+                if (testAdapter != null) {
+                    Log.i(TAG, "not null");
+                    testAdapter.cancelTimer();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0) {
+                if(DataBaseCategories.LIST_OF_CATEGORIES.size() != 0 && testAdapter != null) {
                     testAdapter.searchTests(key.toString());
                 }
             }

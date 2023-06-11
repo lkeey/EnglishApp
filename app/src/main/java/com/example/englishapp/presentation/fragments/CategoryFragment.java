@@ -148,7 +148,9 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                categoryAdapter.cancelTimer();
+                if (categoryAdapter != null) {
+                    categoryAdapter.cancelTimer();
+                }
             }
 
             @Override

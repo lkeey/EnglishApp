@@ -77,7 +77,6 @@ public class MessageRepository {
                         @Override
                         public void OnFailure() {
                             Log.i(TAG, "Fail To Create Discussion");
-
                         }
                     });
                 }
@@ -103,13 +102,14 @@ public class MessageRepository {
     public void updateConversation(String message) {
         try {
             DocumentReference reference = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_CONVERSATION)
-                    .document(CURRENT_CONVERSATION_ID);
+                .collection(KEY_COLLECTION_CONVERSATION)
+                .document(CURRENT_CONVERSATION_ID);
 
             reference.update(
-                    KEY_LAST_MESSAGE, message,
-                    KEY_TIME_STAMP, new Date()
+                KEY_LAST_MESSAGE, message,
+                KEY_TIME_STAMP, new Date()
             );
+
         } catch (Exception e) {
             Log.i(TAG, "updateConversation - " + e.getMessage());
         }
@@ -170,11 +170,13 @@ public class MessageRepository {
     private void checkForConversationRemotely(String senderId, String receiverId) {
         try {
 
+            Log.i(TAG, "sender - " + senderId + " - receiver - " + receiverId);
+
             DATA_FIRESTORE.collection(KEY_COLLECTION_CONVERSATION)
-                    .whereEqualTo(KEY_SENDER_ID, senderId)
-                    .whereEqualTo(KEY_RECEIVER_ID, receiverId)
-                    .get()
-                    .addOnCompleteListener(conversationOnComplete);
+                .whereEqualTo(KEY_SENDER_ID, senderId)
+                .whereEqualTo(KEY_RECEIVER_ID, receiverId)
+                .get()
+                .addOnCompleteListener(conversationOnComplete);
 
         } catch (Exception e) {
             Log.i(TAG, "checkForConversationRemotely error - " + e.getMessage());
@@ -183,11 +185,18 @@ public class MessageRepository {
 
 
     private final OnCompleteListener<QuerySnapshot> conversationOnComplete = task -> {
+
         if (task.isSuccessful() && task.getResult() != null && task.getResult().getDocuments().size() > 0) {
-            DocumentSnapshot document = task.getResult().getDocuments().get(0);
+
+            DocumentSnapshot document = task
+                    .getResult()
+                    .getDocuments()
+                    .get(0);
+
             CURRENT_CONVERSATION_ID = document.getId();
 
             Log.i(TAG, "ConversationID - " + CURRENT_CONVERSATION_ID);
+
         } else {
             Log.i(TAG, "conversationOnComplete error - " + task.getException());
         }

@@ -91,7 +91,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) requireActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment, false);
 
             UsersFragment.this.dismiss();
 

@@ -39,11 +39,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 public class ChatFragment extends BaseFragment implements ConversationListener {
-
     private static final String TAG = "FragmentChat";
     private RecyclerView recyclerRecentlyChats;
     private RecentConversationAdapter conversationAdapter;
-    private ArrayList recentChats = new ArrayList<>();
+    private final ArrayList recentChats = new ArrayList<>();
     private FloatingActionButton fab;
     private TextView noChats;
 
@@ -67,6 +66,8 @@ public class ChatFragment extends BaseFragment implements ConversationListener {
         recyclerRecentlyChats = view.findViewById(R.id.recyclerRecentlyChats);
         fab = view.findViewById(R.id.fab);
         noChats = view.findViewById(R.id.noChats);
+
+        recentChats.clear();
 
         conversationAdapter = new RecentConversationAdapter(
                 recentChats,
@@ -170,7 +171,7 @@ public class ChatFragment extends BaseFragment implements ConversationListener {
             DiscussFragment fragment = new DiscussFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) requireActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment, false);
 
         } else {
             Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();

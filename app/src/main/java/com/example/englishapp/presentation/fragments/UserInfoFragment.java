@@ -49,7 +49,7 @@ public class UserInfoFragment extends BottomSheetDialogFragment {
                 DiscussFragment fragment = new DiscussFragment();
                 fragment.setArguments(bundle);
 
-                ((MainActivity) requireActivity()).setFragment(fragment);
+                ((MainActivity) requireActivity()).setFragment(fragment, false);
 
                 UserInfoFragment.this.dismiss();
             } else {

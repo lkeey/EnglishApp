@@ -88,8 +88,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
 
     public void cancelTimer() {
-        if (timer != null) {
-            timer.cancel();
+        try {
+            if (timer != null) {
+                timer.cancel();
+            }
+        } catch (Exception e) {
+            Log.i(TAG, e.getMessage());
         }
     }
 

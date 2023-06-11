@@ -113,13 +113,14 @@ public class WordsFragment extends Fragment implements CardClickedListener, Refr
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                cardAdapter.cancelTimer();
-
+                if (cardAdapter != null) {
+                    cardAdapter.cancelTimer();
+                }
             }
 
             @Override
             public void afterTextChanged(Editable key) {
-                if(DataBaseCards.LIST_OF_CARDS.size() != 0) {
+                if(DataBaseCards.LIST_OF_CARDS.size() != 0 && cardAdapter != null) {
                     cardAdapter.searchCards(key.toString());
                 }
             }

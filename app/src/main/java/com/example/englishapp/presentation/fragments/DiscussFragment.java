@@ -34,11 +34,14 @@ import com.example.englishapp.R;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.data.models.ChatMessage;
 import com.example.englishapp.data.models.UserModel;
-import com.example.englishapp.presentation.adapters.MessageAdapter;
 import com.example.englishapp.domain.repositories.MessageRepository;
+import com.example.englishapp.presentation.adapters.MessageAdapter;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.Collections;
 
 // https://github.com/ThaminduChankana/TrashCoinApp/tree/648db2e90091ecd39c8ae9502b92cf9c8b21b950
 
@@ -51,6 +54,7 @@ public class DiscussFragment extends Fragment {
     private TextView textStatus, noMessages;
     private static Boolean isReceiverAvailable = false;
     private MessageRepository messageRepository;
+    private ListenerRegistration registrationUser, registrationReceiver;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,8 +72,23 @@ public class DiscussFragment extends Fragment {
         return view;
     }
 
-    private void init(View view) {
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        listenAvailabilityOfReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (registrationUser != null) registrationUser.remove();
+
+        if (registrationReceiver != null) registrationReceiver.remove();
+    }
+
+    private void init(View view) {
         recyclerMessages = view.findViewById(R.id.recyclerMessages);
         layoutSend = view.findViewById(R.id.layoutSend);
         inputMessage = view.findViewById(R.id.inputMessage);
@@ -81,18 +100,18 @@ public class DiscussFragment extends Fragment {
 
         requireActivity().setTitle(receivedUser.getName());
 
+        CHAT_MESSAGES.clear();
+
         messageAdapter = new MessageAdapter(
                 CHAT_MESSAGES,
                 receivedUser
         );
-
 
         recyclerMessages.setAdapter(messageAdapter);
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         manager.setOrientation(RecyclerView.VERTICAL);
         recyclerMessages.setLayoutManager(manager);
-
     }
 
     private void receiveData() {
@@ -118,8 +137,6 @@ public class DiscussFragment extends Fragment {
 
     private void setListeners() {
         layoutSend.setOnClickListener(v -> {
-            Log.i(TAG, String.valueOf(inputMessage.getText().toString().trim().length()));
-
             if (inputMessage.getText().toString().trim().length() != 0) {
 
                 messageRepository.sendMessage(inputMessage);
@@ -149,18 +166,21 @@ public class DiscussFragment extends Fragment {
 
     private void listenMessages() {
         try {
-            DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
-                    .whereEqualTo(KEY_SENDER_ID, DataBasePersonalData.USER_MODEL.getUid())
-                    .whereEqualTo(KEY_RECEIVER_ID, receivedUser.getUid())
-                    .addSnapshotListener(eventListener);
 
-            DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
-                    .whereEqualTo(KEY_SENDER_ID, receivedUser.getUid())
-                    .whereEqualTo(KEY_RECEIVER_ID, DataBasePersonalData.USER_MODEL.getUid())
-                    .addSnapshotListener(eventListener);
+            Log.i(TAG, "listen messages - " + DataBasePersonalData.USER_MODEL.getUid() + " - " + receivedUser.getUid());
+
+            registrationUser = DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
+                .whereEqualTo(KEY_SENDER_ID, DataBasePersonalData.USER_MODEL.getUid())
+                .whereEqualTo(KEY_RECEIVER_ID, receivedUser.getUid())
+                .addSnapshotListener(eventListener);
+
+            registrationReceiver = DATA_FIRESTORE.collection(KEY_COLLECTION_CHAT)
+                .whereEqualTo(KEY_SENDER_ID, receivedUser.getUid())
+                .whereEqualTo(KEY_RECEIVER_ID, DataBasePersonalData.USER_MODEL.getUid())
+                .addSnapshotListener(eventListener);
 
         } catch (Exception e) {
-            Log.i(TAG, e.getMessage());
+            Log.i(TAG, "error - " + e.getMessage());
         }
     }
 
@@ -172,9 +192,13 @@ public class DiscussFragment extends Fragment {
             if (error != null) {
                 Log.i(TAG, "Error - " + error.getMessage());
             }
+
             if (value != null) {
-                int count = CHAT_MESSAGES.size();
+
+                Log.i(TAG, "changes - " + value.getDocumentChanges());
+
                 for (DocumentChange documentChange : value.getDocumentChanges()) {
+                    Log.i(TAG, "change - " + documentChange.getType() + " text - " + documentChange.getDocument().getString(KEY_MESSAGE));
                     if (documentChange.getType() == DocumentChange.Type.ADDED) {
                         ChatMessage chatMessage = new ChatMessage(
                                 documentChange.getDocument().getString(KEY_SENDER_ID),
@@ -186,15 +210,18 @@ public class DiscussFragment extends Fragment {
                         noMessages.setVisibility(View.GONE);
 
                         CHAT_MESSAGES.add(chatMessage);
+
                         Log.i(TAG, "Message added - " + chatMessage.getMessage());
                     }
                 }
 
-                CHAT_MESSAGES.sort(ChatMessage::compareTo);
+                Collections.sort(CHAT_MESSAGES, ChatMessage::compareTo);
 
-                if (count == 0) {
+                if (CHAT_MESSAGES.size() == 0) {
                     messageAdapter.notifyDataSetChanged();
                 } else {
+                    Log.i(TAG, "range - " + CHAT_MESSAGES.size());
+
                     messageAdapter.notifyItemRangeInserted(CHAT_MESSAGES.size(), CHAT_MESSAGES.size());
                     recyclerMessages.smoothScrollToPosition(CHAT_MESSAGES.size() - 1);
                 }
@@ -202,6 +229,7 @@ public class DiscussFragment extends Fragment {
 
             if (CURRENT_CONVERSATION_ID == null) {
                 Log.i(TAG, "Conversation is null");
+
                 messageRepository.checkForConversation();
 
             } else {
@@ -212,12 +240,4 @@ public class DiscussFragment extends Fragment {
             Log.i(TAG, "eventListener - " + e.getMessage());
         }
     };
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        listenAvailabilityOfReceiver();
-    }
-
 }
