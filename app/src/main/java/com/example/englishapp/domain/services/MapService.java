@@ -82,20 +82,22 @@ public class MapService implements OnMapReadyCallback, GoogleMap.OnMapClickListe
                     for(UserModel user: LIST_OF_USERS) {
                         MarkerOptions marker = new MarkerOptions()
                                 .position(new LatLng(
-                                        user.getLatitude(),
-                                        user.getLongitude()
+                                    user.getLatitude(),
+                                    user.getLongitude()
 
                                 ))
                                 .title(user.getName())
                                 .snippet(user.getUid())
                                 .flat(true);
 
-                        Log.i(TAG, "added2 - " + marker.getTitle());
+                        if (user.getLongitude() != 0 && user.getLatitude() != 0) {
 
-                        googleMap.addMarker(marker);
+                            Log.i(TAG, "added2 - " + marker.getTitle());
 
-                        markers.add(marker);
+                            googleMap.addMarker(marker);
 
+                            markers.add(marker);
+                        }
                     }
                 }
 

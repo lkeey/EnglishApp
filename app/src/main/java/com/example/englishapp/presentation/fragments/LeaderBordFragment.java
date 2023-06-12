@@ -60,6 +60,7 @@ public class LeaderBordFragment extends BaseFragment implements UserListener {
         userRank.setText("Place: " + USER_MODEL.getPlace());
 
         Glide.with(LeaderBordFragment.this).load(USER_MODEL.getPathToImage()).into(userImg);
+        userImg.setBackground(null);
 
         progressBar = new Dialog(getContext());
         progressBar.setContentView(R.layout.dialog_layout);

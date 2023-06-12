@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,9 +40,9 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.repositories.UpdateProfileRepository;
+import com.example.englishapp.presentation.activities.MainActivity;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.mlkit.nl.translate.TranslateLanguage;
 
@@ -111,6 +110,8 @@ public class ProfileInfoFragment extends Fragment {
         spinnerLanguage = view.findViewById(R.id.spinnerLanguage);
         switcherWallpaper = view.findViewById(R.id.switcherWallpaper);
 
+        userEmail.setEnabled(false);
+
         progressBar = new Dialog(getActivity());
         progressBar.setContentView(R.layout.dialog_layout);
         progressBar.setCancelable(false);
@@ -133,6 +134,8 @@ public class ProfileInfoFragment extends Fragment {
                                 InputStream inputStream = requireActivity().getContentResolver().openInputStream(imgUri);
                                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                                 profileImg.setImageBitmap(bitmap);
+
+                                profileImg.setBackground(null);
 
                                 Log.i(TAG, "set bitmap 2");
 
@@ -160,6 +163,7 @@ public class ProfileInfoFragment extends Fragment {
             Log.i(TAG, "PATH - " + USER_MODEL.getPathToImage());
 
             Glide.with(requireActivity()).load(USER_MODEL.getPathToImage()).into(profileImg);
+            profileImg.setBackground(null);
 
             if (USER_MODEL.getDateOfBirth() != null) {
                 userDOB = USER_MODEL.getDateOfBirth();
@@ -286,6 +290,8 @@ public class ProfileInfoFragment extends Fragment {
             }
         });
 
+        userEmail.setOnClickListener(v -> Toast.makeText(getActivity(), "You can not change your e-mail!", Toast.LENGTH_SHORT).show());
+
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -315,22 +321,11 @@ public class ProfileInfoFragment extends Fragment {
         radioBtnGender = view.findViewById(selectedGenderId);
 
         String textName = userName.getText().toString();
-        String textEmail = userEmail.getText().toString();
 
         if (TextUtils.isEmpty(textName)) {
             Toast.makeText(getActivity(), R.string.errorName, Toast.LENGTH_SHORT).show();
             userName.setError(getResources().getString(R.string.requiredName));
             userName.requestFocus();
-
-        } else if (TextUtils.isEmpty(textEmail)) {
-            Toast.makeText(getActivity(), R.string.errorEmail, Toast.LENGTH_SHORT).show();
-            userEmail.setError(getResources().getString(R.string.requiredEmail));
-            userEmail.requestFocus();
-
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()) {
-            Toast.makeText(getActivity(), R.string.errorEmail, Toast.LENGTH_SHORT).show();
-            userEmail.setError(getResources().getString(R.string.requiredEmail));
-            userEmail.requestFocus();
 
         } else if (TextUtils.isEmpty(userDOB) && USER_MODEL.getDateOfBirth() == null) {
             Toast.makeText(getActivity(), R.string.errorDOB, Toast.LENGTH_SHORT).show();

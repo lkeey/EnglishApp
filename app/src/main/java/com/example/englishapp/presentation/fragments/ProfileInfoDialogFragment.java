@@ -39,10 +39,6 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
     private void setListeners() {
         textClose.setOnClickListener(v -> this.dismiss());
 
-        btnAgree.setOnClickListener(v -> (
-                (MainActivity) requireActivity()).setFragment(new ProfileInfoFragment())
-        );
-
         btnAgree.setOnClickListener(v -> {
 
             Bundle bundle = new Bundle();
@@ -50,7 +46,7 @@ public class ProfileInfoDialogFragment extends BottomSheetDialogFragment {
             ProfileInfoFragment fragment = new ProfileInfoFragment();
             fragment.setArguments(bundle);
 
-            ((MainActivity) requireActivity()).setFragment(fragment);
+            ((MainActivity) requireActivity()).setFragment(fragment, false);
             ProfileInfoDialogFragment.this.dismiss();
         });
     }

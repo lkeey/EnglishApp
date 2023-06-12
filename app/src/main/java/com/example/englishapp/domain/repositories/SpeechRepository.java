@@ -50,7 +50,15 @@ public class SpeechRepository {
 
                 if (LIST_OF_WORDS.size() > 1) {
 
-                    CHOSEN_WORD = LIST_OF_WORDS.get(new Random().nextInt(LIST_OF_WORDS.size() - 1)).getTextEn();
+                    int number = new Random().nextInt(LIST_OF_WORDS.size() - 1);
+
+                    if (CHOSEN_WORD != null) {
+                        while (CHOSEN_WORD.equals(LIST_OF_WORDS.get(number).getTextEn())){
+                            number = new Random().nextInt(LIST_OF_WORDS.size() - 1);
+                        }
+                    }
+
+                    CHOSEN_WORD = LIST_OF_WORDS.get(number).getTextEn();
 
                     listener.OnSuccess();
 

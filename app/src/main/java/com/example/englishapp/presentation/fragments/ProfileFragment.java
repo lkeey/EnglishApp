@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
@@ -31,7 +32,10 @@ import com.example.englishapp.presentation.activities.MainAuthenticationActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Objects;
 
@@ -39,6 +43,7 @@ public class ProfileFragment extends BaseFragment {
     private static final String TAG = "FragmentProfile";
     private Toolbar toolbar;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
+    private TextView deleteAcc;
     private DataBaseLearningWords dataBaseLearningWords;
 
     @Override
@@ -56,6 +61,52 @@ public class ProfileFragment extends BaseFragment {
 
         return view;
     }
+
+    private void init(View view) {
+
+        toolbar = view.findViewById(R.id.toolbar);
+        ImageView imgUser = view.findViewById(R.id.userImage);
+        TextView userPlace = view.findViewById(R.id.userPlace);
+        TextView userScore = view.findViewById(R.id.userScore);
+        layoutBookmark = view.findViewById(R.id.layoutBookmark);
+        deleteAcc = view.findViewById(R.id.deleteAccount);
+        layoutLeaderBord = view.findViewById(R.id.layoutLeaderBord);
+        layoutProfile = view.findViewById(R.id.layoutProfile);
+        layoutLogout = view.findViewById(R.id.layoutLogout);
+
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
+        ((MainActivity) requireActivity()).setSupportActionBar(toolbar);
+        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(true);
+
+        // set user's data
+        requireActivity().setTitle(USER_MODEL.getName());
+
+        userPlace.setText(String.valueOf(USER_MODEL.getPlace()));
+        userScore.setText(String.valueOf(USER_MODEL.getScore()));
+
+        Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayoutSpeech, new SpeechFragment())
+                .commit();
+
+        TextView view1 = view.findViewById(R.id.learning);
+
+        int count = RoomDataBase.
+                getDatabase(getContext())
+                .roomDao()
+                .getRowCount();
+
+        view1.setText(" - " + count + " - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
+
+        getParentFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frameLayoutLearningWords, new LearningWordsFragment())
+                .commit();
+
+    }
+
 
     private void setListeners() {
 
@@ -97,7 +148,7 @@ public class ProfileFragment extends BaseFragment {
                     }
                 });
             } else {
-                Toast.makeText(getActivity(), "You haven't bookmarks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "You don't have bookmarks", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -146,52 +197,26 @@ public class ProfileFragment extends BaseFragment {
             });
         });
 
-        toolbar.setNavigationOnClickListener(v -> requireActivity().onBackPressed());
+        deleteAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-    }
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                user.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(getActivity(), "Deleted Account", Toast.LENGTH_SHORT).show();
 
-    private void init(View view) {
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getActivity(), "Can not delete Account", Toast.LENGTH_SHORT).show();
 
-        toolbar = view.findViewById(R.id.toolbar);
-        ImageView imgUser = view.findViewById(R.id.userImage);
-        TextView userPlace = view.findViewById(R.id.userPlace);
-        TextView userScore = view.findViewById(R.id.userScore);
-        layoutBookmark = view.findViewById(R.id.layoutBookmark);
-        layoutLeaderBord = view.findViewById(R.id.layoutLeaderBord);
-        layoutProfile = view.findViewById(R.id.layoutProfile);
-        layoutLogout = view.findViewById(R.id.layoutLogout);
-
-        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
-        ((MainActivity) requireActivity()).setSupportActionBar(toolbar);
-        Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).setDisplayShowTitleEnabled(true);
-
-        // set user's data
-        requireActivity().setTitle(USER_MODEL.getName());
-
-        userPlace.setText(String.valueOf(USER_MODEL.getPlace()));
-        userScore.setText(String.valueOf(USER_MODEL.getScore()));
-
-        Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
-
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayoutSpeech, new SpeechFragment())
-                .commit();
-
-        TextView view1 = view.findViewById(R.id.learning);
-
-        int count = RoomDataBase.
-                getDatabase(getContext())
-                .roomDao()
-                .getRowCount();
-
-        view1.setText(" - " + count + " - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
-
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayoutLearningWords, new LearningWordsFragment())
-                .commit();
-
+                    }
+                });
+            }
+        });
     }
 
     private void getWords() {

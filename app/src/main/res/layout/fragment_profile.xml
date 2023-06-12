@@ -308,6 +308,22 @@
                 android:layout_marginBottom="32dp"
                 android:background="@drawable/round_view"/>
 
+            <TextView
+                android:id="@+id/deleteAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:elevation="8dp"
+                android:text="Delete Account"
+                android:drawableStart="@drawable/ic_delete"
+                android:textSize="24sp"
+                android:drawableTint="@color/red"
+                android:textColor="@color/red"
+                android:drawablePadding="8dp"
+                android:gravity="center"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginBottom="32dp"
+                android:background="@drawable/round_view"/>
 
         </LinearLayout>
 

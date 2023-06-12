@@ -67,6 +67,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
             userPlace.setText("Place: " + userModel.getPlace());
 
             Glide.with(itemView.getContext()).load(userModel.getPathToImage()).into(imgUser);
+            imgUser.setBackground(null);
 
             itemView.setOnClickListener(v -> listener.onUserClicked(userModel));
         }
