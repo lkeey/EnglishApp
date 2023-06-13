@@ -40,5 +40,5 @@ The idea is that you choose your own learning trajectory
 
 ## Architecture
 The entire application follows `layers architecture`.
-
+<img src="https://raw.githubusercontent.com/lkeey/EnglishApp/master/app/src/main/res/drawable/app_logo_large.png" width="700" hspace="5" vspace ="10">
 
