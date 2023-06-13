@@ -76,13 +76,9 @@ public class ProfileInfoFragment extends Fragment {
 
         init(view);
 
-        setPreviousData(view);
+        setPicker();
 
-        try {
-            requireActivity().setTitle(R.string.nameProfileInfo);
-        } catch (Exception e) {
-            Log.i(TAG, "e - " + e.getMessage());
-        }
+        setPreviousData(view);
 
         setListeners(view);
 
@@ -91,16 +87,9 @@ public class ProfileInfoFragment extends Fragment {
         return view;
     }
 
-    private void receiveData() {
-
-        Bundle bundle = getArguments();
-
-        if (bundle != null) {
-            isAddingScore = bundle.getBoolean(KEY_ADD_SCORE, false);
-        }
-    }
-
     private void init(View view) {
+        requireActivity().setTitle(R.string.nameProfileInfo);
+
         userName = view.findViewById(R.id.editTextName);
         userEmail = view.findViewById(R.id.editTextEmail);
         textChooseDOB = view.findViewById(R.id.textChooseDOB);
@@ -109,7 +98,6 @@ public class ProfileInfoFragment extends Fragment {
         profileImg = view.findViewById(R.id.imageUser);
         spinnerLanguage = view.findViewById(R.id.spinnerLanguage);
         switcherWallpaper = view.findViewById(R.id.switcherWallpaper);
-
         userEmail.setEnabled(false);
 
         progressBar = new Dialog(getActivity());
@@ -121,6 +109,22 @@ public class ProfileInfoFragment extends Fragment {
         TextView dialogText = progressBar.findViewById(R.id.dialogText);
         dialogText.setText(R.string.progressBarUpdating);
 
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, TranslateLanguage.getAllLanguages());
+
+        spinnerLanguage.setAdapter(arrayAdapter);
+    }
+
+
+    private void receiveData() {
+
+        Bundle bundle = getArguments();
+
+        if (bundle != null) {
+            isAddingScore = bundle.getBoolean(KEY_ADD_SCORE, false);
+        }
+    }
+
+    private void setPicker() {
         pickImage = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -146,12 +150,8 @@ public class ProfileInfoFragment extends Fragment {
                     }
                 }
         );
-
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, TranslateLanguage.getAllLanguages());
-
-        spinnerLanguage.setAdapter(arrayAdapter);
-
     }
+
 
     private void setPreviousData(View view) {
         Log.i(TAG, "Set previous data");
@@ -207,28 +207,7 @@ public class ProfileInfoFragment extends Fragment {
 
 
     private void setListeners(View view) {
-
-        textChooseDOB.setOnClickListener(v -> {
-            final Calendar calendar = Calendar.getInstance();
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int month = calendar.get(Calendar.MONTH);
-            int year = calendar.get(Calendar.YEAR);
-
-            datePicker = new DatePickerDialog(getActivity(), (view1, yearData, monthData, dayOfMonthData) -> {
-
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(yearData, monthData, dayOfMonthData);
-
-                userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
-
-                textChooseDOB.setText(getString(R.string.dateOfBirth)  + " " +  userDOB);
-            }, year, month, day);
-
-            datePicker.show();
-
-            Log.i(TAG, "DOB - " + userDOB);
-
-        });
+        textChooseDOB.setOnClickListener(v -> chooseDOB());
 
         profileImg.setOnClickListener(v -> {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -237,58 +216,7 @@ public class ProfileInfoFragment extends Fragment {
             pickImage.launch(intent);
         });
 
-        btnUpdate.setOnClickListener(v -> {
-            Log.i(TAG, "CHECKING");
-            try {
-                if (checkData(view)) {
-
-                    Log.i(TAG, "Data Checked");
-
-                    progressBar.show();
-
-                    new UpdateProfileRepository().updateUser(
-                            userEmail.getText().toString(),
-                            userName.getText().toString(),
-                            userDOB,
-                            radioBtnGender.getText().toString(),
-                            languageCode,
-                            isAddingScore,
-                            imgUri,
-                            getContext(),
-                            new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    Log.i(TAG, "Successfully set data");
-
-                                    Toast.makeText(getActivity(), getString(R.string.personal_data_successfully_updated), Toast.LENGTH_SHORT).show();
-
-                                    progressBar.dismiss();
-
-                                    ((MainActivity) requireActivity()).setFragment(new ProfileFragment(), true);
-                                    ((MainActivity) requireActivity()).setCheckedNavigationIcon(3);
-
-                                }
-
-                                @Override
-                                public void OnFailure() {
-                                    Log.i(TAG, "Fail to set data");
-
-                                    Toast.makeText(getActivity(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
-
-                                    progressBar.dismiss();
-                                }
-                            }
-                    );
-
-
-                } else {
-                    Log.i(TAG, "Incorrect data");
-                }
-            } catch (Exception e) {
-                Log.i(TAG, e.getMessage());
-
-            }
-        });
+        btnUpdate.setOnClickListener(v -> updateData(view));
 
         userEmail.setOnClickListener(v -> Toast.makeText(getActivity(), getString(R.string.you_can_not_change_your_e_mail), Toast.LENGTH_SHORT).show());
 
@@ -299,19 +227,73 @@ public class ProfileInfoFragment extends Fragment {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
+            public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        switcherWallpaper.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            SharedPreferences sharedPreferences = requireContext().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
-            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+        switcherWallpaper.setOnCheckedChangeListener((buttonView, isChecked) -> updateWallpaperChanging(isChecked));
+    }
 
-            myEdit.putBoolean(KEY_IS_CHANGING_WALLPAPER, isChecked);
+    private void chooseDOB() {
+        final Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
 
-            myEdit.apply();
-        });
+        datePicker = new DatePickerDialog(getActivity(), (view1, yearData, monthData, dayOfMonthData) -> {
+
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(yearData, monthData, dayOfMonthData);
+
+            userDOB = dayOfMonthData + "." + (monthData+1) + "." + yearData;
+
+            textChooseDOB.setText(getString(R.string.dateOfBirth)  + " " +  userDOB);
+        }, year, month, day);
+
+        datePicker.show();
+
+        Log.i(TAG, "DOB - " + userDOB);
+    }
+
+    private void updateData(View view) {
+        if (checkData(view)) {
+
+            Log.i(TAG, "Data Checked");
+
+            progressBar.show();
+
+            new UpdateProfileRepository().updateUser(
+                    userEmail.getText().toString(), userName.getText().toString(),
+                    userDOB, radioBtnGender.getText().toString(),
+                    languageCode, isAddingScore,
+                    imgUri, getContext(), new CompleteListener() {
+                        @Override
+                        public void OnSuccess() {
+                            Log.i(TAG, "Successfully set data");
+                            Toast.makeText(getActivity(), getString(R.string.personal_data_successfully_updated), Toast.LENGTH_SHORT).show();
+                            progressBar.dismiss();
+
+                            ((MainActivity) requireActivity()).setFragment(new ProfileFragment(), true);
+                            ((MainActivity) requireActivity()).setCheckedNavigationIcon(3);
+                        }
+
+                        @Override
+                        public void OnFailure() {
+                            Log.i(TAG, "Fail to set data");
+                            Toast.makeText(getActivity(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
+                            progressBar.dismiss();
+                        }
+                    }
+            );
+        }
+    }
+
+    private void updateWallpaperChanging(Boolean isChecked) {
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(MY_SHARED_PREFERENCES, MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sharedPreferences.edit();
+
+        myEdit.putBoolean(KEY_IS_CHANGING_WALLPAPER, isChecked);
+
+        myEdit.apply();
     }
 
     private boolean checkData(View view) {
