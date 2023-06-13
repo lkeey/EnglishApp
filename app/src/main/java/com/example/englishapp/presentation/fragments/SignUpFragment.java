@@ -99,7 +99,7 @@ public class SignUpFragment extends Fragment {
             public void onFailure() {
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -160,5 +160,4 @@ public class SignUpFragment extends Fragment {
         dialogText.setText(R.string.progressBarCreating);
 
     }
-
 }

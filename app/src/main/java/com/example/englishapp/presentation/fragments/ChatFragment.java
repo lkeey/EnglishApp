@@ -174,7 +174,7 @@ public class ChatFragment extends BaseFragment implements ConversationListener {
             ((MainActivity) requireActivity()).setFragment(fragment, false);
 
         } else {
-            Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.it_s_you), Toast.LENGTH_SHORT).show();
         }
     }
 

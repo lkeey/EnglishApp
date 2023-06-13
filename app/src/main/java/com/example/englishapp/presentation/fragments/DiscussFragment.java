@@ -131,7 +131,7 @@ public class DiscussFragment extends Fragment {
             }
 
         } else {
-            Toast.makeText(getActivity(), "Can not find user", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.can_not_find_user), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -142,7 +142,7 @@ public class DiscussFragment extends Fragment {
                 messageRepository.sendMessage(inputMessage);
 
             } else {
-                Toast.makeText(getActivity(), "Write text, please", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.write_text_please), Toast.LENGTH_SHORT).show();
             }
         });
     }

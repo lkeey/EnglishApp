@@ -85,7 +85,7 @@ public class CreateWordCardFragment extends Fragment {
                     public void OnSuccess() {
                         Log.i(TAG, "Card successfully created");
 
-                        Toast.makeText(getActivity(), "Card Successfully Created", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.card_successfully_created), Toast.LENGTH_SHORT).show();
 
                         ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
@@ -96,7 +96,7 @@ public class CreateWordCardFragment extends Fragment {
                     public void OnFailure() {
                         Log.i(TAG, "Can not create card");
 
-                        Toast.makeText(getActivity(), "Error occurred... Try later", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.error_occurred_try_later), Toast.LENGTH_SHORT).show();
 
                         ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
@@ -116,27 +116,27 @@ public class CreateWordCardFragment extends Fragment {
         );
 
         if (status == CreateCardRepository.CODE_NAME) {
-            Toast.makeText(getActivity(), "Name must be not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.name_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
             return false;
         } else if (status == CreateCardRepository.CODE_DESCRIPTION) {
-            Toast.makeText(getActivity(), "Description must be not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.description_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
             return false;
         } else if (status == CreateCardRepository.CODE_NAME_WORD) {
-            Toast.makeText(getActivity(), "Name of word must be not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.name_of_word_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
             return false;
         } else if (status == CreateCardRepository.CODE_DESCRIPTION_WORD) {
-            Toast.makeText(getActivity(), "Description of word must be not empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.description_of_word_must_be_not_empty), Toast.LENGTH_SHORT).show();
 
             return false;
         } else if (status == CreateCardRepository.CODE_IMAGE_WORD) {
-            Toast.makeText(getActivity(), "Find or Load Image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.find_or_load_image), Toast.LENGTH_SHORT).show();
 
             return false;
         } else if (status == CreateCardRepository.CODE_READ_IMAGE_WORD) {
-            Toast.makeText(getActivity(), "Can not read image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.can_not_read_image), Toast.LENGTH_SHORT).show();
 
             return false;
         } else {
@@ -162,7 +162,7 @@ public class CreateWordCardFragment extends Fragment {
 
             if (wordText.getText().toString().isEmpty()) {
 
-                Toast.makeText(getActivity(), "Write text", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.write_text), Toast.LENGTH_SHORT).show();
 
             } else {
 
@@ -178,7 +178,7 @@ public class CreateWordCardFragment extends Fragment {
         btnSearchGoogle.setOnClickListener(v -> {
             if (wordText.getText().toString().isEmpty()) {
 
-                Toast.makeText(getActivity(), "Write text", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.write_text), Toast.LENGTH_SHORT).show();
 
             } else {
 
@@ -265,6 +265,4 @@ public class CreateWordCardFragment extends Fragment {
         );
 
     }
-
-
 }

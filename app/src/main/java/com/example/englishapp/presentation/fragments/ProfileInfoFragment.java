@@ -260,7 +260,7 @@ public class ProfileInfoFragment extends Fragment {
                                 public void OnSuccess() {
                                     Log.i(TAG, "Successfully set data");
 
-                                    Toast.makeText(getActivity(), "Personal data successfully updated", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), getString(R.string.personal_data_successfully_updated), Toast.LENGTH_SHORT).show();
 
                                     progressBar.dismiss();
 
@@ -273,7 +273,7 @@ public class ProfileInfoFragment extends Fragment {
                                 public void OnFailure() {
                                     Log.i(TAG, "Fail to set data");
 
-                                    Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), getString(R.string.error_occurred), Toast.LENGTH_SHORT).show();
 
                                     progressBar.dismiss();
                                 }
@@ -290,7 +290,7 @@ public class ProfileInfoFragment extends Fragment {
             }
         });
 
-        userEmail.setOnClickListener(v -> Toast.makeText(getActivity(), "You can not change your e-mail!", Toast.LENGTH_SHORT).show());
+        userEmail.setOnClickListener(v -> Toast.makeText(getActivity(), getString(R.string.you_can_not_change_your_e_mail), Toast.LENGTH_SHORT).show());
 
         spinnerLanguage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -336,7 +336,7 @@ public class ProfileInfoFragment extends Fragment {
             Toast.makeText(getActivity(), R.string.errorGender, Toast.LENGTH_SHORT).show();
 
         } else if (languageCode == null) {
-            Toast.makeText(getActivity(), "Please choose language", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.please_choose_language), Toast.LENGTH_SHORT).show();
 
         } else {
             status = true;
@@ -344,6 +344,4 @@ public class ProfileInfoFragment extends Fragment {
 
         return status;
     }
-
-
 }

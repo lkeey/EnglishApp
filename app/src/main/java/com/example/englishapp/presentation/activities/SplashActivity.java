@@ -165,7 +165,7 @@ public class SplashActivity extends AppCompatActivity {
 
                     @Override
                     public void OnFailure() {
-                        Toast.makeText(SplashActivity.this, "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SplashActivity.this, getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -205,7 +205,7 @@ public class SplashActivity extends AppCompatActivity {
             } else {
                 Log.i(TAG, Arrays.toString(permissions));
 
-                Toast.makeText(this, "Permissions Denied!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.permissions_denied), Toast.LENGTH_SHORT).show();
 
                 SplashActivity.this.finish();
             }

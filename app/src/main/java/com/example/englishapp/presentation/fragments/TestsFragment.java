@@ -172,7 +172,7 @@ public class TestsFragment extends Fragment implements TestClickedListener, Refr
                     public void OnFailure() {
                         Log.i(TAG, "Can not load questions");
 
-                        Toast.makeText(getActivity(), "Can not load test... Try later", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.can_not_load_test_try_later), Toast.LENGTH_SHORT).show();
 
                         progressBar.dismiss();
 
@@ -183,7 +183,7 @@ public class TestsFragment extends Fragment implements TestClickedListener, Refr
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -206,7 +206,7 @@ public class TestsFragment extends Fragment implements TestClickedListener, Refr
             @Override
             public void OnFailure() {
                 progressBar.dismiss();
-                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.database_isn_t_available), Toast.LENGTH_SHORT).show();
             }
         });
     }

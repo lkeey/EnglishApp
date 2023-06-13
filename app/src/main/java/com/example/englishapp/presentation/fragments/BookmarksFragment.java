@@ -91,7 +91,7 @@ public class BookmarksFragment extends Fragment {
 
                 Log.i(TAG, "successfully saved");
 
-                Toast.makeText(getActivity(), "Bookmarks successfully saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.bookmarks_successfully_saved), Toast.LENGTH_SHORT).show();
 
                 ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
             }
@@ -102,7 +102,7 @@ public class BookmarksFragment extends Fragment {
 
                 Log.i(TAG, "error occurred");
 
-                Toast.makeText(requireActivity(), "Can not save bookmarks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), getString(R.string.can_not_save_bookmarks), Toast.LENGTH_SHORT).show();
 
                 ((MainActivity) requireActivity()).setFragment(new ProfileFragment());
             }

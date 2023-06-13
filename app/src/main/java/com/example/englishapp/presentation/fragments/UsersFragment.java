@@ -38,8 +38,6 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
 
         dataBaseUsers = new DataBaseUsers();
 
-        Log.i(TAG, "Show List Of Users");
-
         View view = inflater.inflate(R.layout.fragment_users, container, false);
 
         init(view);
@@ -96,7 +94,7 @@ public class UsersFragment extends BottomSheetDialogFragment implements UserList
             UsersFragment.this.dismiss();
 
         } else {
-            Toast.makeText(getActivity(), "It's You!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.it_s_you), Toast.LENGTH_SHORT).show();
         }
     }
 

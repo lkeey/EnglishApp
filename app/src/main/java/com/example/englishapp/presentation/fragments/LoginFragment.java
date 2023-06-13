@@ -140,11 +140,11 @@ public class LoginFragment extends Fragment {
                     progressBar.dismiss();
                     Log.i(TAG, "Exception - " + e.getMessage());
 
-                    Toast.makeText(getActivity(), "Something went wrong with getting data", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.something_went_wrong_with_getting_data), Toast.LENGTH_SHORT).show();
                 }
 
             } else {
-                Toast.makeText(getActivity(), "Something went wrong. Try later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "fail - result not ok - " + result.getData());
             }
         });
@@ -167,13 +167,13 @@ public class LoginFragment extends Fragment {
 
                 } catch (Exception e) {
 
-                    Toast.makeText(getActivity(), "Can not sign up", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.can_not_sign_up), Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "exception - " + e.getMessage());
 
                 }
             })
             .addOnFailureListener(requireActivity(), e -> {
-                Toast.makeText(getActivity(), "Error" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.can_not_login) + e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "fail - " + e.getMessage());
             });
     }
@@ -208,7 +208,7 @@ public class LoginFragment extends Fragment {
             public void onFailure() {
                 progressBar.dismiss();
 
-                Toast.makeText(requireActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -217,10 +217,10 @@ public class LoginFragment extends Fragment {
         boolean status = true;
 
         if (userEmail.getText().toString().isEmpty()) {
-            userEmail.setError("Enter email!");
+            userEmail.setError(getString(R.string.enter_email));
             status = false;
         } else if (userPassword.getText().toString().isEmpty()) {
-            userPassword.setError("Enter Password!");
+            userPassword.setError(getString(R.string.enter_password));
             status = false;
         }
 
@@ -248,11 +248,10 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure() {
-                Toast.makeText(requireActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
 
                 progressBar.dismiss();
             }
         });
     }
-
 }

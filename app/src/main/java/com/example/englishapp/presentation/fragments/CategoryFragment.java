@@ -82,7 +82,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Can not load categories", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.can_not_load_categories), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -116,7 +116,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
             String nameCategory = inputNameCategory.getText().toString().trim();
 
             if (nameCategory.isEmpty()) {
-                Toast.makeText(getActivity(), "Name must be not null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.name_must_be_not_null), Toast.LENGTH_SHORT).show();
             } else {
                 progressCategory.setVisibility(View.VISIBLE);
 
@@ -124,7 +124,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
                     @Override
                     public void OnSuccess() {
                         Log.i(TAG, "Category was created");
-                        Toast.makeText(getContext(), "Category was created", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.category_was_created), Toast.LENGTH_SHORT).show();
 
                         progressBar.dismiss();
                     }
@@ -132,7 +132,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
                     @Override
                     public void OnFailure() {
                         Log.i(TAG, "Can not create category");
-                        Toast.makeText(getContext(), "Can not create category", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), getString(R.string.can_not_create_category), Toast.LENGTH_SHORT).show();
 
                         progressBar.dismiss();
                     }
@@ -187,7 +187,7 @@ public class CategoryFragment extends BaseFragment implements CategoryClickedLis
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.database_isn_t_available), Toast.LENGTH_SHORT).show();
             }
         });
     }

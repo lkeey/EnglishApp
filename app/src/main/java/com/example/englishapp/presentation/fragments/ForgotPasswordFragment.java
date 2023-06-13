@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -16,11 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.R;
+import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
@@ -49,8 +47,6 @@ public class ForgotPasswordFragment extends Fragment {
 
         setListeners();
 
-//        new CustomBottomSheetDialog().show(getChildFragmentManager(), "MyFragment");
-
         return view;
     }
 
@@ -59,8 +55,8 @@ public class ForgotPasswordFragment extends Fragment {
             String textEmail = userEmail.getText().toString();
 
             if(TextUtils.isEmpty(textEmail)) {
-                Toast.makeText(getActivity(), "Please enter your registered email", Toast.LENGTH_SHORT).show();
-                userEmail.setError("Email is required");
+                Toast.makeText(getActivity(), getString(R.string.please_enter_your_registered_email), Toast.LENGTH_SHORT).show();
+                userEmail.setError(getString(R.string.email_is_required));
                 userEmail.requestFocus();
             } else if(!Patterns.EMAIL_ADDRESS.matcher(textEmail).matches()){
                 Toast.makeText(getActivity(), R.string.errorEmail, Toast.LENGTH_SHORT).show();
@@ -116,15 +112,5 @@ public class ForgotPasswordFragment extends Fragment {
             }
             progressBar.dismiss();
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            Toast.makeText(getActivity(), "I am HERE!", Toast.LENGTH_SHORT).show();
-            getChildFragmentManager().popBackStackImmediate();
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

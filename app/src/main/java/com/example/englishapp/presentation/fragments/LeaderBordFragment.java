@@ -94,14 +94,14 @@ public class LeaderBordFragment extends BaseFragment implements UserListener {
                     public void OnFailure() {
                         progressBar.dismiss();
 
-                        Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.try_later), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
             @Override
             public void OnFailure() {
 
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.try_later), Toast.LENGTH_SHORT).show();
 
                 progressBar.dismiss();
 
@@ -142,7 +142,7 @@ public class LeaderBordFragment extends BaseFragment implements UserListener {
             public void OnFailure() {
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.try_later), Toast.LENGTH_SHORT).show();
             }
         });
 

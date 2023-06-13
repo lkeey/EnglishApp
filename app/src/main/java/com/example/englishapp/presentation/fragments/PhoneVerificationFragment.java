@@ -20,11 +20,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.example.englishapp.R;
+import com.example.englishapp.data.database.DataBase;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.data.database.DataBase;
 import com.example.englishapp.presentation.activities.MainActivity;
-import com.example.englishapp.R;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.FirebaseAuth;
@@ -68,6 +68,8 @@ public class PhoneVerificationFragment extends Fragment {
 
         init(view);
 
+        setListeners();
+
         dataBasePersonalData = new DataBasePersonalData();
         dataBase = new DataBase();
 
@@ -76,7 +78,7 @@ public class PhoneVerificationFragment extends Fragment {
         if (bundle != null) {
             String receiveInfo = bundle.getString("phone");
 
-            Toast.makeText(getActivity(), "Phone - " + receiveInfo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.phone) + receiveInfo, Toast.LENGTH_SHORT).show();
 
             userPhone.setText(receiveInfo);
         }
@@ -84,28 +86,12 @@ public class PhoneVerificationFragment extends Fragment {
         return view;
     }
 
-    private void init(View view) {
-        btnSend = view.findViewById(R.id.btnSendCode);
-        btnVerify = view.findViewById(R.id.btnVerifyCode);
-        userCode = view.findViewById(R.id.userCode);
-        userPhone = view.findViewById(R.id.userPhone);
-
+    private void setListeners() {
         // for beauty entering phone number
         MaskImpl mask = MaskImpl.createTerminated(PredefinedSlots.RUS_PHONE_NUMBER);
         mask.setForbidInputWhenFilled(true);
         FormatWatcher formatWatcher = new MaskFormatWatcher(mask);
         formatWatcher.installOn(userPhone);
-
-        btnVerify.setEnabled(false);
-        userCode.setEnabled(false);
-
-        progressBar = new Dialog(getActivity());
-        progressBar.setContentView(R.layout.dialog_layout);
-        progressBar.setCancelable(false);
-        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-        dialogText = progressBar.findViewById(R.id.dialogText);
 
         mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
@@ -119,7 +105,7 @@ public class PhoneVerificationFragment extends Fragment {
 
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Code has successfully sent", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.code_has_successfully_sent), Toast.LENGTH_SHORT).show();
 
                 Log.i(TAG, "Code Sent");
 
@@ -148,20 +134,19 @@ public class PhoneVerificationFragment extends Fragment {
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Authentication Failed - SMS quota exceeded", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.authentication_failed_sms_quota_exceeded), Toast.LENGTH_SHORT).show();
 
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
                     Log.i(TAG, "Invalid request");
-                    Toast.makeText(getActivity(), "Invalid request", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.invalid_request), Toast.LENGTH_SHORT).show();
 
                 } else if (e instanceof FirebaseTooManyRequestsException) {
                     Log.i(TAG, "The SMS quota for the project has been exceeded");
-                    Toast.makeText(getActivity(), "The SMS quota for the project has been exceeded", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.the_sms_quota_for_the_project_has_been_exceeded), Toast.LENGTH_SHORT).show();
 
                 } else if (e instanceof FirebaseAuthMissingActivityForRecaptchaException) {
-                    // reCAPTCHA verification attempted with null Activity
                     Log.i(TAG, "reCAPTCHA verification attempted with null Activity");
-                    Toast.makeText(getActivity(), "reCAPTCHA verification attempted with null Activity", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.recaptcha_verification_attempted_with_null_activity), Toast.LENGTH_SHORT).show();
 
                 }
 
@@ -194,13 +179,29 @@ public class PhoneVerificationFragment extends Fragment {
         btnVerify.setOnClickListener(v -> {
 
             if(!userCode.getText().toString().isEmpty()) {
-//                Toast.makeText(getActivity(), "Checking - " + userCode.toString(), Toast.LENGTH_SHORT).show();
-
                 verifyCode(userCode.getText().toString().trim());
             } else {
-                Toast.makeText(getActivity(), "Write Code", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.write_code), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void init(View view) {
+        btnSend = view.findViewById(R.id.btnSendCode);
+        btnVerify = view.findViewById(R.id.btnVerifyCode);
+        userCode = view.findViewById(R.id.userCode);
+        userPhone = view.findViewById(R.id.userPhone);
+
+        btnVerify.setEnabled(false);
+        userCode.setEnabled(false);
+
+        progressBar = new Dialog(getActivity());
+        progressBar.setContentView(R.layout.dialog_layout);
+        progressBar.setCancelable(false);
+        progressBar.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        dialogText = progressBar.findViewById(R.id.dialogText);
     }
 
     private void sendVerificationToUser(String phoneNumber) {
@@ -236,7 +237,7 @@ public class PhoneVerificationFragment extends Fragment {
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getActivity(), "Sign In Was Successful", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.sign_in_was_successful), Toast.LENGTH_SHORT).show();
 
                     if (Objects.requireNonNull(task.getResult().getAdditionalUserInfo()).isNewUser()) {
                         Log.i(TAG, "New account");
@@ -259,7 +260,7 @@ public class PhoneVerificationFragment extends Fragment {
                                     public void OnFailure() {
                                         progressBar.dismiss();
 
-                                        Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
@@ -268,7 +269,7 @@ public class PhoneVerificationFragment extends Fragment {
                             public void OnFailure() {
                                 progressBar.dismiss();
 
-                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                             }
                         });
                     } else {
@@ -288,19 +289,19 @@ public class PhoneVerificationFragment extends Fragment {
                             public void OnFailure() {
                                 progressBar.dismiss();
 
-                                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
 
                 } else {
-                    Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                     Log.i(TAG, "Fail" + Objects.requireNonNull(task.getException()));
                     progressBar.dismiss();
                 }
             })
             .addOnFailureListener(e -> {
-                Toast.makeText(getActivity(), "Something went wrong! Try later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "onFail" + e.getMessage());
                 progressBar.dismiss();
             });

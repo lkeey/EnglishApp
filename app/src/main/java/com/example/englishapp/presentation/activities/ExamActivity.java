@@ -43,7 +43,6 @@ public class ExamActivity extends BaseActivity {
     private static final String TAG = "ActivityExam";
     private ExamInfoFragment fragment;
     private LinearLayout layoutInfo;
-    private TestModel testModel;
     private static RecyclerView recyclerQuestions;
     private TextView questionNumber, amountTime, testName;
     private Button btnSubmit, btnContinue, btnExit, btnCancel, btnComplete;
@@ -87,7 +86,7 @@ public class ExamActivity extends BaseActivity {
 
         numberOfQuestion = 0;
 
-        testModel = new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID);
+        TestModel testModel = new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID);
 
         testName.setText(testModel.getName());
         amountTime.setText(testModel.getTime() + getString(R.string.minutes));
@@ -266,22 +265,15 @@ public class ExamActivity extends BaseActivity {
 
             @Override
             public void onFinish() {
-                try {
-                    //Toast.makeText(ExamActivity.this, "Finished", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "totalTime - " + totalTime + " - timeCounter - " + timeCounter);
 
-                    Log.i(TAG, "totalTime - " + totalTime + " - timeCounter - " + timeCounter);
+                Intent intent = new Intent(ExamActivity.this, MainActivity.class);
+                intent.putExtra(KEY_TEST_TIME, totalTime - timeCounter);
+                intent.putExtra(KEY_IS_WORDS, isWordExam);
 
-                    Intent intent = new Intent(ExamActivity.this, MainActivity.class);
-                    intent.putExtra(KEY_TEST_TIME, totalTime - timeCounter);
-                    intent.putExtra(KEY_IS_WORDS, isWordExam);
+                startActivity(intent);
 
-                    startActivity(intent);
-
-                    ExamActivity.this.finish();
-
-                } catch (Exception e) {
-                    Log.i(TAG, "error to send - " + e.getMessage());
-                }
+                ExamActivity.this.finish();
             }
         };
 

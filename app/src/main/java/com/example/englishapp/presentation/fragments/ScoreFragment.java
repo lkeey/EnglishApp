@@ -85,13 +85,13 @@ public class ScoreFragment extends Fragment {
                 if (isWordExam) {
                     new WordsRepository().endLearningWords(getContext());
 
-                    Toast.makeText(getActivity(), "You can choose other words to learn", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.you_can_choose_other_words_to_learn), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
                 progressBar.dismiss();
             }
         });
@@ -159,7 +159,7 @@ public class ScoreFragment extends Fragment {
 
         btnReAttempt.setOnClickListener(v -> reAttempt());
 
-        btnViewAnswers.setOnClickListener(v -> Toast.makeText(getActivity(), "View answers", Toast.LENGTH_SHORT).show());
+        btnViewAnswers.setOnClickListener(v -> Toast.makeText(getActivity(), getString(R.string.view_answers), Toast.LENGTH_SHORT).show());
 
     }
 
@@ -211,7 +211,7 @@ public class ScoreFragment extends Fragment {
         } catch (Exception e) {
             Log.i(TAG, "error - " + e.getMessage());
 
-            Toast.makeText(getActivity(), "Can not re-attempt the test... Please, try later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getString(R.string.can_not_re_attempt_the_test_please_try_later), Toast.LENGTH_SHORT).show();
         }
     }
 }

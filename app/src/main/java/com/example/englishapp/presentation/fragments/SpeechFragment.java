@@ -61,7 +61,7 @@ public class SpeechFragment extends Fragment {
                 progressBar.setVisibility(View.VISIBLE);
 
             } catch (Exception e) {
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "error - " + e.getMessage());
 
                 progressBar.setVisibility(View.GONE);
@@ -82,7 +82,7 @@ public class SpeechFragment extends Fragment {
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
 
                 progressBar.setVisibility(View.GONE);
             }
@@ -101,24 +101,24 @@ public class SpeechFragment extends Fragment {
 
                 if (result.get(0).equalsIgnoreCase(textWord.getText().toString())) {
 
-                    Toast.makeText(getActivity(), "Correct!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.correct), Toast.LENGTH_SHORT).show();
 
                     new SpeechRepository().addScore(new CompleteListener() {
                         @Override
                         public void OnSuccess() {
-                            Toast.makeText(getActivity(), "Score Updated!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getString(R.string.score_updated), Toast.LENGTH_LONG).show();
 
                             loadWords();
                         }
 
                         @Override
                         public void OnFailure() {
-                            Toast.makeText(getActivity(), "Can non update score... Check your internet connection", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), getString(R.string.can_non_update_score_check_your_internet_connection), Toast.LENGTH_LONG).show();
                         }
                     });
 
                 } else {
-                    Toast.makeText(getActivity(), "Incorrect!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.incorrect), Toast.LENGTH_SHORT).show();
                 }
             }
         }

@@ -103,7 +103,7 @@ public class CreateTestFragment extends Fragment {
                     public void OnSuccess() {
                         Log.i(TAG, "Successfully created");
 
-                        Toast.makeText(getActivity(), "Test successfully created", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.test_successfully_created), Toast.LENGTH_SHORT).show();
 
                         ((MainActivity) requireActivity()).setFragment(new CategoryFragment());
 
@@ -114,7 +114,7 @@ public class CreateTestFragment extends Fragment {
                     public void OnFailure() {
                         Log.i(TAG, "Can not create test");
 
-                        Toast.makeText(getActivity(), "Error occurred while saving test data", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.error_occurred_while_saving_test_data), Toast.LENGTH_SHORT).show();
 
                         progressBar.dismiss();
                     }
@@ -217,5 +217,4 @@ public class CreateTestFragment extends Fragment {
     private void removeViewOption(LinearLayout layoutList, View view) {
         layoutList.removeView(view);
     }
-
 }

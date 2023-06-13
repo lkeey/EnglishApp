@@ -128,7 +128,7 @@ public class ProfileFragment extends BaseFragment {
                             public void OnFailure() {
                                 Log.i(TAG, "error occurred");
 
-                                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
 
                             }
                         });
@@ -139,11 +139,11 @@ public class ProfileFragment extends BaseFragment {
 
                         Log.i(TAG, "error occurred");
 
-                        Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
                     }
                 });
             } else {
-                Toast.makeText(getActivity(), "You don't have bookmarks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.you_don_t_have_bookmarks), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -163,7 +163,7 @@ public class ProfileFragment extends BaseFragment {
                 new AlarmRepository().cancelAlarm(requireContext(), new CompleteListener() {
                     @Override
                     public void OnSuccess() {
-                        Toast.makeText(getActivity(), "Account has successfully deleted!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.account_has_successfully_deleted), Toast.LENGTH_SHORT).show();
 
                         Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
 
@@ -177,14 +177,14 @@ public class ProfileFragment extends BaseFragment {
 
                     @Override
                     public void OnFailure() {
-                        Toast.makeText(getActivity(), "Can not delete Account. Try Later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.can_not_delete_account_try_later), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Can not delete Account. Try Later.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.can_not_delete_account_try_later), Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -214,7 +214,7 @@ public class ProfileFragment extends BaseFragment {
                             .addOnSuccessListener(unused -> {
                                 FirebaseAuth.getInstance().signOut();
 
-                                Toast.makeText(getActivity(), "You have successfully logout", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.you_have_successfully_logout), Toast.LENGTH_SHORT).show();
 
                                 Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
 
@@ -225,7 +225,7 @@ public class ProfileFragment extends BaseFragment {
                                 startActivity(intent);
                                 requireActivity().finish();
                             }).addOnFailureListener(e -> {
-                                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
 
                                 Log.i(TAG, e.getMessage());
                             });
@@ -233,13 +233,13 @@ public class ProfileFragment extends BaseFragment {
 
                     @Override
                     public void OnFailure() {
-                        Toast.makeText(getActivity(), "Can not logout. Try Later.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), getString(R.string.can_not_logout_try_later), Toast.LENGTH_SHORT).show();
                     }
                 });
 
             } else {
                 Log.i(TAG, "Error - " + Objects.requireNonNull(task.getException()).getMessage());
-                Toast.makeText(getActivity(), "Can not logout... Please, try later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.can_not_logout_try_later), Toast.LENGTH_SHORT).show();
             }
         });
     }

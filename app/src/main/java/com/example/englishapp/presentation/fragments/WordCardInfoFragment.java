@@ -49,7 +49,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
             new BeginLearningRepository().loadModel(getContext(), receivedCard.getId(), new LearningWordListener() {
                 @Override
                 public void beginLearning() {
-                    Toast.makeText(getActivity(), "You will get notifications with chosen words", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.you_will_get_notifications_with_chosen_words), Toast.LENGTH_SHORT).show();
 
                     progressBar.dismiss();
 
@@ -58,14 +58,14 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
 
                 @Override
                 public void cancelLearning() {
-                    Toast.makeText(getActivity(), "You have already learned this words", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.you_have_already_learned_this_words), Toast.LENGTH_SHORT).show();
 
                     progressBar.dismiss();
                 }
 
                 @Override
                 public void otherLearning() {
-                    Toast.makeText(getActivity(), "You are learning other words", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.you_are_learning_other_words), Toast.LENGTH_SHORT).show();
 
                     progressBar.dismiss();
                 }
@@ -74,7 +74,7 @@ public class WordCardInfoFragment extends BottomSheetDialogFragment {
                 public void onFail() {
                     progressBar.dismiss();
 
-                    Toast.makeText(getActivity(), "Something went wrong", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
                 }
             });
         });

@@ -152,7 +152,7 @@ public class LearningWordsFragment extends Fragment {
 
             @Override
             public void OnFailure() {
-                Toast.makeText(getActivity(), "Can not load words", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.can_not_load_words), Toast.LENGTH_SHORT).show();
 
                 progressBar.setVisibility(View.GONE);
             }
@@ -164,5 +164,4 @@ public class LearningWordsFragment extends Fragment {
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerLearningWords);
     }
-
 }

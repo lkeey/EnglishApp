@@ -94,7 +94,7 @@ public class WordsFragment extends Fragment implements CardClickedListener, Refr
             @Override
             public void OnFailure() {
 
-                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
 
                 progressBar.dismiss();
             }
@@ -163,7 +163,7 @@ public class WordsFragment extends Fragment implements CardClickedListener, Refr
             public void OnFailure() {
                 progressBar.dismiss();
 
-                Toast.makeText(getActivity(), "Database isn't available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.database_isn_t_available), Toast.LENGTH_SHORT).show();
             }
         });
     }

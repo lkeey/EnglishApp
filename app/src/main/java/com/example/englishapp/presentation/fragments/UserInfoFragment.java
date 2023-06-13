@@ -53,7 +53,7 @@ public class UserInfoFragment extends BottomSheetDialogFragment {
 
                 UserInfoFragment.this.dismiss();
             } else {
-                Toast.makeText(getActivity(), "It's you!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.it_s_you), Toast.LENGTH_SHORT).show();
             }
         });
 

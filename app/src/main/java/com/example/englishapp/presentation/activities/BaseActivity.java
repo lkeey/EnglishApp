@@ -25,7 +25,6 @@ public class BaseActivity extends AppCompatActivity {
         document = DATA_FIRESTORE.collection(Constants.KEY_COLLECTION_USERS)
                 .document(USER_MODEL.getUid());
 
-        // instabug
         new Instabug.Builder(getApplication(), KEY_INSTABUG)
                 .setInvocationEvents(InstabugInvocationEvent.SHAKE, InstabugInvocationEvent.SCREENSHOT, InstabugInvocationEvent.TWO_FINGER_SWIPE_LEFT)
                 .build();
@@ -48,5 +47,4 @@ public class BaseActivity extends AppCompatActivity {
                 Constants.KEY_AVAILABILITY, true
         );
     }
-
 }
