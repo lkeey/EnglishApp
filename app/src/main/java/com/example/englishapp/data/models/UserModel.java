@@ -12,7 +12,6 @@ public class UserModel implements Serializable {
     private String dateOfBirth;
     private String fcmToken;
     private String languageCode;
-
     private int score;
     private int bookmarksCount;
     private int place;

@@ -3,6 +3,7 @@ package com.example.englishapp.presentation.fragments;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_AMOUNT_OPTIONS;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_LOT_CORRECT_OPTIONS;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NAME;
+import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NAME_SIZE;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NO_CORRECT_OPTION;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NO_QUESTIONS;
 import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_OPTION;
@@ -163,13 +164,17 @@ public class CreateTestFragment extends Fragment {
             Toast.makeText(getActivity(), getString(R.string.must_be_at_least_2_options), Toast.LENGTH_SHORT).show();
 
             return false;
+        } else if (status == CODE_NAME_SIZE) {
+            Toast.makeText(getActivity(), getString(R.string.name_size), Toast.LENGTH_SHORT).show();
+
+            return false;
         } else if (status == CODE_NO_QUESTIONS) {
             Toast.makeText(getActivity(), getString(R.string.add_at_least_one_question), Toast.LENGTH_SHORT).show();
 
             return false;
         } else {
-            return true;
-        }
+                return true;
+            }
     }
     private void addView() {
         View view = getLayoutInflater().inflate(R.layout.row_add, null, false);

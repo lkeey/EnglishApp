@@ -101,6 +101,7 @@
     <string name="there_are_must_be_1_correct_option">There are must be 1 correct option</string>
     <string name="must_be_at_least_2_options">Must be at least 2 options</string>
     <string name="add_at_least_one_question">Add at least one question</string>
+    <string name="name_size">Name must be no more than 10 symbols</string>
     <string name="minutes">" minutes"</string>
     <string name="location">Location</string>
     <string name="please_enable_geolocation">Please, Enable Geolocation</string>

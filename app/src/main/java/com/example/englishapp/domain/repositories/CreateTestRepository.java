@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class CreateTestRepository {
 
     private static final String TAG = "TestRepository";
+    private boolean resultOption;
+    private final ArrayList<OptionModel> listOfOptions = new ArrayList<>();
     public static ArrayList<QuestionModel> listOfQuestions = new ArrayList<>();
     public static int CODE_SUCCESS = 0;
     public static int CODE_NAME = 1;
@@ -26,25 +28,42 @@ public class CreateTestRepository {
     public static int CODE_LOT_CORRECT_OPTIONS = 5;
     public static int CODE_AMOUNT_OPTIONS = 6;
     public static int CODE_NO_QUESTIONS = 7;
+    public static int CODE_NAME_SIZE = 8;
 
     public int readData(String testName, int timeDoing, LinearLayout layoutList) {
-
-        boolean resultOption;
 
         listOfQuestions.clear();
 
         if (testName.isEmpty()) {
-
             return CODE_NAME;
         }
 
         if (timeDoing < 1) {
-
             return CODE_TIME;
         }
 
+        if (testName.length() > 10) {
+            return CODE_NAME_SIZE;
+        }
+
+        int status = checkLayoutQuestions(layoutList);
+
+        if (status == CODE_SUCCESS) {
+
+            if (listOfQuestions.size() == 0) {
+
+                return CODE_NO_QUESTIONS;
+            }
+
+        } else {
+            return status;
+        }
+
+        return CODE_SUCCESS;
+    }
+
+    private int checkLayoutQuestions(LinearLayout layoutList) {
         for(int i=0; i < layoutList.getChildCount(); i++) {
-            resultOption = false;
 
             View viewChild = layoutList.getChildAt(i);
 
@@ -59,70 +78,76 @@ public class CreateTestRepository {
                 return CODE_QUESTION;
             }
 
-            ArrayList<OptionModel> listOfOptions = new ArrayList<>();
+            listOfOptions.clear();
 
-            for(int n=0; n < listOption.getChildCount(); n++) {
+            int status = checkLayoutOptions(listOption);
 
-                View viewOption = listOption.getChildAt(n);
+            if (status == CODE_SUCCESS) {
 
-                EditText editTextOption = viewOption.findViewById(R.id.editTextOption);
-                AppCompatSpinner spinnerOption = viewOption.findViewById(R.id.spinnerOptions);
+                if (!resultOption) {
 
-                OptionModel optionModel = new OptionModel();
-
-                if (!editTextOption.getText().toString().isEmpty()) {
-                    optionModel.setOption(editTextOption.getText().toString());
-                } else {
-
-                    return CODE_OPTION;
+                    return CODE_LOT_CORRECT_OPTIONS;
                 }
 
-                if (spinnerOption.getSelectedItemPosition() == 1) {
+                if (listOfOptions.size() < 2) {
 
-                    if (resultOption) {
-                        // if there are more than one correct answer
-
-                        return CODE_NO_CORRECT_OPTION;
-                    }
-
-                    resultOption = true;
-
-                    optionModel.setCorrect(true);
-
-                } else {
-                    optionModel.setCorrect(false);
+                    return CODE_AMOUNT_OPTIONS;
                 }
 
+                questionModel.setOptionsList(listOfOptions);
 
-                Log.i(TAG, "Option - " + optionModel.getOption() + " - " + optionModel.isCorrect());
 
-                listOfOptions.add(optionModel);
+                listOfQuestions.add(questionModel);
+            } else {
+                return status;
             }
-
-            if (!resultOption) {
-
-                return CODE_LOT_CORRECT_OPTIONS;
-            }
-
-            if (listOfOptions.size() < 2) {
-
-                return CODE_AMOUNT_OPTIONS;
-            }
-
-            questionModel.setOptionsList(listOfOptions);
-
-
-            listOfQuestions.add(questionModel);
-        }
-
-        if(listOfQuestions.size() == 0) {
-
-            return CODE_NO_QUESTIONS;
-
         }
 
         return CODE_SUCCESS;
     }
 
+    private int checkLayoutOptions(LinearLayout listOption) {
+        resultOption = false;
+
+        for(int n=0; n < listOption.getChildCount(); n++) {
+
+            View viewOption = listOption.getChildAt(n);
+
+            EditText editTextOption = viewOption.findViewById(R.id.editTextOption);
+            AppCompatSpinner spinnerOption = viewOption.findViewById(R.id.spinnerOptions);
+
+            OptionModel optionModel = new OptionModel();
+
+            if (!editTextOption.getText().toString().isEmpty()) {
+                optionModel.setOption(editTextOption.getText().toString());
+            } else {
+
+                return CODE_OPTION;
+            }
+
+            if (spinnerOption.getSelectedItemPosition() == 1) {
+
+                if (resultOption) {
+                    // if there are more than one correct answer
+
+                    return CODE_NO_CORRECT_OPTION;
+                }
+
+                resultOption = true;
+
+                optionModel.setCorrect(true);
+
+            } else {
+                optionModel.setCorrect(false);
+            }
+
+
+            Log.i(TAG, "Option - " + optionModel.getOption() + " - " + optionModel.isCorrect());
+
+            listOfOptions.add(optionModel);
+        }
+
+        return CODE_SUCCESS;
+    }
 
 }
