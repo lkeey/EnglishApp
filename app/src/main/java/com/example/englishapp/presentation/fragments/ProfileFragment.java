@@ -21,6 +21,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.data.database.Constants;
 import com.example.englishapp.data.database.DataBaseBookmarks;
 import com.example.englishapp.data.database.DataBaseLearningWords;
+import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.data.database.RoomDataBase;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.repositories.AlarmRepository;
@@ -39,16 +40,11 @@ public class ProfileFragment extends BaseFragment {
     private static final String TAG = "FragmentProfile";
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
     private TextView deleteAcc;
-    private DataBaseLearningWords dataBaseLearningWords;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-
-        dataBaseLearningWords = new DataBaseLearningWords();
-
-        getWords();
 
         init(view);
 
@@ -244,24 +240,18 @@ public class ProfileFragment extends BaseFragment {
         });
     }
 
-    private void getWords() {
-
-        dataBaseLearningWords.loadLearningWords(getContext(), new CompleteListener() {
+    @Override
+    public void onRefresh() {
+        new DataBasePersonalData().getUserData(new CompleteListener() {
             @Override
             public void OnSuccess() {
-                Log.i(TAG, "size - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
+                ((MainActivity) requireActivity()).setFragment(new ProfileFragment(), true);
             }
 
             @Override
             public void OnFailure() {
-                Log.i(TAG, "can not load");
+                Toast.makeText(getActivity(), getString(R.string.something_went_wrong_try_later), Toast.LENGTH_SHORT).show();
             }
         });
-
-    }
-
-    @Override
-    public void onRefresh() {
-        ((MainActivity) requireActivity()).setFragment(new ProfileFragment(), true);
     }
 }

@@ -25,15 +25,18 @@ import java.util.Objects;
 public class DataBaseExam {
 
     private static final String TAG = "ExamDao";
+    private Map<String, Object> userData;
+    private DocumentReference userDocument;
+    private WriteBatch batch;
     public static final int NOT_VISITED = 0;
     public static final int UNANSWERED = 1;
     public static final int ANSWERED = 2;
     public static final int REVIEW = 3;
 
     public void saveResult(boolean isWordExam, String cardId, int finalScore, CompleteListener listener) {
-        WriteBatch batch = DATA_FIRESTORE.batch();
+        batch = DATA_FIRESTORE.batch();
 
-        DocumentReference userDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid());
+        userDocument = DATA_FIRESTORE.collection(KEY_COLLECTION_USERS).document(USER_MODEL.getUid());
 
         if (!isWordExam) {
             Map<String, Object> bookmarksData = new ArrayMap<>();
@@ -52,52 +55,15 @@ public class DataBaseExam {
 
         userDocument.get()
             .addOnSuccessListener(documentSnapshot -> {
-                Map<String, Object> userData = new ArrayMap<>();
+                userData = new ArrayMap<>();
 
                 if (!isWordExam) {
-                    TestModel testModel = new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID);
 
-                    if (finalScore > testModel.getTopScore()) {
-
-                        int userExperience = Objects.requireNonNull(documentSnapshot.getLong(KEY_SCORE)).intValue();
-                        int allScore = userExperience + finalScore - testModel.getTopScore();
-
-                        Log.i(TAG, "user - " + userExperience + " - all score - " + allScore + " - top - " + testModel.getTopScore());
-
-                        userData.put(KEY_SCORE, allScore);
-
-                        DocumentReference scoreDocument = userDocument
-                                .collection(KEY_COLLECTION_PERSONAL_DATA)
-                                .document(KEY_USER_SCORES);
-
-                        Map<String, Object> testData = new ArrayMap<>();
-
-                        testData.put(testModel.getId(), finalScore);
-                        batch.set(scoreDocument, testData, SetOptions.merge());
-
-                        USER_MODEL.setScore(allScore);
-
-                    }
-
-                    userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARK_IDS.size());
+                    updateScore(finalScore, Objects.requireNonNull(documentSnapshot.getLong(KEY_SCORE)).intValue());
 
                 } else {
-                    int userExperience = Objects.requireNonNull(documentSnapshot.getLong(KEY_SCORE)).intValue();
-                    int allScore = userExperience + finalScore;
 
-                    userData.put(KEY_SCORE, allScore);
-
-                    DocumentReference scoreDocument = userDocument
-                            .collection(KEY_COLLECTION_PERSONAL_DATA)
-                            .document(KEY_COMPLETED_CARDS);
-
-                    Map<String, Object> cardData = new ArrayMap<>();
-
-                    cardData.put(cardId, true);
-                    batch.set(scoreDocument, cardData, SetOptions.merge());
-
-
-                    USER_MODEL.setScore(allScore);
+                    updateScoreWord(cardId, Objects.requireNonNull(documentSnapshot.getLong(KEY_SCORE)).intValue(), finalScore);
                 }
 
                 batch.update(userDocument, userData);
@@ -109,4 +75,48 @@ public class DataBaseExam {
             .addOnFailureListener(e -> listener.OnFailure());
     }
 
+    private void updateScore(int finalScore, int userExperience) {
+        TestModel testModel = new DataBaseTests().findTestById(DataBaseTests.CHOSEN_TEST_ID);
+
+        if (finalScore > testModel.getTopScore()) {
+
+            int allScore = userExperience + finalScore - testModel.getTopScore();
+
+            Log.i(TAG, "user - " + userExperience + " - all score - " + allScore + " - top - " + testModel.getTopScore());
+
+            userData.put(KEY_SCORE, allScore);
+
+            DocumentReference scoreDocument = userDocument
+                    .collection(KEY_COLLECTION_PERSONAL_DATA)
+                    .document(KEY_USER_SCORES);
+
+            Map<String, Object> testData = new ArrayMap<>();
+
+            testData.put(testModel.getId(), finalScore);
+            batch.set(scoreDocument, testData, SetOptions.merge());
+
+            USER_MODEL.setScore(allScore);
+
+        }
+
+        userData.put(KEY_BOOKMARKS, LIST_OF_BOOKMARK_IDS.size());
+    }
+
+    private void updateScoreWord(String cardId, int userExperience, int finalScore) {
+        int allScore = userExperience + finalScore;
+
+        userData.put(KEY_SCORE, allScore);
+
+        DocumentReference scoreDocument = userDocument
+                .collection(KEY_COLLECTION_PERSONAL_DATA)
+                .document(KEY_COMPLETED_CARDS);
+
+        Map<String, Object> cardData = new ArrayMap<>();
+
+        cardData.put(cardId, true);
+        batch.set(scoreDocument, cardData, SetOptions.merge());
+
+
+        USER_MODEL.setScore(allScore);
+    }
 }

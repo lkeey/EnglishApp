@@ -116,7 +116,6 @@ public class ProfileInfoFragment extends Fragment {
 
 
     private void receiveData() {
-
         Bundle bundle = getArguments();
 
         if (bundle != null) {
@@ -151,7 +150,6 @@ public class ProfileInfoFragment extends Fragment {
                 }
         );
     }
-
 
     private void setPreviousData(View view) {
         Log.i(TAG, "Set previous data");

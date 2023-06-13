@@ -39,6 +39,7 @@ public class DataBaseTests {
     private static final String TAG = "TestsDao";
     public static List<TestModel> LIST_OF_TESTS = new ArrayList<>();
     public static String CHOSEN_TEST_ID = null;
+    private WriteBatch batch;
 
     public void loadTestsData(CompleteListener listener) {
         LIST_OF_TESTS.clear();
@@ -85,102 +86,100 @@ public class DataBaseTests {
     }
 
     public void createTestData(ArrayList<QuestionModel> listOfQuestions, String name, int time, CompleteListener listener) {
-        try {
-            Map<String, Object> testData = new ArrayMap<>();
+        Map<String, Object> testData = new ArrayMap<>();
 
-            String randomID = null;
+        String randomID = getTestId();
 
-            while (true) {
-                try {
+        testData.put(KEY_TEST_ID, randomID);
+        testData.put(KEY_TEST_NAME, name);
+        testData.put(KEY_TEST_TIME, time);
+        testData.put(KEY_AMOUNT_OF_QUESTIONS, listOfQuestions.size());
+        testData.put(KEY_AUTHOR, USER_MODEL.getName());
+        testData.put(KEY_CATEGORY_ID, DataBaseCategories.CHOSEN_CATEGORY_ID);
 
-                    randomID = RandomStringUtils.random(20, true, true);
+        Log.i(TAG, "set test data");
 
-                    Log.i(TAG, "random id - " + randomID);
+        batch = DATA_FIRESTORE.batch();
 
-                    findTestById(randomID);
-
-                } catch (Exception e) {
-                    Log.i(TAG, "not found test");
-
-                    break;
-                }
-            }
-
-            testData.put(KEY_TEST_ID, randomID);
-            testData.put(KEY_TEST_NAME, name);
-            testData.put(KEY_TEST_TIME, time);
-            testData.put(KEY_AMOUNT_OF_QUESTIONS, listOfQuestions.size());
-            testData.put(KEY_AUTHOR, USER_MODEL.getName());
-            testData.put(KEY_CATEGORY_ID, DataBaseCategories.CHOSEN_CATEGORY_ID);
-
-            Log.i(TAG, "set test data");
-
-            WriteBatch batch = DATA_FIRESTORE.batch();
-
-            DocumentReference testDocument = null;
-            if (randomID != null) {
-                testDocument = DATA_FIRESTORE
-                        .collection(KEY_COLLECTION_TESTS)
-                        .document(randomID);
-            }
-
-            if (testDocument != null) {
-                batch.set(testDocument, testData, SetOptions.merge());
-            }
-
-            Log.i(TAG, "set batch");
-
-            // update amount of tests in category
-            Log.i(TAG, "CHOSEN_CATEGORY_ID - " + DataBaseCategories.CHOSEN_CATEGORY_ID);
-
-            DocumentReference docCategory = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_CATEGORIES)
-                    .document(DataBaseCategories.CHOSEN_CATEGORY_ID);
-
-            batch.update(docCategory, KEY_CATEGORY_NUMBER_OF_TESTS, FieldValue.increment(1));
-
-            Log.i(TAG, "update amount");
-
-            // update statistics
-            DocumentReference docReference = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_STATISTICS)
-                    .document(KEY_AMOUNT_TESTS);
-
-            batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
-
-            docReference = DATA_FIRESTORE
-                    .collection(KEY_COLLECTION_STATISTICS)
-                    .document(KEY_AMOUNT_OF_QUESTIONS);
-
-            Log.i(TAG, "Size questions - " + listOfQuestions.size());
-            batch.update(docReference, KEY_AMOUNT_OF_QUESTIONS, FieldValue.increment(listOfQuestions.size()));
-
-            Log.i(TAG, "update statistics");
-
-            String randomId = randomID;
-            batch.commit().addOnSuccessListener(unused -> {
-
-                Log.i(TAG, "Test was successfully created");
-
-                LIST_OF_TESTS.add(new TestModel(
-                        randomId,
-                        name,
-                        USER_MODEL.getName(),
-                        listOfQuestions.size(),
-                        0,
-                        time
-                ));
-
-                new DataBaseQuestions().createQuestionData(listOfQuestions, randomId, listener);
-
-            }).addOnFailureListener(e -> {
-                Log.i(TAG, "Can not create test - " + e.getMessage());
-
-                listener.OnFailure();
-            });
-        } catch (Exception e) {
-            Log.i(TAG, "error - " + e.getMessage());
+        DocumentReference testDocument = null;
+        if (randomID != null) {
+            testDocument = DATA_FIRESTORE
+                    .collection(KEY_COLLECTION_TESTS)
+                    .document(randomID);
         }
+
+        if (testDocument != null) {
+            batch.set(testDocument, testData, SetOptions.merge());
+        }
+
+        updateStatistics(listOfQuestions.size());
+
+        Log.i(TAG, "set batch");
+
+        batch.commit().addOnSuccessListener(unused -> {
+
+            Log.i(TAG, "Test was successfully created");
+
+            new DataBaseQuestions().createQuestionData(listOfQuestions, randomID, listener);
+
+        }).addOnFailureListener(e -> {
+            Log.i(TAG, "Can not create test - " + e.getMessage());
+
+            listener.OnFailure();
+        });
+
+    }
+
+    private void updateStatistics(int size) {
+        // update amount of tests in category
+        Log.i(TAG, "CHOSEN_CATEGORY_ID - " + DataBaseCategories.CHOSEN_CATEGORY_ID);
+
+        DocumentReference docCategory = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_CATEGORIES)
+                .document(DataBaseCategories.CHOSEN_CATEGORY_ID);
+
+        batch.update(docCategory, KEY_CATEGORY_NUMBER_OF_TESTS, FieldValue.increment(1));
+
+        Log.i(TAG, "update amount");
+
+        // update statistics
+        DocumentReference docReference = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_STATISTICS)
+                .document(KEY_AMOUNT_TESTS);
+
+        batch.update(docReference, KEY_AMOUNT_TESTS, FieldValue.increment(1));
+
+        docReference = DATA_FIRESTORE
+                .collection(KEY_COLLECTION_STATISTICS)
+                .document(KEY_AMOUNT_OF_QUESTIONS);
+
+        Log.i(TAG, "Size questions - " + size);
+        batch.update(docReference, KEY_AMOUNT_OF_QUESTIONS, FieldValue.increment(size));
+
+        Log.i(TAG, "update statistics");
+
+    }
+
+    private String getTestId() {
+        String randomID = null;
+
+        while (true) {
+            try {
+
+                randomID = RandomStringUtils.random(20, true, true);
+
+                Log.i(TAG, "random id - " + randomID);
+
+                findTestById(randomID);
+
+            } catch (Exception e) {
+                Log.i(TAG, "not found test");
+
+                break;
+            }
+        }
+
+        return randomID;
     }
 
     public TestModel findTestById(String testId) {

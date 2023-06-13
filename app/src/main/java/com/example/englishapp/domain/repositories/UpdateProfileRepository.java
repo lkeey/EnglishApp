@@ -17,7 +17,6 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.webkit.MimeTypeMap;
 
-import com.example.englishapp.data.database.DataBase;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,18 +31,17 @@ import java.util.Objects;
 public class UpdateProfileRepository {
 
     private static final String TAG = "ProfileUpdate";
-    private StorageReference storageReference;
     private FirebaseAuth authProfile;
     private FirebaseUser firebaseUser;
     private String pathToImage;
     private DataBasePersonalData dataBasePersonalData;
-    private DataBase dataBase;
+    private Map<String, Object> userData;
 
     public UpdateProfileRepository() {}
 
     public void uploadPicture(Uri uriImg, Context context, CompleteListener listener) {
 
-        storageReference = FirebaseStorage.getInstance().getReference(PATH_PROFILE_IMG);
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference(PATH_PROFILE_IMG);
         authProfile = FirebaseAuth.getInstance();
         dataBasePersonalData = new DataBasePersonalData();
 
@@ -93,10 +91,9 @@ public class UpdateProfileRepository {
 
     public void updateUser(String textEmail, String textName, String textDOB, String textGender, String langCode, boolean isAddingScore, Uri imgUri, Context context, CompleteListener listener)  {
 
-        dataBase = new DataBase();
         dataBasePersonalData = new DataBasePersonalData();
 
-        Map<String, Object> userData = new ArrayMap<>();
+        userData = new ArrayMap<>();
 
         userData.put(KEY_EMAIL, textEmail);
         userData.put(KEY_NAME, textName);
@@ -108,51 +105,34 @@ public class UpdateProfileRepository {
             userData.put(KEY_SCORE, USER_MODEL.getScore() + 50);
         }
 
+        setData(imgUri, context, listener);
+    }
+
+    private void setData(Uri imgUri, Context context, CompleteListener listener) {
         dataBasePersonalData.updateProfileData(userData, new CompleteListener() {
             @Override
             public void OnSuccess() {
                 Log.i(TAG, "personal data updated");
 
-                dataBase.loadData(new CompleteListener() {
-                    @Override
-                    public void OnSuccess() {
-                        Log.i(TAG, "data loaded");
-
-                        if(imgUri != null) {
-                            Log.i(TAG, "HAVE IMAGE");
-
-                            uploadPicture(imgUri, context, new CompleteListener() {
-                                @Override
-                                public void OnSuccess() {
-                                    Log.i(TAG, "upload image");
-
-                                    listener.OnSuccess();
-                                }
-
-                                @Override
-                                public void OnFailure() {
-                                    Log.i(TAG, "fail upload image");
-
-                                    listener.OnFailure();
-                                }
-                            });
-                        } else {
-
-                            Log.i(TAG, "success without img");
+                if (imgUri != null) {
+                    uploadPicture(imgUri, context, new CompleteListener() {
+                        @Override
+                        public void OnSuccess() {
+                            Log.i(TAG, "uploaded image");
 
                             listener.OnSuccess();
-
                         }
-                    }
 
-                    @Override
-                    public void OnFailure() {
-                        Log.i(TAG, "can not load data");
+                        @Override
+                        public void OnFailure() {
+                            Log.i(TAG, "fail upload image");
 
-                        listener.OnFailure();
-                    }
-                });
+                            listener.OnFailure();
+                        }
+                    });
+                }
             }
+
             @Override
             public void OnFailure() {
                 Log.i(TAG, "can not update personal data");
@@ -160,8 +140,8 @@ public class UpdateProfileRepository {
                 listener.OnFailure();
             }
         });
-    }
 
+    }
 
     private String getFileExtension(Uri uriImage, Context context) {
         ContentResolver contentResolver = context.getContentResolver();

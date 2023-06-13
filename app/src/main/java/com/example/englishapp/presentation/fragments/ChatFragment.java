@@ -37,6 +37,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class ChatFragment extends BaseFragment implements ConversationListener {
     private static final String TAG = "FragmentChat";
@@ -112,53 +113,52 @@ public class ChatFragment extends BaseFragment implements ConversationListener {
 
         @Override
         public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-            try {
 
-                if (error != null) {
-                    Log.i(TAG, "Error is - " + error.getMessage());
-                }
+            if (error != null) {
+                Log.i(TAG, "Error is - " + error.getMessage());
+            }
 
-                if (value != null) {
-                    for (DocumentChange document : value.getDocumentChanges()) {
-                        if (document.getType() == DocumentChange.Type.ADDED) {
-                            ChatMessage chatMessage = new ChatMessage(
-                                document.getDocument().getString(KEY_SENDER_ID),
-                                document.getDocument().getString(KEY_RECEIVER_ID),
-                                document.getDocument().getString(KEY_LAST_MESSAGE),
-                                document.getDocument().getDate(KEY_TIME_STAMP)
-                            );
+            if (value != null) {
 
-                            noChats.setVisibility(View.GONE);
-
-                            recentChats.add(chatMessage);
-
-                        } else if (document.getType() == DocumentChange.Type.MODIFIED) {
-                            for (int i = 0; i < recentChats.size(); i++) {
-                                if (((ChatMessage) recentChats.get(i)).getSenderId().equals(document.getDocument().getString(KEY_SENDER_ID)) && ((ChatMessage) recentChats.get(i)).getReceiverId().equals(document.getDocument().getString(KEY_RECEIVER_ID))) {
-                                    ((ChatMessage) recentChats.get(i)).message = document.getDocument().getString(KEY_LAST_MESSAGE);
-                                    ((ChatMessage) recentChats.get(i)).dateTime = document.getDocument().getDate(KEY_TIME_STAMP);
-
-                                    Log.i(TAG, "message was found");
-
-                                }
-                            }
-                        }
-                    }
-
-//                Collections.sort(recentChats, ChatMessage::compareTo);
-                recentChats.sort((Comparator<ChatMessage>) (o1, o2) -> o2.dateTime.compareTo(o1.dateTime));
-
-                    conversationAdapter.notifyDataSetChanged();
-                    recyclerRecentlyChats.smoothScrollToPosition(0);
-
-                    Log.i(TAG, "All okey");
-
-                }
-            } catch (Exception e) {
-                Log.i(TAG, e.getMessage());
+                updateMessages(value.getDocumentChanges());
             }
         }
     };
+
+    private void updateMessages(List<DocumentChange> documentChanges) {
+        for (DocumentChange document: documentChanges) {
+            if (document.getType() == DocumentChange.Type.ADDED) {
+                ChatMessage chatMessage = new ChatMessage(
+                        document.getDocument().getString(KEY_SENDER_ID),
+                        document.getDocument().getString(KEY_RECEIVER_ID),
+                        document.getDocument().getString(KEY_LAST_MESSAGE),
+                        document.getDocument().getDate(KEY_TIME_STAMP)
+                );
+
+                noChats.setVisibility(View.GONE);
+
+                recentChats.add(chatMessage);
+
+            } else if (document.getType() == DocumentChange.Type.MODIFIED) {
+                for (int i = 0; i < recentChats.size(); i++) {
+                    if (((ChatMessage) recentChats.get(i)).getSenderId().equals(document.getDocument().getString(KEY_SENDER_ID)) && ((ChatMessage) recentChats.get(i)).getReceiverId().equals(document.getDocument().getString(KEY_RECEIVER_ID))) {
+                        ((ChatMessage) recentChats.get(i)).message = document.getDocument().getString(KEY_LAST_MESSAGE);
+                        ((ChatMessage) recentChats.get(i)).dateTime = document.getDocument().getDate(KEY_TIME_STAMP);
+
+                        Log.i(TAG, "message was found");
+
+                    }
+                }
+            }
+        }
+
+        recentChats.sort((Comparator<ChatMessage>) (o1, o2) -> o2.dateTime.compareTo(o1.dateTime));
+
+        conversationAdapter.notifyDataSetChanged();
+        recyclerRecentlyChats.smoothScrollToPosition(0);
+
+        Log.i(TAG, "All okey");
+    }
 
     @Override
     public void onConversationClicked(UserModel userModel) {
