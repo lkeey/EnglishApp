@@ -1,11 +1,8 @@
 package com.example.englishapp.presentation.fragments;
 
-import static android.content.Context.ALARM_SERVICE;
-import static com.example.englishapp.data.database.Constants.KEY_SHOW_NOTIFICATION_WORD;
+import static com.example.englishapp.data.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.data.database.DataBasePersonalData.USER_MODEL;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,31 +14,29 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
+import com.example.englishapp.data.database.Constants;
 import com.example.englishapp.data.database.DataBaseBookmarks;
 import com.example.englishapp.data.database.DataBaseLearningWords;
 import com.example.englishapp.data.database.RoomDataBase;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.receivers.AlarmReceiver;
+import com.example.englishapp.domain.repositories.AlarmRepository;
+import com.example.englishapp.domain.repositories.DeleteUserRepository;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 
 import java.util.Objects;
 
 public class ProfileFragment extends BaseFragment {
     private static final String TAG = "FragmentProfile";
-    private Toolbar toolbar;
     private LinearLayout layoutBookmark, layoutLeaderBord, layoutProfile, layoutLogout;
     private TextView deleteAcc;
     private DataBaseLearningWords dataBaseLearningWords;
@@ -64,7 +59,7 @@ public class ProfileFragment extends BaseFragment {
 
     private void init(View view) {
 
-        toolbar = view.findViewById(R.id.toolbar);
+        Toolbar toolbar = view.findViewById(R.id.toolbar);
         ImageView imgUser = view.findViewById(R.id.userImage);
         TextView userPlace = view.findViewById(R.id.userPlace);
         TextView userScore = view.findViewById(R.id.userScore);
@@ -152,69 +147,99 @@ public class ProfileFragment extends BaseFragment {
             }
         });
 
-        layoutLeaderBord.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment()));
+        layoutLeaderBord.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment(), true));
 
         layoutProfile.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new ProfileInfoFragment(), false));
 
-        layoutLogout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
+        layoutLogout.setOnClickListener(v -> logOut());
 
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
+        deleteAcc.setOnClickListener(v -> deleteAccount());
+    }
 
-            GoogleSignInClient mClient = GoogleSignIn.getClient(requireActivity(), gso);
-            mClient.signOut().addOnCompleteListener(task -> {
-
-                if (task.isSuccessful()) {
-
-                    AlarmManager alarmManager = (AlarmManager) requireActivity().getSystemService(ALARM_SERVICE);
-
-                    Intent alarm = new Intent(getContext(), AlarmReceiver.class);
-                    alarm.putExtra(KEY_SHOW_NOTIFICATION_WORD, true);
-
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(), 1, alarm, PendingIntent.FLAG_MUTABLE);
-
-                    // cancel previous
-                    alarmManager.cancel(pendingIntent);
-
-                    Toast.makeText(getActivity(), "You have successfully logout", Toast.LENGTH_SHORT).show();
-
-                    Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
-
-                    intent.setFlags(
-                            Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK
-                    );
-
-                    startActivity(intent);
-                    requireActivity().finish();
-
-                } else {
-                    Log.i(TAG, "Error - " + Objects.requireNonNull(task.getException()).getMessage());
-                    Toast.makeText(getActivity(), "Can not logout... Please, try later", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
-        deleteAcc.setOnClickListener(new View.OnClickListener() {
+    private void deleteAccount() {
+        new DeleteUserRepository().deleteUser(new CompleteListener() {
             @Override
-            public void onClick(View v) {
-
-                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                user.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            public void OnSuccess() {
+                new AlarmRepository().cancelAlarm(requireContext(), new CompleteListener() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(getActivity(), "Deleted Account", Toast.LENGTH_SHORT).show();
+                    public void OnSuccess() {
+                        Toast.makeText(getActivity(), "Account has successfully deleted!", Toast.LENGTH_SHORT).show();
 
+                        Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
+
+                        intent.setFlags(
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK
+                        );
+
+                        startActivity(intent);
+                        requireActivity().finish();
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Can not delete Account", Toast.LENGTH_SHORT).show();
 
+                    @Override
+                    public void OnFailure() {
+                        Toast.makeText(getActivity(), "Can not delete Account. Try Later.", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+
+            @Override
+            public void OnFailure() {
+                Toast.makeText(getActivity(), "Can not delete Account. Try Later.", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+    }
+
+    private void logOut() {
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient mClient = GoogleSignIn.getClient(requireActivity(), gso);
+        mClient.signOut().addOnCompleteListener(task -> {
+
+            if (task.isSuccessful()) {
+
+                new AlarmRepository().cancelAlarm(requireContext(), new CompleteListener() {
+                    @Override
+                    public void OnSuccess() {
+
+                        DocumentReference document = DATA_FIRESTORE
+                                .collection(Constants.KEY_COLLECTION_USERS)
+                                .document(USER_MODEL.getUid());
+
+                        document.update(Constants.KEY_AVAILABILITY, false)
+                            .addOnSuccessListener(unused -> {
+                                FirebaseAuth.getInstance().signOut();
+
+                                Toast.makeText(getActivity(), "You have successfully logout", Toast.LENGTH_SHORT).show();
+
+                                Intent intent = new Intent(getActivity(), MainAuthenticationActivity.class);
+
+                                intent.setFlags(
+                                        Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK
+                                );
+
+                                startActivity(intent);
+                                requireActivity().finish();
+                            }).addOnFailureListener(e -> {
+                                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+
+                                Log.i(TAG, e.getMessage());
+                            });
+                    }
+
+                    @Override
+                    public void OnFailure() {
+                        Toast.makeText(getActivity(), "Can not logout. Try Later.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            } else {
+                Log.i(TAG, "Error - " + Objects.requireNonNull(task.getException()).getMessage());
+                Toast.makeText(getActivity(), "Can not logout... Please, try later", Toast.LENGTH_SHORT).show();
             }
         });
     }

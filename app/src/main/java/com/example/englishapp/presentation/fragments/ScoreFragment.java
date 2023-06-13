@@ -155,7 +155,7 @@ public class ScoreFragment extends Fragment {
     }
 
     private void setListeners() {
-        btnCheckLeader.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment()));
+        btnCheckLeader.setOnClickListener(v -> ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment(), true));
 
         btnReAttempt.setOnClickListener(v -> reAttempt());
 

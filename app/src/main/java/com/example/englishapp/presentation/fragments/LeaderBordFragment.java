@@ -20,13 +20,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
-import com.example.englishapp.presentation.adapters.PlaceAdapter;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.data.database.DataBaseUsers;
+import com.example.englishapp.data.models.UserModel;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.interfaces.UserListener;
-import com.example.englishapp.data.models.UserModel;
-import com.example.englishapp.presentation.activities.MainActivity;
+import com.example.englishapp.presentation.adapters.PlaceAdapter;
 
 public class LeaderBordFragment extends BaseFragment implements UserListener {
 
@@ -89,17 +88,13 @@ public class LeaderBordFragment extends BaseFragment implements UserListener {
                         adapter = new PlaceAdapter(DataBaseUsers.LIST_OF_USERS, LeaderBordFragment.this);
                         recyclerUsers.setAdapter(adapter);
                         progressBar.dismiss();
-
-
                     }
 
                     @Override
                     public void OnFailure() {
-
                         progressBar.dismiss();
 
                         Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
-
                     }
                 });
             }
@@ -133,6 +128,23 @@ public class LeaderBordFragment extends BaseFragment implements UserListener {
 
     @Override
     public void onRefresh() {
-        ((MainActivity) requireActivity()).setFragment(new LeaderBordFragment(), true);
+        progressBar.show();
+
+        dataBaseUsers.getListOfUsers(new CompleteListener() {
+            @Override
+            public void OnSuccess() {
+                adapter = new PlaceAdapter(DataBaseUsers.LIST_OF_USERS, LeaderBordFragment.this);
+                recyclerUsers.setAdapter(adapter);
+                progressBar.dismiss();
+            }
+
+            @Override
+            public void OnFailure() {
+                progressBar.dismiss();
+
+                Toast.makeText(getActivity(), "Try Later", Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }
