@@ -1,4 +1,4 @@
-package com.example.englishapp.domain.repositories;
+package com.example.englishapp.data.repositories;
 
 import static com.example.englishapp.data.database.Constants.GOOGLE_API_KEY;
 import static com.example.englishapp.data.database.Constants.GOOGLE_CX;

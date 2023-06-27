@@ -4,7 +4,7 @@ import static com.example.englishapp.data.database.Constants.KEY_LOCATION;
 import static com.example.englishapp.data.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.data.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.data.database.Constants.REMOTE_MSG_USER_SENDER;
-import static com.example.englishapp.domain.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
+import static com.example.englishapp.data.repositories.PermissionRepository.REQUEST_ID_MULTIPLE_PERMISSIONS;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -25,8 +25,8 @@ import com.example.englishapp.data.database.DataBase;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.interfaces.OpeningListener;
-import com.example.englishapp.domain.repositories.OpenRepository;
-import com.example.englishapp.domain.repositories.PermissionRepository;
+import com.example.englishapp.data.repositories.OpenRepository;
+import com.example.englishapp.data.repositories.PermissionRepository;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 

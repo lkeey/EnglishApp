@@ -41,7 +41,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.example.englishapp.R;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.repositories.UpdateProfileRepository;
+import com.example.englishapp.data.repositories.UpdateProfileRepository;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.mlkit.nl.translate.TranslateLanguage;

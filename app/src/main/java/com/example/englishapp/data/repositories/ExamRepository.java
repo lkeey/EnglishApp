@@ -1,4 +1,4 @@
-package com.example.englishapp.domain.repositories;
+package com.example.englishapp.data.repositories;
 
 import static com.example.englishapp.data.database.DataBaseExam.ANSWERED;
 import static com.example.englishapp.data.database.DataBaseExam.REVIEW;

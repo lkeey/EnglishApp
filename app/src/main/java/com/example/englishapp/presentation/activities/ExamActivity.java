@@ -34,7 +34,7 @@ import com.example.englishapp.data.database.DataBaseTests;
 import com.example.englishapp.presentation.fragments.ExamInfoFragment;
 import com.example.englishapp.data.models.QuestionModel;
 import com.example.englishapp.data.models.TestModel;
-import com.example.englishapp.domain.repositories.ExamRepository;
+import com.example.englishapp.data.repositories.ExamRepository;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;

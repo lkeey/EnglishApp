@@ -27,7 +27,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.example.englishapp.domain.interfaces.AuthenticationListener;
-import com.example.englishapp.domain.repositories.LoginRepository;
+import com.example.englishapp.data.repositories.LoginRepository;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
@@ -248,6 +248,8 @@ public class LoginFragment extends Fragment {
 
             @Override
             public void onFailure() {
+                Log.i(TAG, "login failed");
+
                 Toast.makeText(requireActivity(), getString(R.string.something_went_wrong), Toast.LENGTH_SHORT).show();
 
                 progressBar.dismiss();

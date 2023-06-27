@@ -1,4 +1,4 @@
-package com.example.englishapp.domain.repositories;
+package com.example.englishapp.data.repositories;
 
 import static android.content.Context.MODE_PRIVATE;
 import static com.example.englishapp.data.database.Constants.KEY_ALREADY_LEARNING;

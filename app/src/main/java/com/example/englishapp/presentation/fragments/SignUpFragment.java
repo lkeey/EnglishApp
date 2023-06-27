@@ -24,7 +24,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.domain.interfaces.AuthenticationListener;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
-import com.example.englishapp.domain.repositories.SignupRepository;
+import com.example.englishapp.data.repositories.SignupRepository;
 
 public class SignUpFragment extends Fragment {
 

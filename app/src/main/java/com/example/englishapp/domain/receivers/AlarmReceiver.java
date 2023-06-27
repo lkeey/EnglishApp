@@ -32,7 +32,7 @@ import com.example.englishapp.presentation.activities.SplashActivity;
 import com.example.englishapp.data.database.DataBaseLearningWords;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.data.models.WordModel;
-import com.example.englishapp.domain.repositories.WordsRepository;
+import com.example.englishapp.data.repositories.WordsRepository;
 import com.example.englishapp.domain.services.WallpaperService;
 
 import java.util.Random;

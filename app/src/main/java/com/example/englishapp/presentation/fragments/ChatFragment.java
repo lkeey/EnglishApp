@@ -26,7 +26,7 @@ import com.example.englishapp.data.models.ChatMessage;
 import com.example.englishapp.data.models.UserModel;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.domain.interfaces.ConversationListener;
-import com.example.englishapp.domain.repositories.LoginRepository;
+import com.example.englishapp.data.repositories.LoginRepository;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.adapters.RecentConversationAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;

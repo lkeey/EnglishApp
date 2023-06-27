@@ -34,7 +34,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.data.database.DataBaseCards;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.repositories.CreateCardRepository;
+import com.example.englishapp.data.repositories.CreateCardRepository;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;

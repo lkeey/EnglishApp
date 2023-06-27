@@ -1,4 +1,4 @@
-package com.example.englishapp.domain.repositories;
+package com.example.englishapp.data.repositories;
 
 import android.util.Log;
 import android.view.View;

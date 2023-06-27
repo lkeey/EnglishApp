@@ -27,7 +27,7 @@ import com.example.englishapp.presentation.adapters.QuestionsAdapter;
 import com.example.englishapp.data.database.DataBaseBookmarks;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.data.models.QuestionModel;
-import com.example.englishapp.domain.repositories.BookmarkRepository;
+import com.example.englishapp.data.repositories.BookmarkRepository;
 
 import java.util.Objects;
 

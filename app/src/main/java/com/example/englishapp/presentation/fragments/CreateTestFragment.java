@@ -1,14 +1,14 @@
 package com.example.englishapp.presentation.fragments;
 
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_AMOUNT_OPTIONS;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_LOT_CORRECT_OPTIONS;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NAME;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NAME_SIZE;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NO_CORRECT_OPTION;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_NO_QUESTIONS;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_OPTION;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_QUESTION;
-import static com.example.englishapp.domain.repositories.CreateTestRepository.CODE_TIME;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_AMOUNT_OPTIONS;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_LOT_CORRECT_OPTIONS;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_NAME;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_NAME_SIZE;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_NO_CORRECT_OPTION;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_NO_QUESTIONS;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_OPTION;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_QUESTION;
+import static com.example.englishapp.data.repositories.CreateTestRepository.CODE_TIME;
 
 import android.app.Dialog;
 import android.graphics.Color;
@@ -34,7 +34,7 @@ import com.example.englishapp.R;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.data.database.DataBaseTests;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.repositories.CreateTestRepository;
+import com.example.englishapp.data.repositories.CreateTestRepository;
 
 import java.util.ArrayList;
 import java.util.List;

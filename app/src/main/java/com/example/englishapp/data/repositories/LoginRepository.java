@@ -1,4 +1,4 @@
-package com.example.englishapp.domain.repositories;
+package com.example.englishapp.data.repositories;
 
 import android.util.Log;
 
@@ -24,9 +24,11 @@ public class LoginRepository {
         mAuth = FirebaseAuth.getInstance();
         dataBase = new DataBase();
         DataBasePersonalData dataBasePersonalData = new DataBasePersonalData();
-
+        
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
 
+        Log.i(TAG, "firebaseAuthWithGoogle: started");
+        
         mAuth.signInWithCredential(credential)
             .addOnCompleteListener(task -> {
 
@@ -49,6 +51,7 @@ public class LoginRepository {
 
                                         @Override
                                         public void OnFailure() {
+                                            Log.i(TAG, "OnFailure: 1");
                                             googleAuthentication.onFailure();
                                         }
                                     });
@@ -57,6 +60,8 @@ public class LoginRepository {
 
                                 @Override
                                 public void OnFailure() {
+                                    Log.i(TAG, "OnFailure: 2");
+
                                     googleAuthentication.onFailure();
                                 }
                             });
@@ -71,14 +76,19 @@ public class LoginRepository {
 
                             @Override
                             public void OnFailure() {
+                                Log.i(TAG, "OnFailure: 3");
+
                                 googleAuthentication.onFailure();
                             }
                         });
                     }
                 } else {
+                    Log.i(TAG, "OnFailure: 4");
+
                     googleAuthentication.onFailure();
                 }
-            });
+            })
+        ;
     }
 
     public void login(String email, String password, AuthenticationListener listener) {

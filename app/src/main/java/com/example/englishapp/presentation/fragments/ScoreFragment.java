@@ -30,8 +30,8 @@ import com.example.englishapp.data.database.DataBaseScores;
 import com.example.englishapp.data.database.DataBaseTests;
 import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.data.models.QuestionModel;
-import com.example.englishapp.domain.repositories.ScoreRepository;
-import com.example.englishapp.domain.repositories.WordsRepository;
+import com.example.englishapp.data.repositories.ScoreRepository;
+import com.example.englishapp.data.repositories.WordsRepository;
 
 import java.util.concurrent.TimeUnit;
 

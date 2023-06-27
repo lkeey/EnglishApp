@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.example.englishapp.R;
 import com.example.englishapp.domain.interfaces.LearningWordListener;
 import com.example.englishapp.data.models.CardModel;
-import com.example.englishapp.domain.repositories.BeginLearningRepository;
+import com.example.englishapp.data.repositories.BeginLearningRepository;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class WordCardInfoFragment extends BottomSheetDialogFragment {

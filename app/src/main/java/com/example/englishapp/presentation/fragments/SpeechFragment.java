@@ -19,7 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.englishapp.R;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.repositories.SpeechRepository;
+import com.example.englishapp.data.repositories.SpeechRepository;
 
 import java.util.ArrayList;
 import java.util.Locale;

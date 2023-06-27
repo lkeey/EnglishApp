@@ -24,8 +24,8 @@ import com.example.englishapp.data.database.DataBaseLearningWords;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.data.database.RoomDataBase;
 import com.example.englishapp.domain.interfaces.CompleteListener;
-import com.example.englishapp.domain.repositories.AlarmRepository;
-import com.example.englishapp.domain.repositories.DeleteUserRepository;
+import com.example.englishapp.data.repositories.AlarmRepository;
+import com.example.englishapp.data.repositories.DeleteUserRepository;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -189,7 +189,7 @@ public class ProfileFragment extends BaseFragment {
     private void logOut() {
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestIdToken(Constants.KEY_GOOGLE_WEB_CLIENT_ID)
                 .requestEmail()
                 .build();
 

@@ -12,7 +12,7 @@ The idea is that you choose your own learning trajectory
 
 * Storage of information
   * Firebase Firestore - storing user data
-  * Firebase Storafe - storing profile photos
+  * Firebase Storage - storing profile photos
   * Room Database - saving the studied words
   * SharedPreferences - storing simple data (word counter, wallpaper change status)
 * Authorization
