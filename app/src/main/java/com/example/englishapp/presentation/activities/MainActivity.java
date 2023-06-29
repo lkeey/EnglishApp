@@ -2,6 +2,8 @@ package com.example.englishapp.presentation.activities;
 
 import static com.example.englishapp.data.database.Constants.KEY_CHOSEN_USER_DATA;
 import static com.example.englishapp.data.database.Constants.KEY_IS_WORDS;
+import static com.example.englishapp.data.database.Constants.KEY_LATEST_FRAGMENT;
+import static com.example.englishapp.data.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.data.database.Constants.KEY_TEST_TIME;
 import static com.example.englishapp.data.database.Constants.KEY_USER_UID;
 import static com.example.englishapp.data.database.Constants.SHOW_FRAGMENT_DIALOG;
@@ -67,13 +69,27 @@ public class MainActivity extends BaseActivity {
 
         setListeners();
 
-        // start CategoryFragment at first
-        setFragment(new CategoryFragment(), true);
+        setLatestFragment(savedInstanceState);
 
         receiveData();
 
         startLocationService();
 
+    }
+
+    private void setLatestFragment(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            String latestFragment = savedInstanceState.getString(KEY_LATEST_FRAGMENT);
+
+            if (latestFragment.equals(KEY_PROFILE)) {
+                setFragment(new ProfileFragment(), true);
+            }
+
+        } else {
+            // start CategoryFragment at first
+            setFragment(new CategoryFragment(), true);
+        }
     }
 
     private void init() {
@@ -181,7 +197,7 @@ public class MainActivity extends BaseActivity {
                 MapUsersFragment fragment = new MapUsersFragment();
                 setFragment(fragment, false);
 
-                setCheckedNavigationIcon(2);
+                setCheckedNavigationIcon(1);
             }
 
             @Override

@@ -1,5 +1,7 @@
 package com.example.englishapp.presentation.fragments;
 
+import static com.example.englishapp.data.database.Constants.KEY_LATEST_FRAGMENT;
+import static com.example.englishapp.data.database.Constants.KEY_PROFILE;
 import static com.example.englishapp.data.database.DataBasePersonalData.DATA_FIRESTORE;
 import static com.example.englishapp.data.database.DataBasePersonalData.USER_MODEL;
 
