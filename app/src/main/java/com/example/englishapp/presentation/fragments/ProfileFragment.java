@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,9 +24,9 @@ import com.example.englishapp.data.database.DataBaseBookmarks;
 import com.example.englishapp.data.database.DataBaseLearningWords;
 import com.example.englishapp.data.database.DataBasePersonalData;
 import com.example.englishapp.data.database.RoomDataBase;
-import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.data.repositories.AlarmRepository;
 import com.example.englishapp.data.repositories.DeleteUserRepository;
+import com.example.englishapp.domain.interfaces.CompleteListener;
 import com.example.englishapp.presentation.activities.MainActivity;
 import com.example.englishapp.presentation.activities.MainAuthenticationActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -64,6 +65,7 @@ public class ProfileFragment extends BaseFragment {
         layoutLeaderBord = view.findViewById(R.id.layoutLeaderBord);
         layoutProfile = view.findViewById(R.id.layoutProfile);
         layoutLogout = view.findViewById(R.id.layoutLogout);
+        FrameLayout flWords = view.findViewById(R.id.frameLayoutLearningWords);
 
         Objects.requireNonNull(((MainActivity) requireActivity()).getSupportActionBar()).hide();
         ((MainActivity) requireActivity()).setSupportActionBar(toolbar);
@@ -76,11 +78,20 @@ public class ProfileFragment extends BaseFragment {
         userScore.setText(String.valueOf(USER_MODEL.getScore()));
 
         Glide.with(ProfileFragment.this).load(USER_MODEL.getPathToImage()).into(imgUser);
+        /*
+            show speech fragment
+        */
+        SpeechFragment frSpeech = new SpeechFragment();
 
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayoutSpeech, new SpeechFragment())
-                .commit();
+        getChildFragmentManager()
+            .beginTransaction()
+            .replace(R.id.frameLayoutSpeech, frSpeech)
+            .addToBackStack(String.valueOf(frSpeech.getId()))
+            .commit();
+
+        /*
+            show amount of learning words
+        */
 
         TextView view1 = view.findViewById(R.id.learning);
 
@@ -91,10 +102,17 @@ public class ProfileFragment extends BaseFragment {
 
         view1.setText(" - " + count + " - " + DataBaseLearningWords.LIST_OF_LEARNING_WORDS.size());
 
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.frameLayoutLearningWords, new LearningWordsFragment())
-                .commit();
+        /*
+            show learning words fragment
+        */
+
+        LearningWordsFragment frWords = new LearningWordsFragment();
+
+        getChildFragmentManager()
+            .beginTransaction()
+            .replace(R.id.frameLayoutLearningWords, frWords)
+            .addToBackStack(String.valueOf(frWords.getId()))
+            .commit();
 
     }
 

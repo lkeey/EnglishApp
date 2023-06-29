@@ -160,7 +160,7 @@ public class DataBasePersonalData {
 
     public void updateUserGeoPosition(double latitude, double longitude, CompleteListener listener) {
 
-        if (latitude != USER_MODEL.getLatitude() && longitude != USER_MODEL.getLongitude()) {
+        if (latitude != USER_MODEL.getLatitude() && longitude != USER_MODEL.getLongitude() && USER_MODEL.getUid() != null) {
 
             Log.i(TAG, "new geo - " + USER_MODEL.getUid());
 
