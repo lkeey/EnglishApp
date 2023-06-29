@@ -69,27 +69,13 @@ public class MainActivity extends BaseActivity {
 
         setListeners();
 
-        setLatestFragment(savedInstanceState);
+        // at first
+        setFragment(new CategoryFragment(), true);
 
         receiveData();
 
         startLocationService();
 
-    }
-
-    private void setLatestFragment(Bundle savedInstanceState) {
-
-        if (savedInstanceState != null) {
-            String latestFragment = savedInstanceState.getString(KEY_LATEST_FRAGMENT);
-
-            if (latestFragment.equals(KEY_PROFILE)) {
-                setFragment(new ProfileFragment(), true);
-            }
-
-        } else {
-            // start CategoryFragment at first
-            setFragment(new CategoryFragment(), true);
-        }
     }
 
     private void init() {

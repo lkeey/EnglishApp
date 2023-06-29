@@ -22,8 +22,10 @@ public class BaseActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        document = DATA_FIRESTORE.collection(Constants.KEY_COLLECTION_USERS)
-                .document(USER_MODEL.getUid());
+        if (DATA_FIRESTORE != null) {
+            document = DATA_FIRESTORE.collection(Constants.KEY_COLLECTION_USERS)
+                    .document(USER_MODEL.getUid());
+        }
 
         new Instabug.Builder(getApplication(), KEY_INSTABUG)
                 .setInvocationEvents(InstabugInvocationEvent.SHAKE, InstabugInvocationEvent.SCREENSHOT, InstabugInvocationEvent.TWO_FINGER_SWIPE_LEFT)
