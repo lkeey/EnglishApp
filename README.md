@@ -16,8 +16,8 @@ The idea is that you choose your own learning trajectory
   * Room Database - saving the studied words
   * SharedPreferences - storing simple data (word counter, wallpaper change status)
 * Authorization
-  * One-Tap Google sign in
-  * Firebase Auth
+  * One-Tap Google Sign In
+  * Firebase Authentication
 * Layouts
   * LinearLayout
   * ConstraintLayout
@@ -40,5 +40,6 @@ The idea is that you choose your own learning trajectory
 
 ## Architecture
 The entire application follows `layers architecture`.
-<img src="https://raw.githubusercontent.com/lkeey/EnglishApp/master/layer.png" width="700" hspace="5" vspace ="10">
+
+<img src="https://raw.githubusercontent.com/lkeey/EnglishApp/master/app/src/main/res/drawable/layer.png" width="700" hspace="5" vspace ="10">
 
