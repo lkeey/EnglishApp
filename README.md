@@ -43,3 +43,8 @@ The entire application follows `layers architecture`.
 
 <img src="https://raw.githubusercontent.com/lkeey/EnglishApp/master/app/src/main/res/drawable/layer.png" width="700" hspace="5" vspace ="10">
 
+## Availability
+You can download the app from Google Disk
+
+<img src="https://raw.githubusercontent.com/lkeey/EnglishApp/master/app/src/main/res/drawable/qr-engilize.png" width="700" hspace="5" vspace ="10">
+
